@@ -8,9 +8,7 @@ abstract class InjectableModule {
   @singleton
   Future<AuthTokenStorage> get authTokenStorage async {
     final storage = AuthTokenStorage();
-
     await storage.init();
-
     return storage;
   }
 }

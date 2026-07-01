@@ -48,7 +48,13 @@ class EmployeePageState extends Equatable {
   String get title =>
       response?.data?.department?.name ?? departmentName ?? 'Employees';
 
-  int get totalEmployees => pagination?.total ?? employees.length;
+  int? get totalEmployees {
+    if (status == EmployeePageStatus.loading && response == null) {
+      return null;
+    }
+
+    return pagination?.total ?? employees.length;
+  }
 
   bool get hasData => employees.isNotEmpty;
 

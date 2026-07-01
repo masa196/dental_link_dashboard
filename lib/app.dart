@@ -32,7 +32,7 @@ class DentalLinkDashboardApp extends StatelessWidget {
                 theme: LightThemeData.theme,
                 darkTheme: DarkThemeData.theme,
                 themeMode: mode,
-                routerConfig: appRouterConfig,
+                routerConfig: AppRouter.config, 
               );
             },
           );

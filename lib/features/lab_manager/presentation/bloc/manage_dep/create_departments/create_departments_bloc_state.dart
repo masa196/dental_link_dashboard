@@ -3,26 +3,26 @@ import 'package:equatable/equatable.dart';
 import 'package:dental_link_dashboard/core/error/app_error.dart';
 import 'package:dental_link_dashboard/features/admin/data/models/base_response_model.dart';
 
-enum CreateDepartmentsBulkStatus { initial, loading, success, failure }
+enum CreateDepartmentsStatus { initial, loading, success, failure }
 
-class CreateDepartmentsBulkBlocState extends Equatable {
-  const CreateDepartmentsBulkBlocState({
-    this.status = CreateDepartmentsBulkStatus.initial,
+class CreateDepartmentsBlocState extends Equatable {
+  const CreateDepartmentsBlocState({
+    this.status = CreateDepartmentsStatus.initial,
     this.responseModel,
     this.failure,
   });
 
-  final CreateDepartmentsBulkStatus status;
+  final CreateDepartmentsStatus status;
   final BaseResponseModel? responseModel;
   final AppFailure? failure;
 
-  CreateDepartmentsBulkBlocState copyWith({
-    CreateDepartmentsBulkStatus? status,
+  CreateDepartmentsBlocState copyWith({
+    CreateDepartmentsStatus? status,
     BaseResponseModel? responseModel,
     AppFailure? failure,
     bool clearFailure = false,
   }) {
-    return CreateDepartmentsBulkBlocState(
+    return CreateDepartmentsBlocState(
       status: status ?? this.status,
       responseModel: responseModel ?? this.responseModel,
       failure: clearFailure ? null : (failure ?? this.failure),

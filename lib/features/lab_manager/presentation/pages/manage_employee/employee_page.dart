@@ -1,29 +1,34 @@
 import 'dart:math' as math;
 
+import 'package:dental_link_dashboard/features/lab_manager/domain/entities/employee_entity/employee_entity.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/departments_with_employee/departments_with_employee_event.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/delete_employee/delete_employee_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/delete_employee/delete_employee_bloc_event.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/delete_employee/delete_employee_bloc_state.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/edit_employee/edit_employee_page.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/widgets/department_snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
 import 'package:dental_link_dashboard/core/constants/app_fonts/app_typography.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_radius.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_spacing.dart';
 import 'package:dental_link_dashboard/core/extensions/context_extensions.dart';
 import 'package:dental_link_dashboard/core/responsive/responsive.dart';
-import 'package:dental_link_dashboard/core/services/locator.dart';
+import 'package:dental_link_dashboard/core/navigation/app_breadcrumbs.dart';
+import 'package:dental_link_dashboard/core/navigation/app_route_paths.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/models/show_employee/show_employee_model.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/departments_with_employee/departments_with_employee_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/show_employee/employee_page_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/show_employee/employee_page_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/show_employee/employee_page_state.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/roles/roles_bloc.dart';
+import 'package:dental_link_dashboard/core/services/locator.dart';
 
 class EmployeePage extends StatelessWidget {
-  const EmployeePage({
-    super.key,
-    required this.departmentId,
-    this.departmentName,
-  });
+  EmployeePage({super.key});
 
-  final int departmentId;
-  final String? departmentName;
+  final isDataChangedNotifier = ValueNotifier<bool>(false);
 
   @override
   Widget build(BuildContext context) {
@@ -32,65 +37,72 @@ class EmployeePage extends StatelessWidget {
     final isDesktop = Responsive.isDesktop(context);
     final showMenuButton = Scaffold.maybeOf(context)?.hasDrawer ?? false;
 
-    return BlocProvider(
-      create: (_) => locator<EmployeePageBloc>(
-        param1: departmentId,
-        param2: departmentName,
-      ),
-      child: Directionality(
-        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-        child: BlocBuilder<EmployeePageBloc, EmployeePageState>(
-          builder: (context, state) {
-            final shouldShowError =
-                state.status == EmployeePageStatus.failure && !state.hasData;
+    return Builder(
+      builder: (context) {
+        return BlocProvider<DeleteEmployeeBloc>(
+          create: (context) => locator<DeleteEmployeeBloc>(),
+          child: Directionality(
+            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+            child: BlocBuilder<EmployeePageBloc, EmployeePageState>(
+              builder: (context, state) {
+                final shouldShowError =
+                    state.status == EmployeePageStatus.failure &&
+                    !state.hasData;
+                final totalEmployeesText = state.totalEmployees;
 
-            return Padding(
-              padding: const EdgeInsets.only(
-                left: AppSpacing.lg,
-                right: AppSpacing.lg,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _EmployeeTopBar(
-                    state: state,
-                    isArabic: isArabic,
-                    scheme: scheme,
-                    isDesktop: isDesktop,
-                    showMenuButton: showMenuButton,
+                return Padding(
+                  padding: const EdgeInsets.only(
+                    left: AppSpacing.lg,
+                    right: AppSpacing.lg,
                   ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Flexible(
-                    child: state.isInitialLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : shouldShowError
-                        ? _EmployeeErrorState(
-                            message:
-                                state.failure?.message ??
-                                (isArabic
-                                    ? 'تعذر تحميل الموظفين الآن'
-                                    : 'Unable to load employees right now'),
-                            onRetry: () => context.read<EmployeePageBloc>().add(
-                              EmployeePageFetchRequested(
-                                departmentId: state.departmentId,
-                                page: state.currentPage,
-                                employeesPerPage: state.employeesPerPage,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _EmployeeTopBar(
+                        state: state,
+                        totalEmployeesText: totalEmployeesText,
+                        isArabic: isArabic,
+                        scheme: scheme,
+                        isDesktop: isDesktop,
+                        showMenuButton: showMenuButton,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      Flexible(
+                        child: state.isInitialLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : shouldShowError
+                            ? _EmployeeErrorState(
+                                message:
+                                    state.failure?.message ??
+                                    (isArabic
+                                        ? 'تعذر تحميل الموظفين الآن'
+                                        : 'Unable to load employees right now'),
+                                onRetry: () =>
+                                    context.read<EmployeePageBloc>().add(
+                                      EmployeePageFetchRequested(
+                                        departmentId: state.departmentId,
+                                        page: state.currentPage,
+                                        employeesPerPage:
+                                            state.employeesPerPage,
+                                      ),
+                                    ),
+                              )
+                            : _EmployeeContent(
+                                key: ValueKey('page-${state.currentPage}'),
+                                state: state,
+                                scheme: scheme,
+                                isArabic: isArabic,
+                                isDataChangedNotifier: isDataChangedNotifier,
                               ),
-                            ),
-                          )
-                        : _EmployeeContent(
-                            key: ValueKey('page-${state.currentPage}'),
-                            state: state,
-                            scheme: scheme,
-                            isArabic: isArabic,
-                          ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -98,6 +110,7 @@ class EmployeePage extends StatelessWidget {
 class _EmployeeTopBar extends StatelessWidget {
   const _EmployeeTopBar({
     required this.state,
+    required this.totalEmployeesText,
     required this.isArabic,
     required this.scheme,
     required this.isDesktop,
@@ -105,6 +118,7 @@ class _EmployeeTopBar extends StatelessWidget {
   });
 
   final EmployeePageState state;
+  final int? totalEmployeesText;
   final bool isArabic;
   final ColorScheme scheme;
   final bool isDesktop;
@@ -112,126 +126,151 @@ class _EmployeeTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isCompact = !isDesktop || constraints.maxWidth < 980;
+    final totalEmployeesSuffix = totalEmployeesText == null
+        ? ''
+        : ' : $totalEmployeesText';
 
-        if (isCompact) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        border: Border(
+          bottom: BorderSide(
+            color: scheme.outlineVariant.withValues(alpha: 0.15),
+            width: 1,
+          ),
+        ),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isCompact = !isDesktop || constraints.maxWidth < 980;
+
+          // للشاشات الصغيرة والمتوسطة (Responsive Mobile/Tablet)
+          if (isCompact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    if (showMenuButton)
+                      IconButton(
+                        onPressed: () =>
+                            Scaffold.maybeOf(context)?.openDrawer(),
+                        icon: const Icon(Icons.menu_rounded),
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    Expanded(
+                      child: _Breadcrumbs(state: state, isArabic: isArabic),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                // النص المدمج الجديد في الشاشات الصغيرة
+                Text(
+                  isArabic
+                      ? 'إجمالي موظفي قسم ${state.title}$totalEmployeesSuffix'
+                      : 'Total employees in ${state.title} department$totalEmployeesSuffix',
+                  style: TextStyle(
+                    fontSize: AppTypography.fs18,
+                    fontWeight: FontWeight.w700,
+                    color: scheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                _SearchBar(isArabic: isArabic, scheme: scheme),
+              ],
+            );
+          }
+
+          // للتصميم العريض الموحد (Desktop Standard)
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _Breadcrumbs(state: state, scheme: scheme, isArabic: isArabic),
-              const SizedBox(height: AppSpacing.md),
-              _SearchBar(isArabic: isArabic, scheme: scheme),
-              const SizedBox(height: AppSpacing.sm),
+              // الطرف الأول: زر القائمة + الـ Breadcrumbs + النص المدمج في سطر واحد
+              Expanded(
+                flex: 4,
+                child: Row(
+                  children: [
+                    if (showMenuButton)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(end: 12),
+                        child: IconButton(
+                          onPressed: () =>
+                              Scaffold.maybeOf(context)?.openDrawer(),
+                          icon: const Icon(Icons.menu_rounded),
+                          style: IconButton.styleFrom(
+                            foregroundColor: scheme.onSurfaceVariant,
+                            minimumSize: const Size(40, 40),
+                          ),
+                        ),
+                      ),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _Breadcrumbs(state: state, isArabic: isArabic),
+                          const SizedBox(height: 6),
+                          // السطر الموحد الجديد والمطابق لطلبك
+                          Text(
+                            isArabic
+                                ? 'إجمالي موظفي قسم ${state.title}$totalEmployeesSuffix'
+                                : 'Total employees in ${state.title} department$totalEmployeesSuffix',
+                            style: TextStyle(
+                              fontSize: AppTypography.fs18, // حجم متناسق للويب
+                              fontWeight: FontWeight.w700, // خط عريض وواضح
+                              color: scheme.onSurface,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 32),
+
+              // الطرف الثاني: شريط البحث محاذى للطرف المقابل
+              Expanded(
+                flex: 3,
+                child: Align(
+                  alignment: isArabic
+                      ? Alignment.centerLeft
+                      : Alignment.centerRight,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: _SearchBar(isArabic: isArabic, scheme: scheme),
+                  ),
+                ),
+              ),
             ],
           );
-        }
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _Breadcrumbs(state: state, scheme: scheme, isArabic: isArabic),
-                const SizedBox(width: AppSpacing.lg),
-
-                Expanded(
-                  child: Align(
-                    alignment: isArabic
-                        ? Alignment.centerLeft
-                        : Alignment.centerRight,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 700),
-                      child: _SearchBar(isArabic: isArabic, scheme: scheme),
-                    ),
-                  ),
-                ),
-
-                if (showMenuButton) ...[
-                  IconButton(
-                    onPressed: () => Scaffold.maybeOf(context)?.openDrawer(),
-                    icon: const Icon(Icons.menu_rounded),
-                    color: scheme.primary,
-                  ),
-
-                  const SizedBox(width: AppSpacing.xs),
-                ],
-              ],
-            ),
-
-            const SizedBox(height: AppSpacing.lg),
-
-            Row(
-              textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                /// HEADER
-                Flexible(
-                  child: _HeaderBlock(
-                    state: state,
-                    scheme: scheme,
-                    isArabic: isArabic,
-                  ),
-                ),
-
-                const SizedBox(width: AppSpacing.xl),
-
-                /// ACTIONS
-                _ActionButtons(isArabic: isArabic, scheme: scheme),
-              ],
-            ),
-          ],
-        );
-      },
+        },
+      ),
     );
   }
 }
 
 class _Breadcrumbs extends StatelessWidget {
-  const _Breadcrumbs({
-    required this.state,
-    required this.scheme,
-    required this.isArabic,
-  });
+  const _Breadcrumbs({required this.state, required this.isArabic});
 
   final EmployeePageState state;
-  final ColorScheme scheme;
   final bool isArabic;
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: AppSpacing.xs,
-        children: [
-          Text(
-            isArabic ? 'الأقسام' : 'Departments',
-            style: TextStyle(
-              color: scheme.primary,
-              fontSize: AppTypography.fs18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Icon(
-            Icons.chevron_right_rounded,
-            size: 16,
-            color: scheme.onSurface.withValues(alpha: 0.5),
-          ),
-          Text(
-            state.title,
-            style: TextStyle(
-              color: scheme.onSurface.withValues(alpha: 0.75),
-              fontSize: AppTypography.fs18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
+    return AppBreadcrumbs(
+      items: [
+        AppBreadcrumbItem(
+          label: isArabic ? 'الأقسام' : 'Departments',
+          path: AppRoutePaths.labManagerEmployees,
+        ),
+        AppBreadcrumbItem(label: state.title, isActive: true),
+      ],
     );
   }
 }
@@ -242,8 +281,9 @@ class _EmployeeContent extends StatelessWidget {
     required this.state,
     required this.scheme,
     required this.isArabic,
+    required this.isDataChangedNotifier, //
   });
-
+  final ValueNotifier<bool> isDataChangedNotifier;
   final EmployeePageState state;
   final ColorScheme scheme;
   final bool isArabic;
@@ -266,6 +306,7 @@ class _EmployeeContent extends StatelessWidget {
               scheme: scheme,
               isArabic: isArabic,
               maxHeight: availableHeight,
+              isDataChangedNotifier: isDataChangedNotifier,
             ),
             if (state.status == EmployeePageStatus.failure &&
                 state.hasData) ...[
@@ -281,102 +322,6 @@ class _EmployeeContent extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-}
-
-class _HeaderBlock extends StatelessWidget {
-  const _HeaderBlock({
-    required this.state,
-    required this.scheme,
-    required this.isArabic,
-  });
-
-  final EmployeePageState state;
-  final ColorScheme scheme;
-  final bool isArabic;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          isArabic ? 'موظفي قسم ${state.title}' : '${state.title} Employees',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontSize: AppTypography.fs22,
-            fontWeight: FontWeight.w800,
-            color: scheme.onSurface,
-          ),
-        ),
-
-        const SizedBox(height: AppSpacing.xs),
-
-        Text(
-          isArabic
-              ? 'إجمالي موظفي القسم: ${state.totalEmployees}'
-              : 'Total employees in department: ${state.totalEmployees}',
-          textAlign: TextAlign.start,
-          style: TextStyle(
-            fontSize: AppTypography.fs13,
-            fontWeight: FontWeight.w600,
-            color: scheme.onSurface.withValues(alpha: 0.7),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ActionButtons extends StatelessWidget {
-  const _ActionButtons({required this.isArabic, required this.scheme});
-
-  final bool isArabic;
-  final ColorScheme scheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      alignment: WrapAlignment.end,
-      children: [
-        OutlinedButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.download_outlined),
-          label: Text(isArabic ? 'تصدير البيانات' : 'Export Data'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: scheme.primary,
-            side: BorderSide(color: scheme.primary.withValues(alpha: 0.18)),
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-            ),
-          ),
-        ),
-        FilledButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.person_add_alt_1),
-          label: Text(isArabic ? 'إضافة موظف' : 'Add Employee'),
-          style: FilledButton.styleFrom(
-            backgroundColor: scheme.primary,
-            foregroundColor: scheme.onPrimary,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadius.lg),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -442,12 +387,14 @@ class _EmployeeTableCard extends StatelessWidget {
     required this.scheme,
     required this.isArabic,
     required this.maxHeight,
+    required this.isDataChangedNotifier,
   });
 
   final EmployeePageState state;
   final ColorScheme scheme;
   final bool isArabic;
   final double maxHeight;
+  final ValueNotifier<bool> isDataChangedNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -497,7 +444,7 @@ class _EmployeeTableCard extends StatelessWidget {
                       key: ValueKey(state.currentPage), // مهم جداً
                       physics: const ClampingScrollPhysics(),
                       itemCount: employees.length,
-                      separatorBuilder: (_, __) => Divider(
+                      separatorBuilder: (_, _) => Divider(
                         height: 1,
                         thickness: 1,
                         color: borderColor.withValues(alpha: 0.5),
@@ -509,6 +456,7 @@ class _EmployeeTableCard extends StatelessWidget {
                           employee: emp,
                           scheme: scheme,
                           isArabic: isArabic,
+                          isDataChangedNotifier: isDataChangedNotifier,
                         );
                       },
                     ),
@@ -649,8 +597,9 @@ class _EmployeeTableRow extends StatelessWidget {
     required this.employee,
     required this.scheme,
     required this.isArabic,
+    required this.isDataChangedNotifier,
   });
-
+  final ValueNotifier<bool> isDataChangedNotifier;
   final EmployeesDatum employee;
   final ColorScheme scheme;
   final bool isArabic;
@@ -742,9 +691,11 @@ class _EmployeeTableRow extends StatelessWidget {
                 _RowCell(
                   alignment: Alignment.center,
                   child: _ActionsCell(
+                    employee: employee,
                     isManager: isManager,
                     scheme: scheme,
                     isArabic: isArabic,
+                    isDataChangedNotifier: isDataChangedNotifier,
                   ),
                 ),
               ],
@@ -932,14 +883,23 @@ class _RowCell extends StatelessWidget {
 
 class _ActionsCell extends StatelessWidget {
   const _ActionsCell({
+    required this.employee,
     required this.isManager,
     required this.scheme,
     required this.isArabic,
+    required this.isDataChangedNotifier,
   });
-
+  final ValueNotifier<bool> isDataChangedNotifier; //
+  final EmployeesDatum employee;
   final bool isManager;
   final ColorScheme scheme;
   final bool isArabic;
+
+  // دالة مساعدة لتحويل الـ DateTime لـ String متوافق مع الحقول لديك
+  String _formatDateTimeToString(DateTime? dateTime) {
+    if (dateTime == null) return '';
+    return "${dateTime.year.toString().padLeft(4, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -957,6 +917,10 @@ class _ActionsCell extends StatelessWidget {
           backgroundColor: isManager
               ? scheme.onPrimary.withValues(alpha: 0.12)
               : destructiveColor.withValues(alpha: 0.12),
+          onTap: () {
+            final deleteBloc = context.read<DeleteEmployeeBloc>();
+            _showDeleteConfirmationDialog(context, employee.id!, deleteBloc);
+          },
         ),
         const SizedBox(width: 8),
         _ActionIcon(
@@ -965,6 +929,63 @@ class _ActionsCell extends StatelessWidget {
           backgroundColor: isManager
               ? scheme.onPrimary.withValues(alpha: 0.12)
               : scheme.primary.withValues(alpha: 0.12),
+          onTap: () {
+            // 1. جلب نسخة الـ Blocs والحالة الحالية لصفحة الموظفين
+            final rolesBloc = context.read<RolesBloc>();
+            final deptsBloc = context.read<DepartmentsWithEmployeeBloc>();
+            final pageBlocState = context.read<EmployeePageBloc>().state;
+
+            // 2. بناء الـ Entity ومطابقة البيانات
+            final employeeEntity = EmployeeEntity(
+              id: employee.id,
+              name: employee.name ?? '',
+              email: employee.email ?? '',
+              phone: employee.phone ?? '',
+              birthdate: _formatDateTimeToString(employee.birthdate),
+              joinedAt: _formatDateTimeToString(employee.joinedAt),
+              roleId: employee.role?.id ?? 0,
+
+              // الحل هنا: نمرر معرف القسم الحالي داخل المصفوفة لكي يرسل تلقائياً إذا لم يعدل عليه المستخدم
+              departmentIds: [pageBlocState.departmentId],
+
+              profileImagePath: employee.profileImage ?? '',
+              password: '',
+              passwordConfirmation: '',
+            );
+
+            // 3. الانتقال الطبيعي مع حقن الـ Blocs دون تغيير الـ Breadcrumbs
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider<RolesBloc>.value(value: rolesBloc),
+                    BlocProvider<DepartmentsWithEmployeeBloc>.value(
+                      value: deptsBloc,
+                    ),
+                  ],
+                  child: EditEmployeePage(employee: employeeEntity),
+                ),
+              ),
+            ).then((value) {
+              if (value == true && context.mounted) {
+                isDataChangedNotifier.value = true;
+                context.read<EmployeePageBloc>().add(
+                  EmployeePageFetchRequested(
+                    departmentId: context
+                        .read<EmployeePageBloc>()
+                        .state
+                        .departmentId,
+                    page: context.read<EmployeePageBloc>().state.currentPage,
+                    employeesPerPage: context
+                        .read<EmployeePageBloc>()
+                        .state
+                        .employeesPerPage,
+                  ),
+                );
+              }
+            });
+          },
         ),
       ],
     );
@@ -976,24 +997,131 @@ class _ActionIcon extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.backgroundColor,
+    this.onTap, // إضافة حدث النقرة
   });
 
   final IconData icon;
   final Color color;
   final Color backgroundColor;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 26,
-      height: 26,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(8),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: 26,
+        height: 26,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, size: 15, color: color),
       ),
-      child: Icon(icon, size: 15, color: color),
     );
   }
+}
+
+void _showDeleteConfirmationDialog(
+  BuildContext context,
+  int employeeId,
+  DeleteEmployeeBloc deleteBloc,
+) {
+  final employeePageBloc = context.read<EmployeePageBloc>();
+  final departmentsBloc = context.read<DepartmentsWithEmployeeBloc>();
+  final isArabic = context.isArabic; // جلب حالة اللغة المعتمدة في واجهتك
+
+  showDialog(
+    context: context,
+    builder: (dialogContext) {
+      return BlocConsumer<DeleteEmployeeBloc, DeleteEmployeeBlocState>(
+        bloc: deleteBloc,
+        listener: (context, state) {
+          if (state.status == DeleteEmployeeStatus.success) {
+            Navigator.of(dialogContext).pop();
+
+            AppSnackbarHelper.showSuccess(
+              context,
+              title: isArabic ? 'عملية ناجحة' : 'Success',
+              message: isArabic
+                  ? 'تم حذف الموظف بنجاح'
+                  : 'Employee deleted successfully',
+            );
+
+            // تحديث صفحة الموظفين
+            employeePageBloc.add(
+              EmployeePageFetchRequested(
+                departmentId: employeePageBloc.state.departmentId,
+                page: employeePageBloc.state.currentPage,
+                employeesPerPage: employeePageBloc.state.employeesPerPage,
+              ),
+            );
+
+            departmentsBloc.add(const DepartmentsWithEmployeeFetchRequested());
+
+            deleteBloc.add(const DeleteEmployeeReset());
+          } else if (state.status == DeleteEmployeeStatus.failure) {
+            // استخدام الـ Helper المخصص لرسالة الفشل وتمرير الـ failure لعرض التفاصيل إن وجدت
+            AppSnackbarHelper.showFailure(
+              context,
+              title: isArabic ? 'فشلت العملية' : 'Error',
+              message:
+                  state.failure?.message ??
+                  (isArabic
+                      ? 'حدث خطأ أثناء حذف الموظف'
+                      : 'An error occurred while deleting the employee'),
+              failure: state
+                  .failure, // تمرير كائن الخطأ لمعالجة أخطاء الـ Validation تلقائياً
+            );
+          }
+        },
+        builder: (context, state) {
+          final isLoading = state.status == DeleteEmployeeStatus.loading;
+
+          return AlertDialog(
+            title: Text(isArabic ? 'تأكيد الحذف' : 'Confirm Delete'),
+            content: isLoading
+                ? const SizedBox(
+                    height: 50,
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : Text(
+                    isArabic
+                        ? 'هل أنت متأكد من أنك تريد حذف هذا الموظف نهائياً؟'
+                        : 'Are you sure you want to permanently delete this employee?',
+                  ),
+            actions: [
+              TextButton(
+                onPressed: isLoading
+                    ? null
+                    : () => Navigator.of(dialogContext).pop(),
+                child: Text(isArabic ? 'إلغاء' : 'Cancel'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
+                ),
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        deleteBloc.add(
+                          DeleteEmployeeSubmitted(employeeId: employeeId),
+                        );
+                      },
+                child: Text(isArabic ? 'حذف' : 'Delete'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  ).then((_) {
+    if (deleteBloc.state.status != DeleteEmployeeStatus.initial) {
+      deleteBloc.add(const DeleteEmployeeReset());
+    }
+  });
 }
 
 class _PaginationFooter extends StatelessWidget {

@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+
+import 'dashboard_search_bar.dart';
+import 'widgets/header_container.dart';
+import 'widgets/header_title.dart';
+import 'widgets/menu_button.dart';
+import 'widgets/notification_button.dart';
+import 'widgets/profile_avatar.dart';
+
+class TabletHeader extends StatelessWidget {
+  final ValueChanged<String>? onSearch;
+  final VoidCallback? onNotificationTap;
+  final bool showMenuButton;
+  final VoidCallback? onMenuPressed;
+
+  const TabletHeader({
+    super.key,
+    this.onSearch,
+    this.onNotificationTap,
+    required this.showMenuButton,
+    this.onMenuPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return HeaderContainer(
+      height: 70,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          if (showMenuButton)
+            MenuButton(
+              onPressed: onMenuPressed,
+            ),
+
+          const HeaderTitle(title: "إدارة الطلبات"),
+
+          const Spacer(),
+
+          SizedBox(
+            width: 220,
+            child: DashboardSearchBar(
+              onChanged: onSearch,
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          NotificationButton(
+            onPressed: onNotificationTap,
+          ),
+
+          const SizedBox(width: 8),
+
+          const ProfileAvatar(),
+        ],
+      ),
+    );
+  }
+}

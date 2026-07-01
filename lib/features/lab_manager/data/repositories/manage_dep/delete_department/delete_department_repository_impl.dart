@@ -1,13 +1,14 @@
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
+import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_dep/delete_department_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:dental_link_dashboard/core/error/app_error.dart';
 import 'package:dental_link_dashboard/features/admin/data/models/base_response_model.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/manage_dep/delete_department/delete_department_remote_data_source.dart';
-import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/departments_with_employee/delete_department_repository.dart';
+
 
 @Injectable(as: DeleteDepartmentRepository)
 class DeleteDepartmentRepositoryImpl implements DeleteDepartmentRepository {

@@ -23,6 +23,7 @@ class DarkThemeData {
       outline: AppDarkColors.outline,
       tertiary: AppDarkColors.accent,
       onTertiary: AppDarkColors.onPrimary,
+      
     );
 
     return ThemeData(

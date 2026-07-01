@@ -66,10 +66,13 @@ class AppSnackbarHelper {
           onDismiss: () {
             if (entry.mounted) entry.remove();
           },
-          child: Positioned(
-            top: MediaQuery.of(overlayContext).padding.top + 24,
-            left: 24,
-            right: 24,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              24,
+              MediaQuery.of(overlayContext).padding.top + 24,
+              24,
+              0,
+            ),
             child: SafeArea(
               child: Center(
                 child: ConstrainedBox(
@@ -99,7 +102,6 @@ class AppSnackbarHelper {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // أيقونة الحالة المتغيرة
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
@@ -115,7 +117,6 @@ class AppSnackbarHelper {
                             ),
                           ),
                           const SizedBox(width: 14),
-                          // النصوص (العنوان والرسالة)
                           Expanded(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -127,8 +128,7 @@ class AppSnackbarHelper {
                                     color: textColor,
                                     fontWeight: FontWeight.w800,
                                     fontSize: 15,
-                                    fontFamily:
-                                        'Cairo', // يفضل استخدام خطك المعتمد بالتطبيق
+                                    fontFamily: 'Cairo',
                                   ),
                                 ),
                                 const SizedBox(height: 4),

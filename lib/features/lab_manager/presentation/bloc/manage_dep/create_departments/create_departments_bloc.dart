@@ -1,36 +1,36 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/create_departments_bulk/create_departments_bulk_use_case.dart';
+import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_dep/create_departments_use_case.dart';
 
 import 'create_departments_bloc_event.dart';
 import 'create_departments_bloc_state.dart';
 
 @injectable
-class CreateDepartmentsBulkBloc
+class CreateDepartmentsBloc
     extends
-        Bloc<CreateDepartmentsBlocEvent, CreateDepartmentsBulkBlocState> {
-  CreateDepartmentsBulkBloc({required this.createDepartmentsBulkUseCase})
-    : super(const CreateDepartmentsBulkBlocState()) {
-    on<CreateDepartmentsBulkSubmitted>(_onSubmitted);
-    on<CreateDepartmentsBulkReset>(_onReset);
+        Bloc<CreateDepartmentsBlocEvent, CreateDepartmentsBlocState> {
+  CreateDepartmentsBloc({required this.createDepartmentsUseCase})
+    : super(const CreateDepartmentsBlocState()) {
+    on<CreateDepartmentsSubmitted>(_onSubmitted);
+    on<CreateDepartmentsReset>(_onReset);
   }
 
-  final CreateDepartmentsBulkUseCase createDepartmentsBulkUseCase;
+  final CreateDepartmentsUseCase createDepartmentsUseCase;
 
   Future<void> _onSubmitted(
-    CreateDepartmentsBulkSubmitted event,
-    Emitter<CreateDepartmentsBulkBlocState> emit,
+    CreateDepartmentsSubmitted event,
+    Emitter<CreateDepartmentsBlocState> emit,
   ) async {
-    emit(state.copyWith(status: CreateDepartmentsBulkStatus.loading));
+    emit(state.copyWith(status: CreateDepartmentsStatus.loading));
 
-    final result = await createDepartmentsBulkUseCase(event.params);
+    final result = await createDepartmentsUseCase(event.params);
 
     result.fold(
       (failure) {
         emit(
           state.copyWith(
-            status: CreateDepartmentsBulkStatus.failure,
+            status: CreateDepartmentsStatus.failure,
             failure: failure,
           ),
         );
@@ -38,7 +38,7 @@ class CreateDepartmentsBulkBloc
       (responseModel) {
         emit(
           state.copyWith(
-            status: CreateDepartmentsBulkStatus.success,
+            status: CreateDepartmentsStatus.success,
             responseModel: responseModel,
             clearFailure: true,
           ),
@@ -48,9 +48,9 @@ class CreateDepartmentsBulkBloc
   }
 
   Future<void> _onReset(
-    CreateDepartmentsBulkReset event,
-    Emitter<CreateDepartmentsBulkBlocState> emit,
+    CreateDepartmentsReset event,
+    Emitter<CreateDepartmentsBlocState> emit,
   ) async {
-    emit(const CreateDepartmentsBulkBlocState());
+    emit(const CreateDepartmentsBlocState());
   }
 }

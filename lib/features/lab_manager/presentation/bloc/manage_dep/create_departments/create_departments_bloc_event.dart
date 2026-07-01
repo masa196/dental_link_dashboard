@@ -9,8 +9,8 @@ abstract class CreateDepartmentsBlocEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class CreateDepartmentsBulkSubmitted extends CreateDepartmentsBlocEvent {
-  const CreateDepartmentsBulkSubmitted({required this.params});
+class CreateDepartmentsSubmitted extends CreateDepartmentsBlocEvent {
+  const CreateDepartmentsSubmitted({required this.params});
 
   final DepartmentsEntity params;
 
@@ -18,6 +18,6 @@ class CreateDepartmentsBulkSubmitted extends CreateDepartmentsBlocEvent {
   List<Object?> get props => [params];
 }
 
-class CreateDepartmentsBulkReset extends CreateDepartmentsBlocEvent {
-  const CreateDepartmentsBulkReset();
+class CreateDepartmentsReset extends CreateDepartmentsBlocEvent {
+  const CreateDepartmentsReset();
 }

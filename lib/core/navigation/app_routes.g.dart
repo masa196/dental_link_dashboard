@@ -136,6 +136,14 @@ RouteBase get $labManagerShellRoute => ShellRouteData.$route(
       factory: $LabManagerEmployeesRoute._fromState,
     ),
     GoRouteData.$route(
+      path: '/lab-manager/employees/create',
+      factory: $CreateEmployeeRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: '/lab-manager/employees/edit',
+      factory: $EditEmployeeRoute._fromState,
+    ),
+    GoRouteData.$route(
       path: '/lab-manager/employees/:departmentId',
       factory: $EmployeePageRoute._fromState,
     ),
@@ -152,8 +160,8 @@ RouteBase get $labManagerShellRoute => ShellRouteData.$route(
       factory: $LabManagerStaffRoute._fromState,
     ),
     GoRouteData.$route(
-      path: '/lab-manager/reports',
-      factory: $LabManagerReportsRoute._fromState,
+      path: '/lab-manager/roles',
+      factory: $RolesManagementRoute._fromState,
     ),
   ],
 );
@@ -205,21 +213,37 @@ mixin $LabManagerEmployeesRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $EmployeePageRoute on GoRouteData {
-  static EmployeePageRoute _fromState(GoRouterState state) => EmployeePageRoute(
-    departmentId: int.parse(state.pathParameters['departmentId']!),
-    departmentName: state.uri.queryParameters['department-name'],
-  );
+mixin $CreateEmployeeRoute on GoRouteData {
+  static CreateEmployeeRoute _fromState(GoRouterState state) =>
+      CreateEmployeeRoute($extra: state.extra as CreateEmployeeRouteExtra?);
 
-  EmployeePageRoute get _self => this as EmployeePageRoute;
+  CreateEmployeeRoute get _self => this as CreateEmployeeRoute;
 
   @override
-  String get location => GoRouteData.$location(
-    '/lab-manager/employees/${Uri.encodeComponent(_self.departmentId.toString())}',
-    queryParams: {
-      if (_self.departmentName != null) 'department-name': _self.departmentName,
-    },
-  );
+  String get location => GoRouteData.$location('/lab-manager/employees/create');
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
+}
+
+mixin $EditEmployeeRoute on GoRouteData {
+  static EditEmployeeRoute _fromState(GoRouterState state) =>
+      const EditEmployeeRoute();
+
+  @override
+  String get location => GoRouteData.$location('/lab-manager/employees/edit');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -233,6 +257,39 @@ mixin $EmployeePageRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $EmployeePageRoute on GoRouteData {
+  static EmployeePageRoute _fromState(GoRouterState state) => EmployeePageRoute(
+    departmentId: int.parse(state.pathParameters['departmentId']!),
+    departmentName: state.uri.queryParameters['department-name'],
+    $extra: state.extra as EmployeePageRouteExtra?,
+  );
+
+  EmployeePageRoute get _self => this as EmployeePageRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/lab-manager/employees/${Uri.encodeComponent(_self.departmentId.toString())}',
+    queryParams: {
+      if (_self.departmentName != null) 'department-name': _self.departmentName,
+    },
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
+
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: _self.$extra);
+
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
 
 mixin $LabManagerTestsRoute on GoRouteData {
@@ -298,12 +355,12 @@ mixin $LabManagerStaffRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $LabManagerReportsRoute on GoRouteData {
-  static LabManagerReportsRoute _fromState(GoRouterState state) =>
-      const LabManagerReportsRoute();
+mixin $RolesManagementRoute on GoRouteData {
+  static RolesManagementRoute _fromState(GoRouterState state) =>
+      const RolesManagementRoute();
 
   @override
-  String get location => GoRouteData.$location('/lab-manager/reports');
+  String get location => GoRouteData.$location('/lab-manager/roles');
 
   @override
   void go(BuildContext context) => context.go(location);

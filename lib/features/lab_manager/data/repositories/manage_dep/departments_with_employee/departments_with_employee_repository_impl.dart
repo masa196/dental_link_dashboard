@@ -2,10 +2,11 @@ import 'package:dartz/dartz.dart';
 import 'package:dental_link_dashboard/core/error/app_error.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/manage_dep/departments_with_employee/departments_with_employee_remote_data_source.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/models/departments_with_employee/departments_with_employee.dart';
+import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_dep/departments_with_employee_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/departments_with_employee/departments_with_employee_repository.dart';
+
 
 @Injectable(as: DepartmentsWithEmployeeRepository)
 class DepartmentsWithEmployeeRepositoryImpl

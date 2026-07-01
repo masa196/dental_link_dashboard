@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_radius.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_spacing.dart';
 import 'package:dental_link_dashboard/core/constants/app_fonts/app_typography.dart';
@@ -7,6 +8,8 @@ import 'package:dental_link_dashboard/core/responsive/screen_sizes.dart';
 class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
+    this.labelText,
+    this.initialValue,
     required this.hint,
     required this.icon,
     this.controller,
@@ -20,8 +23,12 @@ class AppTextField extends StatelessWidget {
     this.errorText,
     this.readOnly = false,
     this.onTap,
+    this.keyboardType,
+    this.inputFormatters,
   });
 
+  final String? labelText;
+  final String? initialValue;
   final String hint;
   final IconData icon;
 
@@ -40,6 +47,8 @@ class AppTextField extends StatelessWidget {
   /// OPTIONAL UX
   final bool readOnly;
   final VoidCallback? onTap;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -48,16 +57,20 @@ class AppTextField extends StatelessWidget {
 
     return TextFormField(
       controller: controller,
+      initialValue: initialValue,
       validator: validator,
       obscureText: obscureText,
       textAlign: textAlign,
       onChanged: onChanged,
       readOnly: readOnly,
       onTap: onTap,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
 
       style: TextStyle(fontSize: AppTypography.fs14, color: scheme.onSurface),
 
       decoration: InputDecoration(
+        labelText: labelText,
         hintText: hint,
         hintStyle:
             hintStyle ??
@@ -81,12 +94,12 @@ class AppTextField extends StatelessWidget {
             theme.inputDecorationTheme.fillColor ??
             scheme.surfaceContainerHighest,
 
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+
         enabledBorder:
             theme.inputDecorationTheme.enabledBorder ??
             OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                AppRadius.pill,
-              ), // 👈 مطابق للتصميم
+              borderRadius: BorderRadius.circular(AppRadius.pill),
               borderSide: BorderSide(
                 color: theme.dividerColor,
                 width: AppSizes.borderWidthSm,

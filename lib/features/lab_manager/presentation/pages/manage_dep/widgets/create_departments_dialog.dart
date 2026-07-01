@@ -25,7 +25,7 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
   final TextEditingController _countController = TextEditingController();
   final List<TextEditingController> _nameControllers =
       <TextEditingController>[];
-  late final CreateDepartmentsBulkBloc _createDepartmentsBulkBloc;
+  late final CreateDepartmentsBloc _createDepartmentsBloc;
 
   int? _confirmedCount;
   String? _countError;
@@ -33,7 +33,7 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
   @override
   void initState() {
     super.initState();
-    _createDepartmentsBulkBloc = locator<CreateDepartmentsBulkBloc>();
+    _createDepartmentsBloc = locator<CreateDepartmentsBloc>();
   }
 
   @override
@@ -42,7 +42,7 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
     for (final controller in _nameControllers) {
       controller.dispose();
     }
-    _createDepartmentsBulkBloc.close();
+    _createDepartmentsBloc.close();
     super.dispose();
   }
 
@@ -54,7 +54,7 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
     final shadowColor = theme.shadowColor.withValues(alpha: 0.18);
 
     return MultiBlocProvider(
-      providers: [BlocProvider.value(value: _createDepartmentsBulkBloc)],
+      providers: [BlocProvider.value(value: _createDepartmentsBloc)],
       child: Dialog(
         backgroundColor: theme.dialogTheme.backgroundColor ?? scheme.surface,
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
@@ -76,12 +76,12 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
             ),
             child:
                 BlocListener<
-                  CreateDepartmentsBulkBloc,
-                  CreateDepartmentsBulkBlocState
+                  CreateDepartmentsBloc,
+                  CreateDepartmentsBlocState
                 >(
                   listener: (context, blocState) {
                     if (blocState.status ==
-                        CreateDepartmentsBulkStatus.success) {
+                        CreateDepartmentsStatus.success) {
                       Navigator.of(context).pop(
                         blocState.responseModel?.message ??
                             (isArabic
@@ -92,7 +92,7 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
                     }
 
                     if (blocState.status ==
-                        CreateDepartmentsBulkStatus.failure) {
+                        CreateDepartmentsStatus.failure) {
                       DepartmentSnackbarHelper.showFailure(
                         context,
                         title: isArabic
@@ -157,13 +157,13 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
                                 flex: 2,
                                 child:
                                     BlocBuilder<
-                                      CreateDepartmentsBulkBloc,
-                                      CreateDepartmentsBulkBlocState
+                                      CreateDepartmentsBloc,
+                                      CreateDepartmentsBlocState
                                     >(
                                       builder: (context, blocState) {
                                         final isLoading =
                                             blocState.status ==
-                                            CreateDepartmentsBulkStatus.loading;
+                                            CreateDepartmentsStatus.loading;
                                         return ElevatedButton(
                                           onPressed: isLoading ? null : _submit,
                                           style: ElevatedButton.styleFrom(
@@ -291,8 +291,8 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
       return;
     }
 
-    _createDepartmentsBulkBloc.add(
-      CreateDepartmentsBulkSubmitted(
+    _createDepartmentsBloc.add(
+      CreateDepartmentsSubmitted(
         params: DepartmentsEntity(departments: departments),
       ),
     );

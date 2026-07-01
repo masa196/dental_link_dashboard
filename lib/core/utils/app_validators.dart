@@ -1,5 +1,7 @@
 // core/utils/app_validators.dart
 
+import 'package:intl/intl.dart';
+
 class AppValidators {
   static String? validateEmpty(String? value, String errorMsg) {
     if (value == null || value.trim().isEmpty) {
@@ -65,5 +67,47 @@ class AppValidators {
       return notMatchMsg;
     }
     return null;
+  }
+
+  static String? validateMaskedDate(
+    String? value,
+    String requiredMsg,
+    String invalidMsg,
+  ) {
+    if (value == null || value.trim().isEmpty) {
+      return requiredMsg;
+    }
+
+    if (_parseMaskedDate(value) == null) {
+      return invalidMsg;
+    }
+
+    return null;
+  }
+
+  static String? normalizeMaskedDateToIso(String? value) {
+    final parsed = _parseMaskedDate(value);
+    if (parsed == null) {
+      return null;
+    }
+
+    return DateFormat('yyyy-MM-dd').format(parsed);
+  }
+
+  static DateTime? _parseMaskedDate(String? value) {
+    if (value == null) {
+      return null;
+    }
+
+    final normalized = value.replaceAll(' ', '').trim();
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    try {
+      return DateFormat('dd/MM/yyyy').parseStrict(normalized);
+    } catch (_) {
+      return null;
+    }
   }
 }

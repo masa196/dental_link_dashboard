@@ -1,12 +1,11 @@
+import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/roles/roles_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
 import 'package:dental_link_dashboard/core/constants/app_fonts/app_typography.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_radius.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_spacing.dart';
 import 'package:dental_link_dashboard/core/extensions/context_extensions.dart';
-import 'package:dental_link_dashboard/core/services/locator.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/models/departments_with_employee/departments_with_employee.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/departments_with_employee/departments_with_employee_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/departments_with_employee/departments_with_employee_bloc.dart';
@@ -23,10 +22,6 @@ class DepartmentsPage extends StatelessWidget {
 
   const DepartmentsPage({super.key, this.onMenuTap, this.showMenu = false});
 
-  // مفتاح التحكم بالـ Drawer برمجياً
-  static final GlobalKey<ScaffoldState> _scaffoldKey =
-      GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 700;
@@ -34,242 +29,206 @@ class DepartmentsPage extends StatelessWidget {
     final scheme = context.scheme;
     final isArabic = context.isArabic;
 
-    return BlocProvider(
-      create: (_) => locator<DepartmentsWithEmployeeBloc>(),
-      child: Directionality(
-        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-        child: Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: theme.scaffoldBackgroundColor,
-          // التعديل الثاني: إضافة Drawer بسيط للصفحة
-          drawer: Drawer(
-            backgroundColor: scheme.surface,
-            child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: scheme.primary.withValues(alpha: 0.05),
-                    ),
-                    child: Center(
-                      child: Text(
-                        isArabic ? 'القائمة الجانبية' : 'Navigation Menu',
-                        style: TextStyle(
-                          fontSize: AppTypography.fs18,
-                          fontWeight: FontWeight.bold,
-                          color: scheme.primary,
+    return Directionality(
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: BlocBuilder<DepartmentsWithEmployeeBloc, DepartmentsWithEmployeeState>(
+          builder: (context, state) {
+            // أ. حالة التحميل الأولي
+            if (state.isInitialLoading ||
+                (state.status == DepartmentsWithEmployeeStatus.initial &&
+                    !state.hasData)) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            // ب. حالة الفشل في جلب البيانات
+            if (state.status == DepartmentsWithEmployeeStatus.failure) {
+              return Center(
+                child: _EmptyDepartmentsState(
+                  scheme: scheme,
+                  message:
+                      state.failure?.message ??
+                      (isArabic
+                          ? 'تعذر تحميل الأقسام الآن'
+                          : 'Unable to load departments right now'),
+                ),
+              );
+            }
+
+            // ج. شاشة الحالة الفارغة (نجح الطلب ولكن لا توجد بيانات)
+            if (state.status == DepartmentsWithEmployeeStatus.success &&
+                !state.hasData) {
+              return Center(
+                child: _EmptyDepartmentsState(
+                  scheme: scheme,
+                  message: isArabic
+                      ? 'أنشئ أقسام مخبرك الان واضف موظفي المخبر لبدأ العمل'
+                      : 'Create your lab sections now and add lab staff to get started',
+                ),
+              );
+            }
+
+            // د. عرض الواجهة الطبيعية عند وجود البيانات واستقرارها
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (showMenu)
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(
+                          end: AppSpacing.md,
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            if (onMenuTap != null) {
+                              onMenuTap!();
+                            } else {
+                              Scaffold.of(context).openDrawer();
+                            }
+                          },
+                          icon: const Icon(Icons.menu),
+                          splashRadius: 24,
                         ),
                       ),
-                    ),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.dashboard_rounded),
-                    title: Text(isArabic ? 'الرئيسية' : 'Dashboard'),
-                    onTap: () => Navigator.pop(context),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.people_alt_rounded),
-                    title: Text(isArabic ? 'الموظفين' : 'Employees'),
-                    selected: true,
-                    selectedTileColor: scheme.primary.withValues(alpha: 0.08),
-                    onTap: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          body: BlocBuilder<DepartmentsWithEmployeeBloc, DepartmentsWithEmployeeState>(
-            builder: (context, state) {
-              if (state.isInitialLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              // when there are no departments (or failure), show only the empty box
-              if (state.status == DepartmentsWithEmployeeStatus.failure ||
-                  !state.hasData) {
-                return Center(
-                  child: _EmptyDepartmentsState(
-                    scheme: scheme,
-                    message:
-                        state.status == DepartmentsWithEmployeeStatus.failure
-                        ? state.failure?.message ??
-                              (isArabic
-                                  ? 'تعذر تحميل الأقسام الآن'
-                                  : 'Unable to load departments right now')
-                        : (isArabic
-                              ? 'أنشئ أقسام مخبرك الان واضف موظفي المخبر لبدأ العمل'
-                              : 'Create your lab sections now and add lab staff to get started'),
-                  ),
-                );
-              }
-
-              // otherwise render the full page (header, search, and departments)
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      if (showMenu)
-                        Padding(
-                          padding: const EdgeInsetsDirectional.only(
-                            end: AppSpacing.md,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isArabic
+                                ? 'دليل الموظفين والأقسام'
+                                : 'Employees & Departments',
+                            style: TextStyle(
+                              fontSize: AppTypography.fs24,
+                              fontWeight: FontWeight.w800,
+                              color: scheme.onSurface,
+                            ),
                           ),
-                          child: IconButton(
-                            onPressed: () {
-                              if (onMenuTap != null) {
-                                onMenuTap!();
-                              } else {
-                                _scaffoldKey.currentState?.openDrawer();
-                              }
-                            },
-                            icon: const Icon(Icons.menu),
-                            splashRadius: 24,
-                          ),
-                        ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                          const SizedBox(height: AppSpacing.xs),
+                          if (!isMobile)
                             Text(
                               isArabic
-                                  ? 'دليل الموظفين والأقسام'
-                                  : 'Employees & Departments',
+                                  ? 'إدارة وعرض أعضاء الفريق في جميع أقسام المنشأة.'
+                                  : 'Manage and browse team members across all sections.',
                               style: TextStyle(
-                                fontSize: AppTypography.fs24,
-                                fontWeight: FontWeight.w800,
-                                color: scheme.onSurface,
+                                fontSize: AppTypography.fs14,
+                                color: scheme.onSurface.withValues(alpha: 0.7),
                               ),
                             ),
-                            const SizedBox(height: AppSpacing.xs),
-                            if (!isMobile)
-                              Text(
-                                isArabic
-                                    ? 'إدارة وعرض أعضاء الفريق في جميع أقسام المنشأة.'
-                                    : 'Manage and browse team members across all sections.',
-                                style: TextStyle(
-                                  fontSize: AppTypography.fs14,
-                                  color: scheme.onSurface.withValues(
-                                    alpha: 0.7,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      Wrap(
-                        spacing: AppSpacing.md,
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              final result = await showDialog<String>(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (_) => const CreateDepartmentsDialog(),
-                              );
-
-                              if (result != null && context.mounted) {
-                                context.read<DepartmentsWithEmployeeBloc>().add(
-                                  const DepartmentsWithEmployeeFetchRequested(),
-                                );
-                                DepartmentSnackbarHelper.showSuccess(
-                                  context,
-                                  title: isArabic
-                                      ? 'تم إنشاء القسم'
-                                      : 'Department created',
-                                  message: result,
-                                );
-                              }
-                            },
-                            icon: const Icon(Icons.add),
-                            label: Text(isArabic ? 'إضافة قسم' : 'Add Section'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: scheme.primary,
-                              foregroundColor: scheme.onPrimary,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.lg,
-                                vertical: AppSpacing.md,
-                              ),
-                            ),
-                          ),
-                          OutlinedButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.person_add_alt_1),
-                            label: Text(
-                              isArabic ? 'إضافة موظف' : 'Add Employee',
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: scheme.primary,
-                              side: BorderSide(
-                                color: scheme.primary.withValues(alpha: 0.35),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.lg,
-                                vertical: AppSpacing.md,
-                              ),
-                            ),
-                          ),
                         ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1000),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.search),
-                          hintText: isArabic
-                              ? 'ابحث بالاسم أو الرقم أو القسم...'
-                              : 'Search by name, phone or department...',
-                          filled: true,
-                          fillColor: scheme.surface,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.xl),
-                            borderSide: BorderSide.none,
+                    ),
+                    Wrap(
+                      spacing: AppSpacing.md,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () => _handleCreateDepartment(context),
+                          icon: const Icon(Icons.add),
+                          label: Text(isArabic ? 'إضافة قسم' : 'Add Section'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: scheme.primary,
+                            foregroundColor: scheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.lg,
+                              vertical: AppSpacing.md,
+                            ),
                           ),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: () => _openCreateEmployeePage(
+                            context,
+                            departments: state.departments,
+                          ),
+                          icon: const Icon(Icons.person_add_alt_1),
+                          label: Text(isArabic ? 'إضافة موظف' : 'Add Employee'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: scheme.primary,
+                            side: BorderSide(
+                              color: scheme.primary.withValues(alpha: 0.35),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.lg,
+                              vertical: AppSpacing.md,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1000),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.search),
+                        hintText: isArabic
+                            ? 'ابحث بالاسم أو الرقم أو القسم...'
+                            : 'Search by name, phone or department...',
+                        filled: true,
+                        fillColor: scheme.surface,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppRadius.xl),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Divider(color: theme.dividerColor, thickness: 1),
-                  const SizedBox(height: AppSpacing.lg),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          for (final d in state.departments) ...[
-                            _DepartmentSection(
-                              department: d,
-                              scheme: scheme,
-                              isArabic: isArabic,
-                              isMobile: isMobile,
-                              onEditDepartment: () =>
-                                  _handleEditDepartment(context, d),
-                              onDeleteDepartment: () =>
-                                  _handleDeleteDepartment(context, d),
-                              onViewAllEmployees: () =>
-                                  _openEmployeePage(context, d),
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                          ],
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Divider(color: theme.dividerColor, thickness: 1),
+                const SizedBox(height: AppSpacing.lg),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        for (final d in state.departments) ...[
+                          _DepartmentSection(
+                            department: d,
+                            scheme: scheme,
+                            isArabic: isArabic,
+                            isMobile: isMobile,
+                            onEditDepartment: () =>
+                                _handleEditDepartment(context, d),
+                            onDeleteDepartment: () =>
+                                _handleDeleteDepartment(context, d),
+                            onViewAllEmployees: () =>
+                                _openEmployeePage(context, d),
+                          ),
+                          const SizedBox(height: AppSpacing.xl),
                         ],
-                      ),
+                      ],
                     ),
                   ),
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
+  }
+
+  Future<void> _handleCreateDepartment(BuildContext context) async {
+    final result = await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const CreateDepartmentsDialog(),
+    );
+
+    if (result != null && context.mounted) {
+      _refreshDepartments(context);
+      DepartmentSnackbarHelper.showSuccess(
+        context,
+        title: context.isArabic ? 'تم إنشاء القسم' : 'Department created',
+        message: result,
+      );
+    }
   }
 
   Future<void> _handleEditDepartment(
@@ -277,9 +236,7 @@ class DepartmentsPage extends StatelessWidget {
     DepartmentItem department,
   ) async {
     final departmentId = department.id;
-    if (departmentId == null) {
-      return;
-    }
+    if (departmentId == null) return;
 
     final result = await showDialog<String>(
       context: context,
@@ -305,9 +262,7 @@ class DepartmentsPage extends StatelessWidget {
     DepartmentItem department,
   ) async {
     final departmentId = department.id;
-    if (departmentId == null) {
-      return;
-    }
+    if (departmentId == null) return;
 
     final result = await showDialog<String>(
       context: context,
@@ -335,17 +290,49 @@ class DepartmentsPage extends StatelessWidget {
     DepartmentItem department,
   ) async {
     final departmentId = department.id;
-    if (departmentId == null) {
-      return;
-    }
+    if (departmentId == null) return;
 
-    await EmployeePageRoute(departmentId: departmentId).push(context);
+    // 👈 1. نقوم باستقبال النتيجة كـ bool (والتي يرسلها الـ Notifier عند الخروج)
+    final isChanged = await EmployeePageRoute(
+      departmentId: departmentId,
+      departmentName: department.name,
+      $extra: EmployeePageRouteExtra(
+        departmentsBloc: context.read<DepartmentsWithEmployeeBloc>(),
+        rolesBloc: context.read<RolesBloc>(),
+      ),
+    ).push<bool>(context); // 👈 حددنا نوع القيمة المرتجعة هنا لتكون bool
+
+    // 👈 2. نتحقق: إذا عادت القيمة بـ true والسياق ما زال موجوداً، نقوم بتحديث صفحة الأقسام
+    if (isChanged == true && context.mounted) {
+      _refreshDepartments(context);
+    }
   }
 
   void _refreshDepartments(BuildContext context) {
     context.read<DepartmentsWithEmployeeBloc>().add(
       const DepartmentsWithEmployeeFetchRequested(),
     );
+  }
+
+  Future<void> _openCreateEmployeePage(
+    BuildContext context, {
+    required List<DepartmentItem> departments,
+  }) async {
+    final result = await CreateEmployeeRoute(
+      $extra: CreateEmployeeRouteExtra(
+        departmentsBloc: context.read<DepartmentsWithEmployeeBloc>(),
+        rolesBloc: context.read<RolesBloc>(),
+      ),
+    ).push<String>(context);
+
+    if (result != null && context.mounted) {
+      _refreshDepartments(context);
+      DepartmentSnackbarHelper.showSuccess(
+        context,
+        title: context.isArabic ? 'تم إنشاء الموظف' : 'Employee created',
+        message: result,
+      );
+    }
   }
 }
 
@@ -443,7 +430,7 @@ class _DepartmentSection extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: totalCount,
-              separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.lg),
+              separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.lg),
               itemBuilder: (context, index) {
                 final EmployeesDatum employee = manager != null
                     ? (index == 0 ? manager : staff[index - 1])
@@ -810,7 +797,7 @@ class _EmployeeAvatar extends StatelessWidget {
           : Image.network(
               imageUrl!,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Center(
+              errorBuilder: (_, _, _) => Center(
                 child: Text(
                   initials,
                   style: TextStyle(

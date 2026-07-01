@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/delete_department/delete_department_use_case.dart';
+import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_dep/delete_department_use_case.dart';
 
 import 'delete_department_bloc_event.dart';
 import 'delete_department_bloc_state.dart';

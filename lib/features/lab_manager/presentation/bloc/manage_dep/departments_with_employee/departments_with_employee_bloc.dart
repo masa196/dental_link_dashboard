@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:dental_link_dashboard/features/admin/domain/usecases/base_use_case.dart';
-import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/departments_with_employee/get_departments_with_employee_usecase.dart';
+import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_dep/get_departments_with_employee_usecase.dart';
 
 import 'departments_with_employee_event.dart';
 import 'departments_with_employee_state.dart';
@@ -11,9 +11,10 @@ import 'departments_with_employee_state.dart';
 class DepartmentsWithEmployeeBloc
     extends Bloc<DepartmentsWithEmployeeEvent, DepartmentsWithEmployeeState> {
   DepartmentsWithEmployeeBloc({required this.getDepartmentsWithEmployeeUseCase})
-    : super(const DepartmentsWithEmployeeState()) {
+      : super(const DepartmentsWithEmployeeState()) {
     on<DepartmentsWithEmployeeFetchRequested>(_onFetchRequested);
-    add(const DepartmentsWithEmployeeFetchRequested());
+    
+    // 🔴 تم حذف سطر الـ add من هنا تماماً لمنع التحديث عند الـ Rebuild العشوائي
   }
 
   final GetDepartmentsWithEmployeeUseCase getDepartmentsWithEmployeeUseCase;
@@ -22,6 +23,9 @@ class DepartmentsWithEmployeeBloc
     DepartmentsWithEmployeeFetchRequested event,
     Emitter<DepartmentsWithEmployeeState> emit,
   ) async {
+    // 🛡️ حارس يمنع تكرار الطلب إذا كان الـ Bloc يجلب البيانات حالياً 
+    if (state.status == DepartmentsWithEmployeeStatus.loading) return;
+
     emit(
       state.copyWith(
         status: DepartmentsWithEmployeeStatus.loading,

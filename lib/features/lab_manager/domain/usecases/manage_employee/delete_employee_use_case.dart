@@ -1,0 +1,18 @@
+import 'package:dartz/dartz.dart';
+import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_employee/delete_employee_repository.dart';
+import 'package:injectable/injectable.dart';
+
+import 'package:dental_link_dashboard/core/error/app_error.dart';
+import 'package:dental_link_dashboard/features/admin/data/models/base_response_model.dart';
+
+
+@injectable
+class DeleteEmployeeUseCase {
+  const DeleteEmployeeUseCase(this.repository);
+
+  final DeleteEmployeeRepository repository;
+
+  Future<Either<AppFailure, BaseResponseModel>> call(int employeeId) {
+    return repository.call(employeeId);
+  }
+}

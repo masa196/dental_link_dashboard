@@ -15,12 +15,20 @@ class ApiEndpoints {
   static const String createLabs = '/admin/labs';
   static const String editLabs = '/admin/labs';
   static const String deleteLabs = '/admin/labs';
-  static const String departmentsWithEmployees = '/auth/lab/departments/with-employees/list';
-  static const String createDepartmentsBulk = '/auth/lab/departments/bulk';
+  static const String departmentsWithEmployees =
+      '/auth/lab/departments/with-employees/list';
+  static const String createDepartments = '/auth/lab/departments/bulk';
   static const String departments = '/auth/lab/departments';
+  static const String employees = '/auth/lab/employees';
+  
   static String departmentEmployees(int departmentId) {
     return '/auth/lab/departments/$departmentId/with-employees';
   }
 
   static const String getRoles = '/auth/roles';
+  static const String orders = '/auth/orders';
+  static const String matrixRolesAndPermissions = '/auth/lab/roles/matrix';
+  static const String allPermissions = '/auth/lab/permissions';
+  static const String createRole = '/auth/lab/roles';
+   static const String deleteRole = '/auth/lab/roles';
 }

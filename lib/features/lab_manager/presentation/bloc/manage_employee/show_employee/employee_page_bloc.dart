@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 
 import 'package:dental_link_dashboard/features/lab_manager/domain/entities/employee_pagination_entity.dart';
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/show_employee/get_show_employee_usecase.dart';
@@ -6,17 +7,16 @@ import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/show_
 import 'employee_page_event.dart';
 import 'employee_page_state.dart';
 
+@injectable
 class EmployeePageBloc extends Bloc<EmployeePageEvent, EmployeePageState> {
   EmployeePageBloc({
     required this.getShowEmployeeUseCase,
-    required int departmentId,
-    String? departmentName,
-    int employeesPerPage = 10,
+    @factoryParam required int departmentId,
+    @factoryParam required String departmentName,
   }) : super(
          EmployeePageState(
            departmentId: departmentId,
            departmentName: departmentName,
-           employeesPerPage: employeesPerPage,
          ),
        ) {
     on<EmployeePageFetchRequested>(_onFetchRequested);
@@ -24,7 +24,7 @@ class EmployeePageBloc extends Bloc<EmployeePageEvent, EmployeePageState> {
       EmployeePageFetchRequested(
         departmentId: departmentId,
         page: 1,
-        employeesPerPage: employeesPerPage,
+        employeesPerPage: 15,
       ),
     );
   }

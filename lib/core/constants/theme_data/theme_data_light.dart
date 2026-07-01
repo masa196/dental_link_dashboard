@@ -23,6 +23,7 @@ class LightThemeData {
       outline: AppLightColors.outline,
       tertiary: AppLightColors.accent,
       onTertiary: AppLightColors.onPrimary,
+      
     );
 
     return ThemeData(

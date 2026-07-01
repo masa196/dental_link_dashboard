@@ -381,8 +381,9 @@ class _LocationSearchField extends StatelessWidget {
 
                                 if (!context.mounted ||
                                     result == null ||
-                                    result is! LocationModel)
+                                    result is! LocationModel) {
                                   return;
+                                }
 
                                 controller.text = result.name;
                                 context
