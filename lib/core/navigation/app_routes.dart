@@ -4,6 +4,7 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/man
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/show_employee/employee_page_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/edit_employee/edit_employee_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_roles/roles_permissions_page.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/orders/lab_manager_order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -97,6 +98,7 @@ class LoginRoute extends GoRouteData with $LoginRoute {
       routes: [TypedGoRoute<LabDetailsRoute>(path: 'details/:labId')],
     ),
     TypedGoRoute<ProfileRoute>(path: '/profile'),
+     TypedGoRoute<RolesSystemManagementRoute>(path: '/roles_management'),
   ],
 )
 class MainShellRoute extends ShellRouteData {
@@ -115,6 +117,16 @@ class MainShellRoute extends ShellRouteData {
     );
   }
 }
+
+class RolesSystemManagementRoute extends GoRouteData with $RolesSystemManagementRoute {
+  const RolesSystemManagementRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const RolesPermissionsPage();
+  }
+}
+
 
 class ManageLabsRoute extends GoRouteData with $ManageLabsRoute {
   const ManageLabsRoute();
@@ -171,7 +183,7 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
     TypedGoRoute<EmployeePageRoute>(
       path: '/lab-manager/employees/:departmentId',
     ),
-    TypedGoRoute<LabManagerTestsRoute>(path: '/lab-manager/tests'),
+    TypedGoRoute<LabManagerOrdersRoute>(path: '/lab-manager/orders'),
     TypedGoRoute<LabManagerPatientsRoute>(path: '/lab-manager/patients'),
     TypedGoRoute<LabManagerStaffRoute>(path: '/lab-manager/staff'),
     TypedGoRoute<RolesManagementRoute>(path: '/lab-manager/roles'),
@@ -311,7 +323,6 @@ class CreateEmployeeRoute extends GoRouteData with $CreateEmployeeRoute {
             )
           : MultiBlocProvider(
               providers: [
-                // خيار احتياطي أخير من الـ locator لتفادي الـ Crash إذا فتحت الرابط مباشرة
                 BlocProvider.value(
                   value: locator<DepartmentsWithEmployeeBloc>(),
                 ),
@@ -369,13 +380,14 @@ class EmployeePageRoute extends GoRouteData with $EmployeePageRoute {
 }
 
 /// ===== بقية مسارات الـ Shell والمشرفين الخالية من المشاكل =====
-class LabManagerTestsRoute extends GoRouteData with $LabManagerTestsRoute {
-  const LabManagerTestsRoute();
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const Center(child: Text('Tests'));
-}
+class LabManagerOrdersRoute extends GoRouteData with $LabManagerOrdersRoute {
+  const LabManagerOrdersRoute();
 
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const LabManagerOrdersPage();
+  }
+}
 class LabManagerPatientsRoute extends GoRouteData
     with $LabManagerPatientsRoute {
   const LabManagerPatientsRoute();

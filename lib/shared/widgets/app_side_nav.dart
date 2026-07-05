@@ -57,9 +57,11 @@ class AppSideNav extends StatelessWidget {
             ),
 
             _NavItem(
-              icon: Icons.payments_outlined,
-              label: l10n.navPayments,
+              icon: Icons.manage_accounts,
+              label: l10n.navDashboard,
+              active: location.startsWith('/roles_management'),
               compact: compact,
+              onTap: () => const RolesSystemManagementRoute().go(context),
             ),
 
             _NavItem(

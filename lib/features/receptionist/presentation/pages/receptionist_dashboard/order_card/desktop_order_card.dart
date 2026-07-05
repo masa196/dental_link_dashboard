@@ -1,29 +1,27 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:dental_link_dashboard/features/receptionist/presentation/cubit/receptionist_dashboard_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../data/models/orders_model.dart';
+import '../../../../data/models/orders_model/orders_model.dart';
 import 'patient_section.dart';
 import 'specs_section.dart';
 import 'status_section.dart';
 import 'date_action_section.dart';
+
 import 'workflow/workflow_section.dart';
 import 'card_section_divider.dart';
 
 class DesktopOrderCard extends StatelessWidget {
   final OrderModel order;
-  final String buttonTitle;
+  final Widget? actionWidget;
 
-  const DesktopOrderCard({
-    super.key,
-    required this.order,
-    required this.buttonTitle,
-  });
+  const DesktopOrderCard({super.key, required this.order, this.actionWidget});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<ReceptionistDashboardCubit>();
-
+    final buttonTitle = cubit.getButtonTitle(cubit.state.selectedTab);
     final showWorkflow = cubit.shouldUseWorkflow(cubit.state.selectedTab);
 
     final theme = Theme.of(context);
@@ -53,7 +51,11 @@ class DesktopOrderCard extends StatelessWidget {
 
           Expanded(
             flex: 2,
-            child: DateActionSection(order: order, buttonTitle: buttonTitle),
+            child: DateActionSection(
+              order: order,
+              buttonTitle: buttonTitle,
+              actionWidget: actionWidget,
+            ),
           ),
         ],
       ),
@@ -62,7 +64,7 @@ class DesktopOrderCard extends StatelessWidget {
 
   Widget _buildMiddleSection(bool showWorkflow) {
     if (showWorkflow) {
-      return WorkflowSection(steps: order.workflowSteps);
+      return Center(child: WorkflowSection(steps: order.workflowSteps));
     }
 
     return Row(

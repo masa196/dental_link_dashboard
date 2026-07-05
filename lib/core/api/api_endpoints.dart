@@ -25,10 +25,27 @@ class ApiEndpoints {
     return '/auth/lab/departments/$departmentId/with-employees';
   }
 
-  static const String getRoles = '/auth/roles';
+  //Manage Orders
   static const String orders = '/auth/orders';
+  static String qrImage(int orderId) {
+  return '/auth/orders/$orderId/qr-image';
+   }
+
+   static String updateOrderStatus(int orderId) {
+    return '/auth/orders/$orderId/status';
+   }
+   
+
+
+//Management Roles and Permissions
+  static const String getRoles = '/auth/roles';
   static const String matrixRolesAndPermissions = '/auth/lab/roles/matrix';
   static const String allPermissions = '/auth/lab/permissions';
   static const String createRole = '/auth/lab/roles';
-   static const String deleteRole = '/auth/lab/roles';
+  static const String deleteRole = '/auth/lab/roles';
+
+  //Manage Delivery
+  static const String showDeliveryEmployees = '/auth/orders/delivery-employees';
+
+
 }

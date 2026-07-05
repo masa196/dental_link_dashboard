@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
 
-import '../../../../data/models/orders_model.dart';
+import '../../../../data/models/orders_model/orders_model.dart';
 import 'spec_divider.dart';
 
 class SpecsSection extends StatelessWidget {
@@ -32,26 +31,41 @@ class SpecsSection extends StatelessWidget {
       ),
       child: Row(
         children: [
+          const SpecDivider(),
+
           Expanded(
-            child: _SpecItem(label: 'الكمية', value: order.orderTeethCount.toString()),
+            child: _SpecItem(
+              label: 'نوع الحالة ',
+              value: order.caseType ?? "No_Type",
+            ),
           ),
 
           const SpecDivider(),
 
           Expanded(
-            child: _SpecItem(label: 'المادة', value: order.materialType?? "No_Material"),
+            child: _SpecItem(
+              label: 'المادة',
+              value: order.materialType ?? "No_Material",
+            ),
           ),
 
           const SpecDivider(),
 
           Expanded(
-            child: _SpecItem(label: 'اللون', value: order.toothShadeName?? "No_Color"),
+            child: _SpecItem(
+              label: 'اللون',
+              value: order.toothShadeName ?? "No_Color",
+            ),
           ),
 
           const SpecDivider(),
 
           Expanded(
-            child: _SpecItem(label: 'السعر', value: order.price ?? "-", accent: true),
+            child: _SpecItem(
+              label: 'السعر',
+              value: order.price ?? "-",
+              accent: true,
+            ),
           ),
         ],
       ),

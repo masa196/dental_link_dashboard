@@ -1,40 +1,33 @@
+import 'package:dental_link_dashboard/core/constants/app_colors/app_light_colors.dart';
+import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/shared/outline_pill.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../data/models/orders_model.dart';
+import '../../../../data/models/orders_model/orders_model.dart';
 
 class StatusSection extends StatelessWidget {
   final OrderModel order;
-
-  const StatusSection({super.key, required this.order});
+  final bool showAttachment;
+  const StatusSection({
+    super.key,
+    required this.order,
+    this.showAttachment = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    final isUrgent = order.priority == "urgent";
-
-    final color = isUrgent ? const Color(0xFFEF4444) : const Color(0xFF3B82F6);
-
-    final background = isUrgent
-        ? const Color(0xFFFEE2E2)
-        : const Color(0xFFE0F2FE);
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: color),
-          ),
-          child: Text(
-            isUrgent ? "مستعجل" : "عادي",
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: color,
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 120),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: OutlinePill(
+              label: order.orderType ?? "No Type",
+              background: AppLightColors.background,
+              borderColor: AppLightColors.accent,
+              textColor: AppLightColors.primary,
             ),
           ),
         ),

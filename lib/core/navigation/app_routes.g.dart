@@ -50,6 +50,10 @@ RouteBase get $mainShellRoute => ShellRouteData.$route(
       ],
     ),
     GoRouteData.$route(path: '/profile', factory: $ProfileRoute._fromState),
+    GoRouteData.$route(
+      path: '/roles_management',
+      factory: $RolesSystemManagementRoute._fromState,
+    ),
   ],
 );
 
@@ -124,6 +128,27 @@ mixin $ProfileRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
+mixin $RolesSystemManagementRoute on GoRouteData {
+  static RolesSystemManagementRoute _fromState(GoRouterState state) =>
+      const RolesSystemManagementRoute();
+
+  @override
+  String get location => GoRouteData.$location('/roles_management');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
 RouteBase get $labManagerShellRoute => ShellRouteData.$route(
   factory: $LabManagerShellRouteExtension._fromState,
   routes: [
@@ -148,8 +173,8 @@ RouteBase get $labManagerShellRoute => ShellRouteData.$route(
       factory: $EmployeePageRoute._fromState,
     ),
     GoRouteData.$route(
-      path: '/lab-manager/tests',
-      factory: $LabManagerTestsRoute._fromState,
+      path: '/lab-manager/orders',
+      factory: $LabManagerOrdersRoute._fromState,
     ),
     GoRouteData.$route(
       path: '/lab-manager/patients',
@@ -292,12 +317,12 @@ mixin $EmployeePageRoute on GoRouteData {
       context.replace(location, extra: _self.$extra);
 }
 
-mixin $LabManagerTestsRoute on GoRouteData {
-  static LabManagerTestsRoute _fromState(GoRouterState state) =>
-      const LabManagerTestsRoute();
+mixin $LabManagerOrdersRoute on GoRouteData {
+  static LabManagerOrdersRoute _fromState(GoRouterState state) =>
+      const LabManagerOrdersRoute();
 
   @override
-  String get location => GoRouteData.$location('/lab-manager/tests');
+  String get location => GoRouteData.$location('/lab-manager/orders');
 
   @override
   void go(BuildContext context) => context.go(location);

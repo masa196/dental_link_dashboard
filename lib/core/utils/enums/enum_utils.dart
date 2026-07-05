@@ -1,4 +1,4 @@
-import 'package:dental_link_dashboard/features/receptionist/data/models/orders_model.dart';
+import 'package:dental_link_dashboard/features/receptionist/data/models/orders_model/orders_model.dart';
 
 enum PageAnimation { slide, fade, none }
 
@@ -7,11 +7,31 @@ enum ReceptionistOrderTab {
   pending,
   inProgress,
   needsRedo,
-  needsTrial,
+  needsTest,
   readyToSend,
 }
 
+enum UpdateOrderStatusOption {
+  needsRedo,
+  needsTest,
+}
 
+enum OrderMode {
+  simple,
+  workflow,
+}
+
+
+enum OrderPriority {
+  normal,
+  urgent,
+}
+
+
+enum OrdersMode {
+  receptionist,
+  labManager,
+}
 
 
 extension ReceptionistOrderTabX on ReceptionistOrderTab {
@@ -29,7 +49,7 @@ extension ReceptionistOrderTabX on ReceptionistOrderTab {
       case ReceptionistOrderTab.needsRedo:
         return 'resend_wrong_impression';
 
-      case ReceptionistOrderTab.needsTrial:
+      case ReceptionistOrderTab.needsTest:
         return 'try_on';
 
       case ReceptionistOrderTab.readyToSend:
@@ -39,16 +59,6 @@ extension ReceptionistOrderTabX on ReceptionistOrderTab {
 }
 
 
-enum OrderMode {
-  simple,
-  workflow,
-}
-
-
-enum OrderPriority {
-  normal,
-  urgent,
-}
 
 
 extension OrderModeX on OrderModel {
@@ -74,4 +84,26 @@ OrderPriority parsePriority(String? value) {
   }
 }
 
+
+extension UpdateOrderStatusOptionX on UpdateOrderStatusOption {
+  String get apiValue {
+    switch (this) {
+      case UpdateOrderStatusOption.needsRedo:
+        return 'resend_wrong_impression';
+
+      case UpdateOrderStatusOption.needsTest:
+        return 'try_on';
+    }
+  }
+
+  String get title {
+    switch (this) {
+      case UpdateOrderStatusOption.needsRedo:
+        return 'Needs Redo';
+
+      case UpdateOrderStatusOption.needsTest:
+        return 'Needs Test';
+    }
+  }
+}
 

@@ -63,9 +63,9 @@ class LabManagerSideNav extends StatelessWidget {
                       _NavItem(
                         icon: Icons.monitor_heart_outlined,
                         label: isArabic ? 'الاختبارات' : 'Tests',
-                        active: location.startsWith('/lab-manager/tests'),
+                        active: location.startsWith('/lab-manager/orders'),
                         compact: compact,
-                        onTap: () => const LabManagerTestsRoute().go(context),
+                       onTap: () => const LabManagerOrdersRoute().go(context),
                       ),
 
                       _NavItem(

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:dental_link_dashboard/core/auth/auth_token_storage.dart';
 import 'package:dental_link_dashboard/core/auth/user_role_cubit.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_radius.dart';
@@ -28,7 +29,9 @@ class ReceptionistSideNav extends StatelessWidget {
     final l10n = context.l10n;
     final isArabic = context.isArabic;
     final isDark = context.isDark;
+
     final location = GoRouterState.of(context).uri.path;
+
     final sideWidth =
         width ??
         (compact ? AppSizes.sideNavWidthCompact : AppSizes.sideNavWidth);
@@ -37,79 +40,120 @@ class ReceptionistSideNav extends StatelessWidget {
       width: sideWidth,
       color: Theme.of(context).colorScheme.primary,
       child: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: AppSpacing.sm),
-            _NavItem(
-              icon: Icons.dashboard_customize,
-              label: l10n.navDashboard,
-              active: location == '/receptionist',
-              compact: compact,
-              onTap: () => const ReceptionistDashboardRoute().go(context),
-            ),
-            _NavItem(
-              icon: Icons.calendar_month_outlined,
-              label: isArabic ? 'المواعيد' : 'Appointments',
-              active: location.startsWith('/receptionist/appointments'),
-              compact: compact,
-              onTap: () => const ReceptionistAppointmentsRoute().go(context),
-            ),
-            _NavItem(
-              icon: Icons.groups_outlined,
-              label: isArabic ? 'المرضى' : 'Patients',
-              active: location.startsWith('/receptionist/patients'),
-              compact: compact,
-              onTap: () => const ReceptionistPatientsRoute().go(context),
-            ),
-            _NavItem(
-              icon: Icons.payments_outlined,
-              label: isArabic ? 'الفواتير' : 'Billing',
-              active: location.startsWith('/receptionist/billing'),
-              compact: compact,
-              onTap: () => const ReceptionistBillingRoute().go(context),
-            ),
-            _NavItem(
-              icon: Icons.mark_email_unread_outlined,
-              label: isArabic ? 'الاستعلامات' : 'Inquiries',
-              active: location.startsWith('/receptionist/inquiries'),
-              compact: compact,
-              onTap: () => const ReceptionistInquiriesRoute().go(context),
-            ),
-            const Spacer(),
-            _NavItem(
-              icon: Icons.help_outline,
-              label: l10n.navHelp,
-              compact: compact,
-            ),
-            _NavItem(
-              icon: Icons.logout,
-              label: l10n.navLogout,
-              compact: compact,
-              onTap: () => _handleLogout(context),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            compact
-                ? Column(
+        top: false,
+
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
                     children: [
-                      IconButton(
-                        onPressed: () => context.read<LocaleCubit>().toggle(),
-                        icon: const Icon(Icons.language),
-                        color: Theme.of(context).colorScheme.onPrimary,
+                      const SizedBox(height: AppSpacing.sm),
+
+                      _NavItem(
+                        icon: Icons.dashboard_customize,
+                        label: l10n.navDashboard,
+                        active: location == '/receptionist',
+                        compact: compact,
+                        onTap: () =>
+                            const ReceptionistDashboardRoute().go(context),
                       ),
-                      IconButton(
-                        onPressed: () => context.read<ThemeCubit>().toggle(),
-                        icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-                        color: Theme.of(context).colorScheme.onPrimary,
+
+                      _NavItem(
+                        icon: Icons.calendar_month_outlined,
+                        label: isArabic ? 'المواعيد' : 'Appointments',
+                        active: location.startsWith(
+                          '/receptionist/appointments',
+                        ),
+                        compact: compact,
+                        onTap: () =>
+                            const ReceptionistAppointmentsRoute().go(context),
                       ),
+
+                      _NavItem(
+                        icon: Icons.groups_outlined,
+                        label: isArabic ? 'المرضى' : 'Patients',
+                        active: location.startsWith('/receptionist/patients'),
+                        compact: compact,
+                        onTap: () =>
+                            const ReceptionistPatientsRoute().go(context),
+                      ),
+
+                      _NavItem(
+                        icon: Icons.payments_outlined,
+                        label: isArabic ? 'الفواتير' : 'Billing',
+                        active: location.startsWith('/receptionist/billing'),
+                        compact: compact,
+                        onTap: () =>
+                            const ReceptionistBillingRoute().go(context),
+                      ),
+
+                      _NavItem(
+                        icon: Icons.mark_email_unread_outlined,
+                        label: isArabic ? 'الاستعلامات' : 'Inquiries',
+                        active: location.startsWith('/receptionist/inquiries'),
+                        compact: compact,
+                        onTap: () =>
+                            const ReceptionistInquiriesRoute().go(context),
+                      ),
+
+                      const Spacer(),
+
+                      _NavItem(
+                        icon: Icons.help_outline,
+                        label: l10n.navHelp,
+                        compact: compact,
+                      ),
+
+                      _NavItem(
+                        icon: Icons.logout,
+                        label: l10n.navLogout,
+                        compact: compact,
+                        onTap: () => _handleLogout(context),
+                      ),
+
+                      const SizedBox(height: AppSpacing.md),
+
+                      compact
+                          ? Column(
+                              children: [
+                                IconButton(
+                                  onPressed: () =>
+                                      context.read<LocaleCubit>().toggle(),
+                                  icon: const Icon(Icons.language),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
+                                IconButton(
+                                  onPressed: () =>
+                                      context.read<ThemeCubit>().toggle(),
+                                  icon: Icon(
+                                    isDark ? Icons.light_mode : Icons.dark_mode,
+                                  ),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
+                              ],
+                            )
+                          : _ThemeSwitches(isArabic: isArabic, isDark: isDark),
+
+                      const SizedBox(height: AppSpacing.sm),
                     ],
-                  )
-                : _ThemeSwitches(isArabic: isArabic, isDark: isDark),
-            const SizedBox(height: AppSpacing.sm),
-          ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
+
+  // أبقِ _handleLogout كما هو دون أي تعديل.
 
   Future<void> _handleLogout(BuildContext context) async {
     final token = locator<AuthTokenStorage>().token;
@@ -157,7 +201,7 @@ class ReceptionistSideNav extends StatelessWidget {
   }
 }
 
-class _NavItem extends StatelessWidget {
+class _NavItem extends StatefulWidget {
   const _NavItem({
     required this.icon,
     required this.label,
@@ -173,62 +217,85 @@ class _NavItem extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
+  State<_NavItem> createState() => _NavItemState();
+}
+
+class _NavItemState extends State<_NavItem> {
+  bool _hover = false;
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    if (compact) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: GestureDetector(
-          onTap: onTap,
-          child: CircleAvatar(
-            radius: AppSizes.sideNavIconBox / 2,
-            backgroundColor: active
-                ? colorScheme.secondary
-                : Colors.transparent,
-            child: Icon(
-              icon,
+    final hoverColor = colorScheme.onPrimary.withValues(alpha: 0.08);
+
+    final backgroundColor = widget.active
+        ? colorScheme.secondary
+        : (_hover ? hoverColor : Colors.transparent);
+
+    Widget child;
+
+    if (widget.compact) {
+      child = Tooltip(
+        message: widget.label,
+        waitDuration: const Duration(milliseconds: 300),
+        child: CircleAvatar(
+          radius: AppSizes.sideNavIconBox / 2,
+          backgroundColor: backgroundColor,
+          child: Icon(
+            widget.icon,
+            color: colorScheme.onPrimary,
+            size: AppSizes.sideNavIconSize,
+          ),
+        ),
+      );
+    } else {
+      child = Container(
+        height: AppSizes.sideNavItemHeight,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: AppSpacing.sm),
+
+            Icon(
+              widget.icon,
               color: colorScheme.onPrimary,
               size: AppSizes.sideNavIconSize,
             ),
-          ),
+
+            const SizedBox(width: AppSpacing.sm),
+
+            Expanded(
+              child: Text(
+                widget.label,
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                  fontWeight: widget.active
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.mdMinus,
-        vertical: 4,
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        onTap: onTap,
-        child: Container(
-          height: AppSizes.sideNavItemHeight,
-          decoration: BoxDecoration(
-            color: active ? colorScheme.secondary : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-          child: Row(
-            children: [
-              const SizedBox(width: AppSpacing.sm),
-              Icon(
-                icon,
-                color: colorScheme.onPrimary,
-                size: AppSizes.sideNavIconSize,
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: colorScheme.onPrimary,
-                    fontWeight: active ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ),
-            ],
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOut,
+            child: child,
           ),
         ),
       ),

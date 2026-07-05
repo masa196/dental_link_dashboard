@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class OutlinePill extends StatelessWidget {
   final String label;
   final Color background;
@@ -26,9 +25,9 @@ class OutlinePill extends StatelessWidget {
         color: background,
         borderRadius: BorderRadius.circular(100),
         border: Border.all(
-          color: theme.brightness == Brightness.light 
-              ? borderColor 
-              : borderColor.withValues(alpha: 0.3), 
+          color: theme.brightness == Brightness.light
+              ? borderColor
+              : borderColor.withValues(alpha: 0.3),
         ),
       ),
       child: Text(
@@ -37,7 +36,7 @@ class OutlinePill extends StatelessWidget {
         style: TextStyle(
           color: textColor,
           fontWeight: FontWeight.w800,
-          fontSize: 10,
+          fontSize: 12,
         ),
       ),
     );
