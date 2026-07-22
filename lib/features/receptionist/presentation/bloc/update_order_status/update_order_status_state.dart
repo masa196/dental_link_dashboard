@@ -3,10 +3,14 @@ import 'package:dental_link_dashboard/features/admin/data/models/base_response_m
 import 'package:equatable/equatable.dart';
 
 enum UpdateOrderStatusStatus {
-  initial,
-  loading,
-  success,
-  failure,
+initial,
+locking,
+locked,
+loading,
+success,
+unlocking,
+unlocked,
+failure
 }
 
 class UpdateOrderStatusState extends Equatable {
@@ -14,21 +18,25 @@ class UpdateOrderStatusState extends Equatable {
     this.status = UpdateOrderStatusStatus.initial,
     this.response,
     this.failure,
+    this.orderId,
   });
 
   final UpdateOrderStatusStatus status;
   final BaseResponseModel? response;
   final AppFailure? failure;
+  final int? orderId;
 
   UpdateOrderStatusState copyWith({
     UpdateOrderStatusStatus? status,
     BaseResponseModel? response,
     AppFailure? failure,
+    int? orderId,
   }) {
     return UpdateOrderStatusState(
       status: status ?? this.status,
       response: response ?? this.response,
       failure: failure,
+      orderId: orderId ?? this.orderId,
     );
   }
 
@@ -37,5 +45,6 @@ class UpdateOrderStatusState extends Equatable {
         status,
         response,
         failure,
+        orderId,
       ];
-}
+} 

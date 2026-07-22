@@ -7,12 +7,16 @@ class DateActionSection extends StatelessWidget {
   final OrderModel order;
   final String buttonTitle;
   final Widget? actionWidget;
+  final VoidCallback? onDetailsPressed;
+  final bool showDetailsButton;
 
   const DateActionSection({
     super.key,
     required this.order,
     required this.buttonTitle,
     this.actionWidget,
+    this.onDetailsPressed,
+    this.showDetailsButton = false,
   });
 
   String _format(DateTime? date) {
@@ -62,19 +66,38 @@ class DateActionSection extends StatelessWidget {
 
             const SizedBox(height: 14),
 
-            ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: 120, maxWidth: 200),
-              child: SizedBox(
-                width: double.infinity,
-                height: 36,
-                child:
-                    actionWidget ??
-                    FilledButton(
-                      onPressed: null,
-                      child: Text(buttonTitle, overflow: TextOverflow.ellipsis),
-                    ),
+           Row(
+  children: [
+
+    if (showDetailsButton)
+      SizedBox(
+        width: 38,
+        height: 38,
+        child: IconButton(
+          tooltip: "تفاصيل الحالة",
+          icon: const Icon(Icons.visibility_outlined),
+          onPressed: onDetailsPressed,
+        ),
+      ),
+
+    if (showDetailsButton)
+      const SizedBox(width: 8),
+
+    Expanded(
+      child: SizedBox(
+        height: 36,
+        child: actionWidget ??
+            FilledButton(
+              onPressed: null,
+              child: Text(
+                buttonTitle,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+      ),
+    ),
+  ],
+)
           ],
         );
       },

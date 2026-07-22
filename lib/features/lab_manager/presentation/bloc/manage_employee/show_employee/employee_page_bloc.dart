@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:dental_link_dashboard/features/lab_manager/domain/entities/employee_pagination_entity.dart';
+import 'package:dental_link_dashboard/features/lab_manager/domain/entities/employee_entity/employee_pagination_entity.dart';
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/show_employee/get_show_employee_usecase.dart';
 
 import 'employee_page_event.dart';

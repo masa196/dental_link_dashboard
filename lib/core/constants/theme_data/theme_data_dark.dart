@@ -23,14 +23,19 @@ class DarkThemeData {
       outline: AppDarkColors.outline,
       tertiary: AppDarkColors.accent,
       onTertiary: AppDarkColors.onPrimary,
-      
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
+      fontFamily: 'Inter',
       scaffoldBackgroundColor: AppDarkColors.background,
-      textTheme: AppTypography.textTheme(scheme.onSurface),
+      textTheme: AppTypography.textTheme(
+        scheme.onSurface,
+      ).apply(fontFamily: 'Inter'),
+      primaryTextTheme: AppTypography.textTheme(
+        scheme.onSurface,
+      ).apply(fontFamily: 'Inter'),
       cardColor: AppDarkColors.surface,
       dividerColor: AppDarkColors.divider,
       shadowColor: AppDarkColors.shadow,
@@ -43,7 +48,7 @@ class DarkThemeData {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppDarkColors.inputFill,
-        hintStyle: TextStyle(color: AppDarkColors.hint),
+        hintStyle: TextStyle(color: AppDarkColors.hint, fontFamily: 'Inter'),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.mdPlus),
           borderSide: BorderSide(color: AppDarkColors.outline),

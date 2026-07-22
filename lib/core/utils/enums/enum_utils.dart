@@ -99,10 +99,10 @@ extension UpdateOrderStatusOptionX on UpdateOrderStatusOption {
   String get title {
     switch (this) {
       case UpdateOrderStatusOption.needsRedo:
-        return 'Needs Redo';
+        return 'تحتاج لإعادة';
 
       case UpdateOrderStatusOption.needsTest:
-        return 'Needs Test';
+        return 'تحتاج للتجربة';
     }
   }
 }

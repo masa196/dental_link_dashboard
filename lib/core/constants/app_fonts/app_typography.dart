@@ -20,21 +20,25 @@ class AppTypography {
         fontSize: fs24,
         fontWeight: FontWeight.w700,
         color: textColor,
+        height: 1.0,
       ),
       titleMedium: TextStyle(
         fontSize: fs18,
         fontWeight: FontWeight.w600,
         color: textColor,
+        height: 1.0,
       ),
       bodyLarge: TextStyle(
         fontSize: fs16,
         fontWeight: FontWeight.w400,
         color: textColor,
+        height: 1.0,
       ),
       bodyMedium: TextStyle(
         fontSize: fs14,
         fontWeight: FontWeight.w400,
         color: textColor,
+        height: 1.0,
       ),
     );
   }

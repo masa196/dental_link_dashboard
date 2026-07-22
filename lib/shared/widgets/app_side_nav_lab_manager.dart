@@ -62,7 +62,7 @@ class LabManagerSideNav extends StatelessWidget {
 
                       _NavItem(
                         icon: Icons.monitor_heart_outlined,
-                        label: isArabic ? 'الاختبارات' : 'Tests',
+                        label: isArabic ? 'الطلبات' : 'Orders',
                         active: location.startsWith('/lab-manager/orders'),
                         compact: compact,
                        onTap: () => const LabManagerOrdersRoute().go(context),
@@ -70,11 +70,11 @@ class LabManagerSideNav extends StatelessWidget {
 
                       _NavItem(
                         icon: Icons.people_outlined,
-                        label: isArabic ? 'المرضى' : 'Patients',
-                        active: location.startsWith('/lab-manager/patients'),
+                        label: isArabic ? 'المواد والأسعار' : 'materials & Prices',
+                        active: location.startsWith('/lab-manager/materials'),
                         compact: compact,
                         onTap: () =>
-                            const LabManagerPatientsRoute().go(context),
+                            const LabManagerMaterialsRoute().go(context),
                       ),
 
                       _NavItem(

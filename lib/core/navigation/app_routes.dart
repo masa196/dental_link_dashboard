@@ -3,8 +3,12 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/man
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/roles/roles_bloc_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/show_employee/employee_page_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/edit_employee/edit_employee_page.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/materials_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_roles/roles_permissions_page.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/order_details_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/orders/lab_manager_order_page.dart';
+import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_delivery_tasks/receptionist_delivery_tasks_page.dart';
+import 'package:dental_link_dashboard/features/receptionist/presentation/pages/show_materials/show_materials_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +28,7 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/la
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_dep/departments_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/employee_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/create_employee/create_employee_page.dart';
-import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/receptionist_dashboard.dart';
+import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/receptionist_dashboard_page.dart';
 
 part 'app_routes.g.dart';
 
@@ -98,7 +102,7 @@ class LoginRoute extends GoRouteData with $LoginRoute {
       routes: [TypedGoRoute<LabDetailsRoute>(path: 'details/:labId')],
     ),
     TypedGoRoute<ProfileRoute>(path: '/profile'),
-     TypedGoRoute<RolesSystemManagementRoute>(path: '/roles_management'),
+    TypedGoRoute<RolesSystemManagementRoute>(path: '/roles_management'),
   ],
 )
 class MainShellRoute extends ShellRouteData {
@@ -118,7 +122,8 @@ class MainShellRoute extends ShellRouteData {
   }
 }
 
-class RolesSystemManagementRoute extends GoRouteData with $RolesSystemManagementRoute {
+class RolesSystemManagementRoute extends GoRouteData
+    with $RolesSystemManagementRoute {
   const RolesSystemManagementRoute();
 
   @override
@@ -126,7 +131,6 @@ class RolesSystemManagementRoute extends GoRouteData with $RolesSystemManagement
     return const RolesPermissionsPage();
   }
 }
-
 
 class ManageLabsRoute extends GoRouteData with $ManageLabsRoute {
   const ManageLabsRoute();
@@ -184,7 +188,8 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
       path: '/lab-manager/employees/:departmentId',
     ),
     TypedGoRoute<LabManagerOrdersRoute>(path: '/lab-manager/orders'),
-    TypedGoRoute<LabManagerPatientsRoute>(path: '/lab-manager/patients'),
+    TypedGoRoute<OrderDetailsRoute>(path: '/lab-manager/orders/:orderId'),
+    TypedGoRoute<LabManagerMaterialsRoute>(path: '/lab-manager/materials'),
     TypedGoRoute<LabManagerStaffRoute>(path: '/lab-manager/staff'),
     TypedGoRoute<RolesManagementRoute>(path: '/lab-manager/roles'),
   ],
@@ -379,7 +384,6 @@ class EmployeePageRoute extends GoRouteData with $EmployeePageRoute {
   }
 }
 
-/// ===== بقية مسارات الـ Shell والمشرفين الخالية من المشاكل =====
 class LabManagerOrdersRoute extends GoRouteData with $LabManagerOrdersRoute {
   const LabManagerOrdersRoute();
 
@@ -388,12 +392,36 @@ class LabManagerOrdersRoute extends GoRouteData with $LabManagerOrdersRoute {
     return const LabManagerOrdersPage();
   }
 }
-class LabManagerPatientsRoute extends GoRouteData
-    with $LabManagerPatientsRoute {
-  const LabManagerPatientsRoute();
+
+class OrderDetailsRoute extends GoRouteData with $OrderDetailsRoute {
+  const OrderDetailsRoute({required this.orderId});
+
+  final int orderId;
+
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const Center(child: Text('Patients'));
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    return OrderDetailsPage(
+      orderId: orderId,
+    ).buildPage(pageAnimation: PageAnimation.fade);
+  }
+}
+
+class LabManagerMaterialsRoute extends GoRouteData
+    with $LabManagerMaterialsRoute {
+  const LabManagerMaterialsRoute();
+
+  @override
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    debugPrint("LabManagerMaterialsRoute.buildPage");
+
+    return const MaterialsPage().buildPage(pageAnimation: PageAnimation.fade);
+  }
 }
 
 class LabManagerStaffRoute extends GoRouteData with $LabManagerStaffRoute {
@@ -416,10 +444,14 @@ class RolesManagementRoute extends GoRouteData with $RolesManagementRoute {
 @TypedShellRoute<ReceptionistShellRoute>(
   routes: [
     TypedGoRoute<ReceptionistDashboardRoute>(path: '/receptionist'),
-    TypedGoRoute<ReceptionistAppointmentsRoute>(
-      path: '/receptionist/appointments',
+    TypedGoRoute<ReceptionistOrderDetailsRoute>(
+      path: '/receptionist/orders/:orderId',
     ),
-    TypedGoRoute<ReceptionistPatientsRoute>(path: '/receptionist/patients'),
+
+    TypedGoRoute<ReceptionistDeliveryTasksRoute>(
+      path: '/receptionist/delivery-tasks',
+    ),
+    TypedGoRoute<ReceptionistShowMaterialsRoute>(path: '/receptionist/show-materials'),
     TypedGoRoute<ReceptionistBillingRoute>(path: '/receptionist/billing'),
     TypedGoRoute<ReceptionistInquiriesRoute>(path: '/receptionist/inquiries'),
   ],
@@ -450,35 +482,51 @@ class ReceptionistDashboardRoute extends GoRouteData
   }
 }
 
-// --- Receptionist Appointments ---
-class ReceptionistAppointmentsRoute extends GoRouteData
-    with $ReceptionistAppointmentsRoute {
-  const ReceptionistAppointmentsRoute();
+class ReceptionistOrderDetailsRoute extends GoRouteData
+    with $ReceptionistOrderDetailsRoute {
+  const ReceptionistOrderDetailsRoute({required this.orderId});
+
+  final int orderId;
 
   @override
   CustomTransitionPage<void> buildPage(
     BuildContext context,
     GoRouterState state,
   ) {
-    return Scaffold(
-      body: Center(child: Text('Receptionist Appointments Page')),
+    return OrderDetailsPage(
+      orderId: orderId,
     ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }
 
-// --- Receptionist Patients ---
-class ReceptionistPatientsRoute extends GoRouteData
-    with $ReceptionistPatientsRoute {
-  const ReceptionistPatientsRoute();
+// --- Receptionist Delivery Tasks ---
+class ReceptionistDeliveryTasksRoute extends GoRouteData
+    with $ReceptionistDeliveryTasksRoute {
+  const ReceptionistDeliveryTasksRoute();
 
   @override
   CustomTransitionPage<void> buildPage(
     BuildContext context,
     GoRouterState state,
   ) {
-    return Scaffold(
-      body: Center(child: Text('Receptionist Patients Page')),
-    ).buildPage(pageAnimation: PageAnimation.fade);
+    return const ReceptionistDeliveryTasksPage().buildPage(
+      pageAnimation: PageAnimation.fade,
+    );
+  }
+}
+
+
+// --- Receptionist Show Materials ---
+class ReceptionistShowMaterialsRoute extends GoRouteData
+    with $ReceptionistShowMaterialsRoute {
+  const ReceptionistShowMaterialsRoute();
+
+  @override
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    return const ShowMaterialsPage().buildPage(pageAnimation: PageAnimation.fade);
   }
 }
 

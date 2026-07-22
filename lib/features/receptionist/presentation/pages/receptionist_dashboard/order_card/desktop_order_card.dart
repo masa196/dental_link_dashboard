@@ -1,8 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:dental_link_dashboard/features/receptionist/presentation/cubit/receptionist_dashboard_cubit.dart';
+import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/dialogs/order_attachments_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../data/models/orders_model/orders_model.dart';
 import 'patient_section.dart';
 import 'specs_section.dart';
@@ -15,15 +15,23 @@ import 'card_section_divider.dart';
 class DesktopOrderCard extends StatelessWidget {
   final OrderModel order;
   final Widget? actionWidget;
+  final bool showWorkflow;
+  final String buttonTitle;
+  final bool showDetailsButton;
+  final VoidCallback? onDetailsPressed;
 
-  const DesktopOrderCard({super.key, required this.order, this.actionWidget});
+  const DesktopOrderCard({
+    super.key,
+    required this.order,
+    this.actionWidget,
+    required this.showWorkflow,
+    required this.buttonTitle,
+    this.showDetailsButton = false,
+    this.onDetailsPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.watch<ReceptionistDashboardCubit>();
-    final buttonTitle = cubit.getButtonTitle(cubit.state.selectedTab);
-    final showWorkflow = cubit.shouldUseWorkflow(cubit.state.selectedTab);
-
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
@@ -45,7 +53,7 @@ class DesktopOrderCard extends StatelessWidget {
           Expanded(flex: 2, child: PatientSection(order: order)),
 
           const CardSectionDivider(),
-          Expanded(flex: 5, child: _buildMiddleSection(showWorkflow)),
+          Expanded(flex: 5, child: _buildMiddleSection(context, showWorkflow)),
 
           const CardSectionDivider(),
 
@@ -55,6 +63,8 @@ class DesktopOrderCard extends StatelessWidget {
               order: order,
               buttonTitle: buttonTitle,
               actionWidget: actionWidget,
+              showDetailsButton: showDetailsButton,
+              onDetailsPressed: onDetailsPressed,
             ),
           ),
         ],
@@ -62,7 +72,7 @@ class DesktopOrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMiddleSection(bool showWorkflow) {
+  Widget _buildMiddleSection(BuildContext context, bool showWorkflow) {
     if (showWorkflow) {
       return Center(child: WorkflowSection(steps: order.workflowSteps));
     }
@@ -71,7 +81,19 @@ class DesktopOrderCard extends StatelessWidget {
       children: [
         Expanded(child: SpecsSection(order: order)),
         const SizedBox(width: 40),
-        SizedBox(width: 120, child: StatusSection(order: order)),
+        SizedBox(
+          width: 120,
+          child: StatusSection(
+            order: order,
+            onAttachmentsPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) =>
+                    OrderAttachmentsDialog(files: order.files ?? []),
+              );
+            },
+          ),
+        ),
       ],
     );
   }

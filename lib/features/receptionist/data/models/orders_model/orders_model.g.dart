@@ -58,46 +58,53 @@ OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => OrderModel(
   price: json['price'] as String?,
   remainingAmount: json['remaining_amount'] as String?,
   paidAmount: json['paid_amount'] as String?,
-  orderTeethCount: (json['order_teeth_count'] as num).toInt(),
-  teeth: (json['teeth'] as List<dynamic>)
-      .map((e) => (e as num).toInt())
+  orderTeethCount: (json['order_teeth_count'] as num?)?.toInt(),
+  teeth: (json['teeth'] as List<dynamic>?)
+      ?.map((e) => (e as num).toInt())
       .toList(),
   files: (json['files'] as List<dynamic>?)
       ?.map((e) => FileElement.fromJson(e as Map<String, dynamic>))
       .toList(),
-  createdAt: DateTime.parse(json['created_at'] as String),
-  doctor: Doctor.fromJson(json['doctor'] as Map<String, dynamic>),
-  lab: json['lab'] == null
-      ? null
-      : Lab.fromJson(json['lab'] as Map<String, dynamic>),
+  departments: (json['departments'] as List<dynamic>?)
+      ?.map((e) => Department.fromJson(e as Map<String, dynamic>))
+      .toList(),
   currentDepartment: json['current_department'] == null
       ? null
       : Department.fromJson(json['current_department'] as Map<String, dynamic>),
+  requiresResubmission: json['requires_resubmission'] as bool?,
+  resubmissionReason: json['resubmission_reason'],
+  resubmissionRequestedAt: json['resubmission_requested_at'],
+  createdAt: json['created_at'] == null
+      ? null
+      : DateTime.parse(json['created_at'] as String),
+  doctor: json['doctor'] == null
+      ? null
+      : Doctor.fromJson(json['doctor'] as Map<String, dynamic>),
+  lab: json['lab'] == null
+      ? null
+      : Lab.fromJson(json['lab'] as Map<String, dynamic>),
 );
 
 Department _$DepartmentFromJson(Map<String, dynamic> json) => Department(
   id: (json['id'] as num?)?.toInt(),
   name: json['name'] as String?,
-  description: json['description'] as String?,
-  timeAllowed: (json['time_allowed'] as num?)?.toInt(),
-  taskStatus: json['task_status'] as String?,
+  sortOrder: (json['sort_order'] as num?)?.toInt(),
+  taskId: (json['task_id'] as num?)?.toInt(),
+  status: json['status'] as String?,
+  approvedAt: json['approved_at'] == null
+      ? null
+      : DateTime.parse(json['approved_at'] as String),
+  timeAllowedHours: (json['time_allowed_hours'] as num?)?.toInt(),
   isManagement: json['is_management'] as bool?,
-);
-
-Lab _$LabFromJson(Map<String, dynamic> json) => Lab(
-  id: (json['id'] as num?)?.toInt(),
-  name: json['name'] as String?,
-  phone: json['phone'] as String?,
-  address: json['address'] as String?,
-  departments: (json['departments'] as List<dynamic>?)
-      ?.map((e) => Department.fromJson(e as Map<String, dynamic>))
-      .toList(),
+  isCurrent: json['is_current'] as bool?,
 );
 
 Doctor _$DoctorFromJson(Map<String, dynamic> json) => Doctor(
-  id: (json['id'] as num).toInt(),
-  name: json['name'] as String,
-  location: json['location'] as String,
+  id: (json['id'] as num?)?.toInt(),
+  name: json['name'] as String?,
+  email: json['email'] as String?,
+  phone: json['phone'] as String?,
+  location: json['location'] as String?,
 );
 
 FileElement _$FileElementFromJson(Map<String, dynamic> json) => FileElement(
@@ -107,6 +114,13 @@ FileElement _$FileElementFromJson(Map<String, dynamic> json) => FileElement(
   uploadedAt: json['uploaded_at'] == null
       ? null
       : DateTime.parse(json['uploaded_at'] as String),
+);
+
+Lab _$LabFromJson(Map<String, dynamic> json) => Lab(
+  id: (json['id'] as num?)?.toInt(),
+  name: json['name'] as String?,
+  phone: json['phone'] as String?,
+  address: json['address'] as String?,
 );
 
 Link _$LinkFromJson(Map<String, dynamic> json) => Link(

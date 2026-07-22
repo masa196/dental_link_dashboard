@@ -177,8 +177,12 @@ RouteBase get $labManagerShellRoute => ShellRouteData.$route(
       factory: $LabManagerOrdersRoute._fromState,
     ),
     GoRouteData.$route(
-      path: '/lab-manager/patients',
-      factory: $LabManagerPatientsRoute._fromState,
+      path: '/lab-manager/orders/:orderId',
+      factory: $OrderDetailsRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: '/lab-manager/materials',
+      factory: $LabManagerMaterialsRoute._fromState,
     ),
     GoRouteData.$route(
       path: '/lab-manager/staff',
@@ -338,12 +342,37 @@ mixin $LabManagerOrdersRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $LabManagerPatientsRoute on GoRouteData {
-  static LabManagerPatientsRoute _fromState(GoRouterState state) =>
-      const LabManagerPatientsRoute();
+mixin $OrderDetailsRoute on GoRouteData {
+  static OrderDetailsRoute _fromState(GoRouterState state) =>
+      OrderDetailsRoute(orderId: int.parse(state.pathParameters['orderId']!));
+
+  OrderDetailsRoute get _self => this as OrderDetailsRoute;
 
   @override
-  String get location => GoRouteData.$location('/lab-manager/patients');
+  String get location => GoRouteData.$location(
+    '/lab-manager/orders/${Uri.encodeComponent(_self.orderId.toString())}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $LabManagerMaterialsRoute on GoRouteData {
+  static LabManagerMaterialsRoute _fromState(GoRouterState state) =>
+      const LabManagerMaterialsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/lab-manager/materials');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -409,12 +438,16 @@ RouteBase get $receptionistShellRoute => ShellRouteData.$route(
       factory: $ReceptionistDashboardRoute._fromState,
     ),
     GoRouteData.$route(
-      path: '/receptionist/appointments',
-      factory: $ReceptionistAppointmentsRoute._fromState,
+      path: '/receptionist/orders/:orderId',
+      factory: $ReceptionistOrderDetailsRoute._fromState,
     ),
     GoRouteData.$route(
-      path: '/receptionist/patients',
-      factory: $ReceptionistPatientsRoute._fromState,
+      path: '/receptionist/delivery-tasks',
+      factory: $ReceptionistDeliveryTasksRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: '/receptionist/show-materials',
+      factory: $ReceptionistShowMaterialsRoute._fromState,
     ),
     GoRouteData.$route(
       path: '/receptionist/billing',
@@ -453,12 +486,19 @@ mixin $ReceptionistDashboardRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $ReceptionistAppointmentsRoute on GoRouteData {
-  static ReceptionistAppointmentsRoute _fromState(GoRouterState state) =>
-      const ReceptionistAppointmentsRoute();
+mixin $ReceptionistOrderDetailsRoute on GoRouteData {
+  static ReceptionistOrderDetailsRoute _fromState(GoRouterState state) =>
+      ReceptionistOrderDetailsRoute(
+        orderId: int.parse(state.pathParameters['orderId']!),
+      );
+
+  ReceptionistOrderDetailsRoute get _self =>
+      this as ReceptionistOrderDetailsRoute;
 
   @override
-  String get location => GoRouteData.$location('/receptionist/appointments');
+  String get location => GoRouteData.$location(
+    '/receptionist/orders/${Uri.encodeComponent(_self.orderId.toString())}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -474,12 +514,33 @@ mixin $ReceptionistAppointmentsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin $ReceptionistPatientsRoute on GoRouteData {
-  static ReceptionistPatientsRoute _fromState(GoRouterState state) =>
-      const ReceptionistPatientsRoute();
+mixin $ReceptionistDeliveryTasksRoute on GoRouteData {
+  static ReceptionistDeliveryTasksRoute _fromState(GoRouterState state) =>
+      const ReceptionistDeliveryTasksRoute();
 
   @override
-  String get location => GoRouteData.$location('/receptionist/patients');
+  String get location => GoRouteData.$location('/receptionist/delivery-tasks');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ReceptionistShowMaterialsRoute on GoRouteData {
+  static ReceptionistShowMaterialsRoute _fromState(GoRouterState state) =>
+      const ReceptionistShowMaterialsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/receptionist/show-materials');
 
   @override
   void go(BuildContext context) => context.go(location);

@@ -1,9 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:dental_link_dashboard/core/auth/auth_token_storage.dart';
 import 'package:dental_link_dashboard/core/auth/user_role_cubit.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_radius.dart';
@@ -55,7 +53,9 @@ class ReceptionistSideNav extends StatelessWidget {
                       _NavItem(
                         icon: Icons.dashboard_customize,
                         label: l10n.navDashboard,
-                        active: location == '/receptionist',
+                        active:
+                            ['/receptionist'].contains(location) ||
+                            location.startsWith('/receptionist/orders'),
                         compact: compact,
                         onTap: () =>
                             const ReceptionistDashboardRoute().go(context),
@@ -63,22 +63,26 @@ class ReceptionistSideNav extends StatelessWidget {
 
                       _NavItem(
                         icon: Icons.calendar_month_outlined,
-                        label: isArabic ? 'المواعيد' : 'Appointments',
+                        label: isArabic ? 'مهام التوصيل' : 'Delivery Tasks',
                         active: location.startsWith(
-                          '/receptionist/appointments',
+                          '/receptionist/delivery-tasks',
                         ),
                         compact: compact,
                         onTap: () =>
-                            const ReceptionistAppointmentsRoute().go(context),
+                            const ReceptionistDeliveryTasksRoute().go(context),
                       ),
 
                       _NavItem(
-                        icon: Icons.groups_outlined,
-                        label: isArabic ? 'المرضى' : 'Patients',
-                        active: location.startsWith('/receptionist/patients'),
+                        icon: Icons.medical_services_outlined,
+                        label: isArabic
+                            ? 'المواد والأسعار '
+                            : 'Materials & Prices',
+                        active: location.startsWith(
+                          '/receptionist/show-materials',
+                        ),
                         compact: compact,
                         onTap: () =>
-                            const ReceptionistPatientsRoute().go(context),
+                            const ReceptionistShowMaterialsRoute().go(context),
                       ),
 
                       _NavItem(

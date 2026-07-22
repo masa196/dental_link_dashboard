@@ -10,6 +10,7 @@ class FileDownloader {
 
     final url = html.Url.createObjectUrlFromBlob(blob);
 
+    // ignore: unused_local_variable
     final anchor = html.AnchorElement(href: url)
       ..download = fileName
       ..click();

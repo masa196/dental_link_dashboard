@@ -6,10 +6,12 @@ import '../../../../data/models/orders_model/orders_model.dart';
 class StatusSection extends StatelessWidget {
   final OrderModel order;
   final bool showAttachment;
+  final VoidCallback? onAttachmentsPressed;
   const StatusSection({
     super.key,
     required this.order,
     this.showAttachment = true,
+    this.onAttachmentsPressed,
   });
 
   @override
@@ -34,22 +36,34 @@ class StatusSection extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: scheme.outline),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.attach_file, size: 14),
-              SizedBox(width: 6),
-              Text("ملحقات الطلبية", style: TextStyle(fontSize: 12)),
-            ],
-          ),
+       InkWell(
+  onTap: showAttachment
+      ? onAttachmentsPressed
+      : null,
+  borderRadius: BorderRadius.circular(10),
+  child: Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 6,
+      vertical: 10,
+    ),
+    decoration: BoxDecoration(
+      color: scheme.surface,
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: scheme.outline),
+    ),
+    child: const Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.attach_file,size:14),
+        SizedBox(width:6),
+        Text(
+          "ملحقات الطلبية",
+          style: TextStyle(fontSize:12),
         ),
+      ],
+    ),
+  ),
+),
       ],
     );
   }

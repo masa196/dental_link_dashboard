@@ -31,9 +31,22 @@ class ApiEndpoints {
   return '/auth/orders/$orderId/qr-image';
    }
 
+   static String orderDetails(int orderId) {
+  return '/auth/orders/$orderId';
+   }
+
    static String updateOrderStatus(int orderId) {
     return '/auth/orders/$orderId/status';
    }
+
+   static String lockOrder(int orderId) {
+  return '/auth/orders/$orderId/lock';
+   }
+
+   static String unLockOrder(int orderId) {
+  return '/auth/orders/$orderId/unlock';
+   }
+
    
 
 
@@ -46,6 +59,15 @@ class ApiEndpoints {
 
   //Manage Delivery
   static const String showDeliveryEmployees = '/auth/orders/delivery-employees';
+  static const String showDeliveryTasks = '/auth/orders/delivery-tasks';
+
+
+  //Manage Materials
+  static const String materials = '/auth/lab/compensations';
+
+  static String updateMaterials(int materialId) {
+  return '/auth/lab/compensations/$materialId';
+   }
 
 
 }

@@ -61,7 +61,7 @@ class PatientSection extends StatelessWidget {
             // DOCTOR NAME
             //------------------------------------------------
             Text(
-              "Dr. ${order.doctor.name}",
+              "Dr. ${order.doctor?.name}",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -86,7 +86,7 @@ class PatientSection extends StatelessWidget {
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    order.doctor.location,
+                    order.doctor?.location ?? "No Location",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),

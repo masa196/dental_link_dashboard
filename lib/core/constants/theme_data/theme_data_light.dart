@@ -23,14 +23,19 @@ class LightThemeData {
       outline: AppLightColors.outline,
       tertiary: AppLightColors.accent,
       onTertiary: AppLightColors.onPrimary,
-      
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
+      fontFamily: 'Inter',
       scaffoldBackgroundColor: AppLightColors.background,
-      textTheme: AppTypography.textTheme(scheme.onSurface),
+      textTheme: AppTypography.textTheme(
+        scheme.onSurface,
+      ).apply(fontFamily: 'Inter'),
+      primaryTextTheme: AppTypography.textTheme(
+        scheme.onSurface,
+      ).apply(fontFamily: 'Inter'),
       cardColor: AppLightColors.surface,
       dividerColor: AppLightColors.divider,
       shadowColor: AppLightColors.shadow,
@@ -43,7 +48,7 @@ class LightThemeData {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppLightColors.inputFill,
-        hintStyle: TextStyle(color: AppLightColors.hint),
+        hintStyle: TextStyle(color: AppLightColors.hint, fontFamily: 'Inter'),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.mdPlus),
           borderSide: BorderSide(color: AppLightColors.outline),

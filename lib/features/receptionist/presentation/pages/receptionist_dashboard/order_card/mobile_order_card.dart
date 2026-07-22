@@ -1,8 +1,7 @@
-import 'package:dental_link_dashboard/features/receptionist/presentation/cubit/receptionist_dashboard_cubit.dart';
+
+import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/dialogs/order_attachments_dialog.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/order_card/workflow/workflow_section.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../data/models/orders_model/orders_model.dart';
 import 'date_action_section.dart';
 import 'patient_section.dart';
@@ -12,18 +11,16 @@ import 'status_section.dart';
 class MobileOrderCard extends StatelessWidget {
   final OrderModel order;
   final Widget? actionWidget;
+  final bool showWorkflow;
+final String buttonTitle;
 
-  const MobileOrderCard({super.key, required this.order, this.actionWidget});
+  const MobileOrderCard({super.key, required this.order, this.actionWidget, required this.showWorkflow, required this.buttonTitle});
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    final cubit = context.watch<ReceptionistDashboardCubit>();
 
-    final buttonTitle = cubit.getButtonTitle(cubit.state.selectedTab);
-
-    final showWorkflow = cubit.shouldUseWorkflow(cubit.state.selectedTab);
 
     return Card(
       elevation: 0,
@@ -53,7 +50,17 @@ class MobileOrderCard extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              SizedBox(width: 120, child: StatusSection(order: order)),
+              SizedBox(width: 120, child: StatusSection(
+  order: order,
+  onAttachmentsPressed: () {
+    showDialog(
+      context: context,
+      builder: (_) => OrderAttachmentsDialog(
+        files: order.files ?? [],
+      ),
+    );
+  },
+),),
             ],
 
             const SizedBox(height: 16),

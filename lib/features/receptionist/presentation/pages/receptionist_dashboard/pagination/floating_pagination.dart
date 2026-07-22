@@ -66,60 +66,61 @@ class FloatingPagination extends StatelessWidget {
 
     final height = compact ? 32.0 : 40.0;
 
-    return Container(
-      height: height,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: scheme.outlineVariant),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _NavButton(
-            icon: Icons.chevron_left,
-            enabled: currentPage > 1,
-            onTap: () => onPageChanged(currentPage - 1),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          height: height,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerLow,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: scheme.outlineVariant),
           ),
-
-          const SizedBox(width: 4),
-
-          ..._visiblePages().map((item) {
-            if (item.isEllipsis) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4),
-                child: Text(
-                  "...",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _NavButton(
+                  icon: Icons.chevron_left,
+                  enabled: currentPage > 1,
+                  onTap: () => onPageChanged(currentPage - 1),
                 ),
-              );
-            }
 
-            final page = item.page!;
+                const SizedBox(width: 4),
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: _PageItem(
-                label: "$page",
-                selected: page == currentPage,
-                onTap: () {
-                  if (page == currentPage) return;
+                ..._visiblePages().map((item) {
+                  if (item.isEllipsis) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4),
+                      child: Text("..."),
+                    );
+                  }
 
-                  onPageChanged(page);
-                },
-              ),
-            );
-          }),
-          const SizedBox(width: 4),
+                  final page = item.page!;
 
-          _NavButton(
-            icon: Icons.chevron_right,
-            enabled: currentPage < totalPages,
-           onTap: () => onPageChanged(currentPage + 1),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: _PageItem(
+                      label: "$page",
+                      selected: page == currentPage,
+                      onTap: () => onPageChanged(page),
+                    ),
+                  );
+                }),
+
+                const SizedBox(width: 4),
+
+                _NavButton(
+                  icon: Icons.chevron_right,
+                  enabled: currentPage < totalPages,
+                  onTap: () => onPageChanged(currentPage + 1),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

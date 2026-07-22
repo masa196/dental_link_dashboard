@@ -16,3 +16,21 @@ class UpdateOrderStatusRequested extends UpdateOrderStatusEvent {
   @override
   List<Object?> get props => [parameters];
 }
+
+class LockOrderRequested extends UpdateOrderStatusEvent {
+  const LockOrderRequested(this.orderId);
+
+  final int orderId;
+
+  @override
+  List<Object?> get props => [orderId];
+}
+
+class UnlockOrderRequested extends UpdateOrderStatusEvent {
+  const UnlockOrderRequested(this.orderId);
+
+  final int orderId;
+
+  @override
+  List<Object?> get props => [orderId];
+}

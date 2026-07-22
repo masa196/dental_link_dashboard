@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:dental_link_dashboard/core/error/app_error.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/show_employee/show_employee_remote_data_source.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/models/show_employee/show_employee_model.dart';
-import 'package:dental_link_dashboard/features/lab_manager/domain/entities/employee_pagination_entity.dart';
+import 'package:dental_link_dashboard/features/lab_manager/domain/entities/employee_entity/employee_pagination_entity.dart';
 import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/employee/show_employee_repository.dart';
 
 @Injectable(as: ShowEmployeeRepository)

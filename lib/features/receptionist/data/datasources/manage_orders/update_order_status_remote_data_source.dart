@@ -11,6 +11,9 @@ import 'package:dental_link_dashboard/features/admin/data/models/base_response_m
 
 abstract class UpdateOrderStatusRemoteDataSource {
   Future<BaseResponseModel> updateStatus(UpdateOrderStatusEntity parameters);
+  Future<BaseResponseModel> lockOrder(int orderId);
+  Future<BaseResponseModel> unLockOrder(int orderId);
+
 }
 
 @Injectable(as: UpdateOrderStatusRemoteDataSource)
@@ -37,6 +40,63 @@ class UpdateOrderStatusRemoteDataSourceImpl
           if (parameters.notes != null && parameters.notes!.trim().isNotEmpty)
             'notes': parameters.notes,
         },
+        options: Options(
+          headers: token == null || token.isEmpty
+              ? null
+              : {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      final payload = _asMap(response.data);
+
+      if (payload == null) {
+        throw const AppException(message: 'Invalid response format');
+      }
+
+      return BaseResponseModel.fromJson(payload);
+    } on DioException {
+      rethrow;
+    }
+  }
+
+    @override
+  Future<BaseResponseModel> lockOrder(
+    int orderId,
+  ) async {
+    final token = authTokenStorage.token;
+
+    try {
+      final response = await dio.post(
+        ApiEndpoints.lockOrder(orderId),
+        options: Options(
+          headers: token == null || token.isEmpty
+              ? null
+              : {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      final payload = _asMap(response.data);
+
+      if (payload == null) {
+        throw const AppException(message: 'Invalid response format');
+      }
+
+      return BaseResponseModel.fromJson(payload);
+    } on DioException {
+      rethrow;
+    }
+  }
+
+
+   @override
+  Future<BaseResponseModel> unLockOrder(
+    int orderId,
+  ) async {
+    final token = authTokenStorage.token;
+
+    try {
+      final response = await dio.post(
+        ApiEndpoints.unLockOrder(orderId),
         options: Options(
           headers: token == null || token.isEmpty
               ? null
