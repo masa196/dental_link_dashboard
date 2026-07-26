@@ -1,4 +1,4 @@
-import 'package:dental_link_dashboard/core/navigation/lab_manager_layout.dart';
+/*import 'package:dental_link_dashboard/core/navigation/lab_manager_layout.dart';
 import 'package:dental_link_dashboard/core/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:dental_link_dashboard/core/utils/enums/enum_utils.dart';
@@ -27,4 +27,4 @@ class OrdersView extends StatelessWidget {
       ],
     );
   }
-}
+}*/

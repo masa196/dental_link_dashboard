@@ -1,12 +1,12 @@
+
 import 'package:flutter/material.dart';
 
-class NotificationButton extends StatelessWidget {
-  final VoidCallback? onPressed;
 
-  const NotificationButton({
-    super.key,
-    this.onPressed,
-  });
+class NotificationButton extends StatelessWidget {
+  const NotificationButton({super.key, this.onPressed, this.count = 0});
+
+  final VoidCallback? onPressed;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +22,31 @@ class NotificationButton extends StatelessWidget {
             color: scheme.onSurfaceVariant,
           ),
         ),
-        Positioned(
-          top: 12,
-          left: 12,
-          child: Container(
-            width: 8,
-            height: 8,
-            decoration: const BoxDecoration(
-              color: Colors.redAccent,
-              shape: BoxShape.circle,
+
+/*
+        if (count > 0)
+          Positioned(
+            top: 10,
+            left: 10,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                count > 99 ? '99+' : '$count',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
-        ),
+          */
       ],
     );
   }

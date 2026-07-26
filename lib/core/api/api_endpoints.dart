@@ -47,6 +47,8 @@ class ApiEndpoints {
   return '/auth/orders/$orderId/unlock';
    }
 
+//Manage Delivery Settings
+  static const String deliverySettings = '/auth/lab/delivery-settings';
    
 
 
@@ -69,5 +71,13 @@ class ApiEndpoints {
   return '/auth/lab/compensations/$materialId';
    }
 
+   //notifications
+  static const String createDeviceToken =
+    '/auth/notifications/device-tokens';
+  static const String showNotifications = '/auth/notifications';
+
+
+  //Manage Lab Manager Profile
+  static const String labManagerProfile = '/auth/me';
 
 }

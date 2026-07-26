@@ -1,5 +1,7 @@
 import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
+import 'package:dental_link_dashboard/core/responsive/responsive.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/roles/roles_bloc.dart';
+import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dental_link_dashboard/core/constants/app_fonts/app_typography.dart';
@@ -70,144 +72,156 @@ class DepartmentsPage extends StatelessWidget {
             }
 
             // د. عرض الواجهة الطبيعية عند وجود البيانات واستقرارها
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (showMenu)
-                      Padding(
-                        padding: const EdgeInsetsDirectional.only(
-                          end: AppSpacing.md,
-                        ),
-                        child: IconButton(
-                          onPressed: () {
-                            if (onMenuTap != null) {
-                              onMenuTap!();
-                            } else {
-                              Scaffold.of(context).openDrawer();
-                            }
-                          },
-                          icon: const Icon(Icons.menu),
-                          splashRadius: 24,
-                        ),
-                      ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            isArabic
-                                ? 'دليل الموظفين والأقسام'
-                                : 'Employees & Departments',
-                            style: TextStyle(
-                              fontSize: AppTypography.fs24,
-                              fontWeight: FontWeight.w800,
-                              color: scheme.onSurface,
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.xs),
-                          if (!isMobile)
-                            Text(
-                              isArabic
-                                  ? 'إدارة وعرض أعضاء الفريق في جميع أقسام المنشأة.'
-                                  : 'Manage and browse team members across all sections.',
-                              style: TextStyle(
-                                fontSize: AppTypography.fs14,
-                                color: scheme.onSurface.withValues(alpha: 0.7),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    Wrap(
-                      spacing: AppSpacing.md,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: () => _handleCreateDepartment(context),
-                          icon: const Icon(Icons.add),
-                          label: Text(isArabic ? 'إضافة قسم' : 'Add Section'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: scheme.primary,
-                            foregroundColor: scheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.lg,
-                              vertical: AppSpacing.md,
-                            ),
-                          ),
-                        ),
-                        OutlinedButton.icon(
-                          onPressed: () => _openCreateEmployeePage(
-                            context,
-                            departments: state.departments,
-                          ),
-                          icon: const Icon(Icons.person_add_alt_1),
-                          label: Text(isArabic ? 'إضافة موظف' : 'Add Employee'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: scheme.primary,
-                            side: BorderSide(
-                              color: scheme.primary.withValues(alpha: 0.35),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.lg,
-                              vertical: AppSpacing.md,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+           return Column(
+  crossAxisAlignment: CrossAxisAlignment.stretch,
+  children: [
+
+    DashboardHeader(
+      showSearchBar: false,
+      title: isArabic
+          ? 'دليل الموظفين والأقسام'
+          : 'Employees & Departments',
+
+      showMenuButton: !Responsive.isDesktop(context),
+
+
+      trailing: Wrap(
+        spacing: AppSpacing.md,
+
+        children: [
+
+          ElevatedButton.icon(
+            onPressed: () =>
+                _handleCreateDepartment(context),
+
+            icon: const Icon(
+              Icons.add,
+            ),
+
+            label: Text(
+              isArabic
+                  ? 'إضافة قسم'
+                  : 'Add Section',
+            ),
+
+            style: ElevatedButton.styleFrom(
+              backgroundColor: scheme.primary,
+              foregroundColor: scheme.onPrimary,
+
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
+            ),
+          ),
+
+
+          OutlinedButton.icon(
+            onPressed: () =>
+                _openCreateEmployeePage(
+                  context,
+                  departments: state.departments,
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1000),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.search),
-                        hintText: isArabic
-                            ? 'ابحث بالاسم أو الرقم أو القسم...'
-                            : 'Search by name, phone or department...',
-                        filled: true,
-                        fillColor: scheme.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.xl),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                  ),
+
+            icon: const Icon(
+              Icons.person_add_alt_1,
+            ),
+
+            label: Text(
+              isArabic
+                  ? 'إضافة موظف'
+                  : 'Add Employee',
+            ),
+
+            style: OutlinedButton.styleFrom(
+              foregroundColor: scheme.primary,
+
+              side: BorderSide(
+                color: scheme.primary.withValues(
+                  alpha: 0.35,
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                Divider(color: theme.dividerColor, thickness: 1),
-                const SizedBox(height: AppSpacing.lg),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        for (final d in state.departments) ...[
-                          _DepartmentSection(
-                            department: d,
-                            scheme: scheme,
-                            isArabic: isArabic,
-                            isMobile: isMobile,
-                            onEditDepartment: () =>
-                                _handleEditDepartment(context, d),
-                            onDeleteDepartment: () =>
-                                _handleDeleteDepartment(context, d),
-                            onViewAllEmployees: () =>
-                                _openEmployeePage(context, d),
-                          ),
-                          const SizedBox(height: AppSpacing.xl),
-                        ],
-                      ],
+              ),
+
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    ),
+
+
+    const SizedBox(
+      height: AppSpacing.lg,
+    ),
+
+
+    Divider(
+      color: theme.dividerColor,
+      thickness: 1,
+    ),
+
+
+    const SizedBox(
+      height: AppSpacing.lg,
+    ),
+
+
+    Expanded(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+
+            for (final d in state.departments) ...[
+
+              _DepartmentSection(
+                department: d,
+
+                scheme: scheme,
+
+                isArabic: isArabic,
+
+                isMobile: isMobile,
+
+
+                onEditDepartment: () =>
+                    _handleEditDepartment(
+                      context,
+                      d,
                     ),
-                  ),
-                ),
-              ],
-            );
+
+
+                onDeleteDepartment: () =>
+                    _handleDeleteDepartment(
+                      context,
+                      d,
+                    ),
+
+
+                onViewAllEmployees: () =>
+                    _openEmployeePage(
+                      context,
+                      d,
+                    ),
+              ),
+
+
+              const SizedBox(
+                height: AppSpacing.xl,
+              ),
+
+            ],
+
+          ],
+        ),
+      ),
+    ),
+
+  ],
+);
           },
         ),
       ),

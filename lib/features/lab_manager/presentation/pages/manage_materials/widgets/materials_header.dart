@@ -8,20 +8,28 @@ class MaterialsHeader extends StatelessWidget {
     super.key,
     required this.title,
     this.onAdd,
+    this.onSearch,
     this.showAddButton = true,
+    this.onNotificationTap,
   });
 
   final String title;
   final VoidCallback? onAdd;
   final bool showAddButton;
+  final ValueChanged<String>? onSearch;
+  final VoidCallback? onNotificationTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.xl),
       child: DashboardHeader(
-         showMenuButton: !Responsive.isDesktop(context),
+        showMenuButton: !Responsive.isDesktop(context),
         title: title,
+
+        onSearch: onSearch,
+        onNotificationTap: onNotificationTap,
+
         trailing: showAddButton
             ? FilledButton.icon(
                 onPressed: onAdd,

@@ -12,6 +12,8 @@ import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/up
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/update_order_status/update_order_status_state.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/cubit/receptionist_dashboard_cubit.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/cubit/receptionist_dashboard_state.dart';
+
+import 'package:dental_link_dashboard/notifications/presentation/widgets/notifications_dialog.dart';
 import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/shared/orders_filters_bar.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/tabs/dashboard_tab_model.dart';
@@ -21,12 +23,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReceptionistDashboardView extends StatelessWidget {
-
-    final OrdersMode mode;
-   const ReceptionistDashboardView({
-    super.key,
-    required this.mode,
-  });
+  final OrdersMode mode;
+  const ReceptionistDashboardView({super.key, required this.mode});
 
   @override
   Widget build(BuildContext context) {
@@ -100,16 +98,17 @@ class ReceptionistDashboardView extends StatelessWidget {
       ],
       child: Column(
         children: [
-          Builder(
-            builder: (context) {
-              return DashboardHeader(
-                title: "ادارة الطلبات ",
-                showMenuButton: !Responsive.isDesktop(context),
-                onMenuPressed: ReceptionistLayoutScope.of(context).openDrawer,
-                onSearch: (_) {},
-                onNotificationTap: () {},
-              );
+          DashboardHeader(
+            title: "ادارة الطلبات",
+            showMenuButton: !Responsive.isDesktop(context),
+            onMenuPressed: ReceptionistLayoutScope.of(context).openDrawer,
+            onSearch: (_) {},
+
+            onNotificationTap: () {
+              NotificationsDialog.show(context);
             },
+
+            notificationCount: 0,
           ),
           Expanded(
             child: Padding(

@@ -12,6 +12,7 @@ class DashboardHeader extends StatelessWidget {
   final String title;
   final bool showSearchBar;
    final Widget? trailing;
+   final int notificationCount;
 
 
 const DashboardHeader({
@@ -23,6 +24,7 @@ const DashboardHeader({
   this.onMenuPressed,
   this.showSearchBar = true,
    this.trailing,
+   this.notificationCount = 0,
 });
 
   @override
@@ -38,6 +40,7 @@ const DashboardHeader({
             title: title,
             showSearchBar: showSearchBar,
             trailing: trailing,
+            notificationCount: notificationCount,
           );
         }
 
@@ -49,7 +52,8 @@ const DashboardHeader({
             onMenuPressed: onMenuPressed,
             title: title,
             showSearchBar: showSearchBar,
-             trailing: trailing,
+            trailing: trailing,
+             notificationCount: notificationCount,
           );
         }
 
@@ -61,6 +65,7 @@ const DashboardHeader({
           title: title,
           showSearchBar: showSearchBar,
            trailing: trailing,
+           notificationCount: notificationCount,
         );
       },
     );

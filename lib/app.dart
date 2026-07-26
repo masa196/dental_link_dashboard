@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:dental_link_dashboard/notifications/presentation/bloc/notification_badge/notification_badge_bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dental_link_dashboard/core/auth/user_role_cubit.dart';
 import 'package:dental_link_dashboard/core/services/locator.dart';
@@ -19,6 +20,12 @@ class DentalLinkDashboardApp extends StatelessWidget {
         BlocProvider.value(value: locator<LocaleCubit>()),
         BlocProvider.value(value: locator<ThemeCubit>()),
         BlocProvider.value(value: locator<UserRoleCubit>()),
+
+        BlocProvider(
+          create: (_) =>
+              locator<NotificationBadgeBloc>()
+              //  ..add(const InitializeNotificationBadge()),
+        ),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {

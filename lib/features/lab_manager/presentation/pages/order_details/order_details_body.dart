@@ -9,6 +9,7 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/or
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/widgets/patient_info_card.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/widgets/time_tracking/time_tracking_card.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/widgets/timeline/order_timeline_card.dart';
+import 'package:dental_link_dashboard/notifications/presentation/widgets/notifications_dialog.dart';
 import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,6 +71,10 @@ class _LoadedBody extends StatelessWidget {
               ),
             ),
           ),
+
+           onNotificationTap: () {
+              NotificationsDialog.show(context);
+            },
         ),
 
         Expanded(

@@ -15,7 +15,7 @@ class ShowMaterialsEntity extends Equatable {
     return {
       'per_page': perPage,
       'page': page,
-      if (search != null && search!.isNotEmpty) 'search': search,
+      if (search != null && search!.isNotEmpty) 'q': search,
     };
   }
 

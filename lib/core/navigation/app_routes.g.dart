@@ -192,6 +192,10 @@ RouteBase get $labManagerShellRoute => ShellRouteData.$route(
       path: '/lab-manager/roles',
       factory: $RolesManagementRoute._fromState,
     ),
+    GoRouteData.$route(
+      path: '/lab-manager/profile',
+      factory: $LabManagerProfileRoute._fromState,
+    ),
   ],
 );
 
@@ -415,6 +419,27 @@ mixin $RolesManagementRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/lab-manager/roles');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $LabManagerProfileRoute on GoRouteData {
+  static LabManagerProfileRoute _fromState(GoRouterState state) =>
+      const LabManagerProfileRoute();
+
+  @override
+  String get location => GoRouteData.$location('/lab-manager/profile');
 
   @override
   void go(BuildContext context) => context.go(location);

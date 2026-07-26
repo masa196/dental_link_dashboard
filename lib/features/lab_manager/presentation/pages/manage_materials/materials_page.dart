@@ -1,5 +1,6 @@
 import 'package:dental_link_dashboard/core/services/locator.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/add_materials/add_materials_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/delete_materials/delete_materials_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/show_materials/show_materials_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/show_materials/show_materials_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/update_materials/update_materials_bloc.dart';
@@ -31,6 +32,11 @@ class MaterialsPage extends StatelessWidget {
          BlocProvider(
           create: (_) =>
               locator<UpdateMaterialsBloc>(),
+        ),
+
+        BlocProvider(
+          create: (_) =>
+              locator<DeleteMaterialsBloc>(),
         ),
 
       ],

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "22318488604",
+    "project_id": "dentallink-5440a",
+    "storage_bucket": "dentallink-5440a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22318488604:android:ddfec319eb4ca3bcbf93d9",
+        "android_client_info": {
+          "package_name": "com.example.dental_link"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBW9OldBIpiCsVHk7WTmWzZv5XC182MKoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22318488604:android:3b17eb2898533c78bf93d9",
+        "android_client_info": {
+          "package_name": "com.example.dental_link_dashboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBW9OldBIpiCsVHk7WTmWzZv5XC182MKoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

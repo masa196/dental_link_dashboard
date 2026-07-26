@@ -36,13 +36,13 @@ class ReceptionistDashboardPage extends StatelessWidget {
               locator<ShowDeliveryEmployeesBloc>()
                 ..add(const LoadDeliveryEmployees()),
         ),
-        BlocProvider(
-  create: (_) => locator<CreateDeliveryAssignmentBloc>(),
-),
+        BlocProvider(create: (_) => locator<CreateDeliveryAssignmentBloc>()),
+
+      
+
+       
       ],
-     child: const ReceptionistDashboardView(
-  mode: OrdersMode.receptionist,
-),
+      child: const ReceptionistDashboardView(mode: OrdersMode.receptionist),
     );
   }
 }

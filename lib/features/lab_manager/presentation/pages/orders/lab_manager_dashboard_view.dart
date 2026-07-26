@@ -2,7 +2,11 @@ import 'package:dental_link_dashboard/core/navigation/lab_manager_layout.dart';
 import 'package:dental_link_dashboard/core/responsive/responsive.dart';
 import 'package:dental_link_dashboard/core/utils/enums/enum_utils.dart';
 import 'package:dental_link_dashboard/core/utils/file_downloader.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/order_delivery_time/get_order_delivery_time/get_order_delivery_time_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/order_delivery_time/get_order_delivery_time/get_order_delivery_time_event.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/order_delivery_time/update_order_delivery_time/update_order_delivery_time_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/widgets/department_snackbar_helper.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/widgets/order_delivery_time_dialog.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/show_orders/show_orders_bloc.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/show_orders/show_orders_event.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/show_orders/show_orders_state.dart';
@@ -23,10 +27,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class LabManagerDashboardView extends StatelessWidget {
   final OrdersMode mode;
 
-  const LabManagerDashboardView({
-    super.key,
-    required this.mode,
-  });
+  const LabManagerDashboardView({super.key, required this.mode});
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +109,37 @@ class LabManagerDashboardView extends StatelessWidget {
                 onMenuPressed: LayoutScope.of(context).openDrawer,
                 onSearch: (_) {},
                 onNotificationTap: () {},
+
+                trailing: ElevatedButton.icon(
+                  onPressed: () {
+                    context.read<GetOrderDeliveryTimeBloc>().add(
+                      const GetOrderDeliveryTimeRequested(),
+                    );
+
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return MultiBlocProvider(
+                          providers: [
+                            BlocProvider.value(
+                              value: context.read<GetOrderDeliveryTimeBloc>(),
+                            ),
+
+                            BlocProvider.value(
+                              value: context
+                                  .read<UpdateOrderDeliveryTimeBloc>(),
+                            ),
+                          ],
+                          child: const OrderDeliveryTimeDialog(),
+                        );
+                      },
+                    );
+                  },
+
+                  icon: const Icon(Icons.timer_outlined),
+
+                  label: const Text("مدة تسليم الطلبيات"),
+                ),
               );
             },
           ),

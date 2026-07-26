@@ -1,14 +1,17 @@
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/add_materials/add_materials_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/delete_materials/delete_materials_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/show_materials/show_materials_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/show_materials/show_materials_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/show_materials/show_materials_state.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/update_materials/update_materials_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/dialogs/add_material_dialog.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/dialogs/delete_material_dialog.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/dialogs/update_material_dialog.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/materials_grid.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/materials_header.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/materials_mode.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/pagination/floating_pagination.dart';
+import 'package:dental_link_dashboard/notifications/presentation/widgets/notifications_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -76,6 +79,24 @@ class MaterialsView extends StatelessWidget {
                         },
                       );
                     },
+                    onDelete: (material) {
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return MultiBlocProvider(
+                            providers: [
+                              BlocProvider.value(
+                                value: context.read<DeleteMaterialsBloc>(),
+                              ),
+                              BlocProvider.value(
+                                value: context.read<ShowMaterialsBloc>(),
+                              ),
+                            ],
+                            child: DeleteMaterialDialog(material: material),
+                          );
+                        },
+                      );
+                    },
                   ),
 
                   if (state.isLoading) ...[
@@ -116,7 +137,14 @@ class MaterialsView extends StatelessWidget {
                     MaterialsHeader(
                       title: "إدارة المواد",
                       showAddButton: mode.canEdit,
+
                       onAdd: () => _showAddDialog(context),
+
+                      onSearch: (value) {
+                        context.read<ShowMaterialsBloc>().add(
+                          ShowMaterialsRequested(page: 1, search: value),
+                        );
+                      },
                     ),
                     content,
                   ],
@@ -129,7 +157,20 @@ class MaterialsView extends StatelessWidget {
                 MaterialsHeader(
                   title: "إدارة المواد",
                   showAddButton: mode.canEdit,
+
                   onAdd: () => _showAddDialog(context),
+
+                  onSearch: (value) {
+                    context.read<ShowMaterialsBloc>().add(
+                      ShowMaterialsRequested(page: 1, search: value),
+                    );
+                  },
+                  onNotificationTap: mode.canEdit
+                      ? null
+                      : () {
+                          NotificationsDialog.show(context);
+                        },
+                 
                 ),
 
                 Expanded(child: SingleChildScrollView(child: content)),

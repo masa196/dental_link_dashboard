@@ -2,6 +2,7 @@ import 'package:dental_link_dashboard/features/lab_manager/domain/entities/emplo
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/departments_with_employee/departments_with_employee_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/roles/roles_bloc_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/show_employee/employee_page_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/lab_manager_profile/lab_manager_profile_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/edit_employee/edit_employee_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/materials_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_roles/roles_permissions_page.dart';
@@ -192,6 +193,7 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
     TypedGoRoute<LabManagerMaterialsRoute>(path: '/lab-manager/materials'),
     TypedGoRoute<LabManagerStaffRoute>(path: '/lab-manager/staff'),
     TypedGoRoute<RolesManagementRoute>(path: '/lab-manager/roles'),
+    TypedGoRoute<LabManagerProfileRoute>(path: '/lab-manager/profile'),
   ],
 )
 class LabManagerShellRoute extends ShellRouteData {
@@ -440,6 +442,17 @@ class RolesManagementRoute extends GoRouteData with $RolesManagementRoute {
   }
 }
 
+
+class LabManagerProfileRoute extends GoRouteData
+    with $LabManagerProfileRoute {
+  const LabManagerProfileRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const LabManagerProfilePage();
+  }
+}
+
 /// ===== RECEPTIONIST ROUTES =====
 @TypedShellRoute<ReceptionistShellRoute>(
   routes: [
@@ -451,7 +464,9 @@ class RolesManagementRoute extends GoRouteData with $RolesManagementRoute {
     TypedGoRoute<ReceptionistDeliveryTasksRoute>(
       path: '/receptionist/delivery-tasks',
     ),
-    TypedGoRoute<ReceptionistShowMaterialsRoute>(path: '/receptionist/show-materials'),
+    TypedGoRoute<ReceptionistShowMaterialsRoute>(
+      path: '/receptionist/show-materials',
+    ),
     TypedGoRoute<ReceptionistBillingRoute>(path: '/receptionist/billing'),
     TypedGoRoute<ReceptionistInquiriesRoute>(path: '/receptionist/inquiries'),
   ],
@@ -515,7 +530,6 @@ class ReceptionistDeliveryTasksRoute extends GoRouteData
   }
 }
 
-
 // --- Receptionist Show Materials ---
 class ReceptionistShowMaterialsRoute extends GoRouteData
     with $ReceptionistShowMaterialsRoute {
@@ -526,7 +540,9 @@ class ReceptionistShowMaterialsRoute extends GoRouteData
     BuildContext context,
     GoRouterState state,
   ) {
-    return const ShowMaterialsPage().buildPage(pageAnimation: PageAnimation.fade);
+    return const ShowMaterialsPage().buildPage(
+      pageAnimation: PageAnimation.fade,
+    );
   }
 }
 

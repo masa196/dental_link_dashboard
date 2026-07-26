@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+
+
 class AuthTokenStorage {
   static const String _boxName = 'auth_token_box';
   static const String _tokenKey = 'auth_token';

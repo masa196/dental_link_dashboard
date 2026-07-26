@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -177,6 +178,7 @@ class ReceptionistSideNav extends StatelessWidget {
     late final StreamSubscription sub;
     sub = bloc.stream.listen((state) async {
       if (state.isSuccess) {
+        await FirebaseMessaging.instance.deleteToken();
         await locator<AuthTokenStorage>().clearToken();
         locator<UserRoleCubit>().clearUserRole();
         AppSnackbarHelper.showSuccess(

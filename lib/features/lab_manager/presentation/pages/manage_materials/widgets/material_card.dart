@@ -43,33 +43,45 @@ class MaterialCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          Text(
-            material.name ?? "-",
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: scheme.onSurface,
-              fontSize: 16,
-              height: 1.35,
-              fontWeight: FontWeight.w700,
+          SizedBox(
+            height: 44,
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Text(
+                material.name ?? "-",
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: scheme.onSurface,
+                  fontSize: 16,
+                  height: 1.35,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ),
 
           const SizedBox(height: 10),
 
-          Text(
-            material.description ?? "",
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-              color: scheme.onSurfaceVariant,
-              fontSize: 14,
-              height: 1.6,
+          SizedBox(
+            height: 72,
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Text(
+                material.description ?? "",
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  color: scheme.onSurfaceVariant,
+                  fontSize: 14,
+                  height: 1.6,
+                ),
+              ),
             ),
           ),
 
-          if (mode.canEdit) const Spacer() else const SizedBox(height: 50),
+          const SizedBox(height: 20),
 
           _PriceSection(price: material.price),
 
@@ -85,7 +97,7 @@ class MaterialCard extends StatelessWidget {
                 Expanded(
                   child: _ActionButton(
                     title: "تعديل",
-                    background: scheme.primary.withAlpha(12),
+                    background: scheme.primary.withValues(alpha: .12),
                     color: scheme.primary,
                     onTap: onEdit,
                   ),
@@ -96,7 +108,7 @@ class MaterialCard extends StatelessWidget {
                 Expanded(
                   child: _ActionButton(
                     title: "حذف",
-                    background: scheme.errorContainer.withValues(alpha: 0.1),
+                    background: scheme.errorContainer.withValues(alpha: .1),
                     color: scheme.error,
                     onTap: onDelete,
                   ),
@@ -151,7 +163,8 @@ class _PriceSection extends StatelessWidget {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
       children: [
         Text(
           "السعر ",
@@ -162,28 +175,27 @@ class _PriceSection extends StatelessWidget {
           ),
         ),
 
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: price ?? "0",
-                style: TextStyle(
-                  color: scheme.primary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              price ?? "0",
+              style: TextStyle(
+                color: scheme.primary,
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
               ),
-
-              TextSpan(
-                text: " ل.س",
-                style: TextStyle(
-                  color: scheme.onSurfaceVariant,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              "ل.س",
+              style: TextStyle(
+                color: scheme.onSurfaceVariant,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );

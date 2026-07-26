@@ -102,6 +102,8 @@ import 'package:dental_link_dashboard/features/admin/presentation/cubit/login/lo
     as _i949;
 import 'package:dental_link_dashboard/features/admin/presentation/cubit/manage_labs/manage_labs_cubit.dart'
     as _i9;
+import 'package:dental_link_dashboard/features/lab_manager/data/datasources/lab_manager_profile/show_lab_manager_profile_remote_data_source.dart'
+    as _i501;
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/manage_dep/create_departments/create_departments_remote_data_source.dart'
     as _i705;
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/manage_dep/delete_department/delete_department_remote_data_source.dart'
@@ -118,6 +120,8 @@ import 'package:dental_link_dashboard/features/lab_manager/data/datasources/mana
     as _i714;
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/manage_materials/add_materials/add_materials_remote_data_source.dart'
     as _i893;
+import 'package:dental_link_dashboard/features/lab_manager/data/datasources/manage_materials/delete_materials/delete_materials_remote_data_source.dart'
+    as _i310;
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/manage_materials/show_materials/show_materials_remote_data_source.dart'
     as _i237;
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/manage_materials/update_materials/update_materials_remote_data_source.dart'
@@ -134,10 +138,14 @@ import 'package:dental_link_dashboard/features/lab_manager/data/datasources/mana
     as _i759;
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/manage_roles/update_matrix_roles_and_permissions_remote_data_source.dart'
     as _i1012;
+import 'package:dental_link_dashboard/features/lab_manager/data/datasources/order_delivery_time/order_delivery_time_remote_data_source.dart'
+    as _i1051;
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/show_employee/show_employee_remote_data_source.dart'
     as _i722;
 import 'package:dental_link_dashboard/features/lab_manager/data/datasources/show_order_details/show_order_details_remote_data_source.dart'
     as _i389;
+import 'package:dental_link_dashboard/features/lab_manager/data/repositories/lab_manager_profile/show_lab_manager_profile_repository_impl.dart'
+    as _i613;
 import 'package:dental_link_dashboard/features/lab_manager/data/repositories/manage_dep/create_departments_bulk/create_departments_bulk_repository_impl.dart'
     as _i186;
 import 'package:dental_link_dashboard/features/lab_manager/data/repositories/manage_dep/delete_department/delete_department_repository_impl.dart'
@@ -154,6 +162,8 @@ import 'package:dental_link_dashboard/features/lab_manager/data/repositories/man
     as _i723;
 import 'package:dental_link_dashboard/features/lab_manager/data/repositories/manage_materials/add_materials_repository_impl.dart'
     as _i257;
+import 'package:dental_link_dashboard/features/lab_manager/data/repositories/manage_materials/delete_materials_repository_impl.dart'
+    as _i441;
 import 'package:dental_link_dashboard/features/lab_manager/data/repositories/manage_materials/show_materials_repositrory_impl.dart'
     as _i921;
 import 'package:dental_link_dashboard/features/lab_manager/data/repositories/manage_materials/update_materials_repository_impl.dart'
@@ -170,12 +180,16 @@ import 'package:dental_link_dashboard/features/lab_manager/data/repositories/man
     as _i979;
 import 'package:dental_link_dashboard/features/lab_manager/data/repositories/manage_roles/update_matrix_roles_and_permissions_repository_impl.dart'
     as _i37;
+import 'package:dental_link_dashboard/features/lab_manager/data/repositories/order_delivery_time/order_delivery_time_repository_impl.dart'
+    as _i1036;
 import 'package:dental_link_dashboard/features/lab_manager/data/repositories/show_employee/show_employee_repository_impl.dart'
     as _i116;
 import 'package:dental_link_dashboard/features/lab_manager/data/repositories/show_order_details/show_order_details_repository_impl.dart'
     as _i280;
 import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/employee/show_employee_repository.dart'
     as _i683;
+import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/lab_manager_profile/show_lab_manager_profile_repository.dart'
+    as _i1049;
 import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_dep/create_departments_repository.dart'
     as _i912;
 import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_dep/delete_department_repository.dart'
@@ -192,6 +206,8 @@ import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/m
     as _i1019;
 import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_materials/add_materials_repository.dart'
     as _i89;
+import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_materials/delete_materials_repository.dart'
+    as _i809;
 import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_materials/show_materials_repository.dart'
     as _i562;
 import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_materials/update_materials_repository.dart'
@@ -208,8 +224,12 @@ import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/m
     as _i1004;
 import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/manage_roles/update_matrix_roles_and_permissions_repository.dart'
     as _i635;
+import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/order_delivery_time/order_delivery_time_repository.dart'
+    as _i502;
 import 'package:dental_link_dashboard/features/lab_manager/domain/repositories/show_order_details/show_order_details_repository.dart'
     as _i1033;
+import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/lab_manager_profile/show_lab_manager_profile_usecase.dart'
+    as _i960;
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_dep/create_departments_use_case.dart'
     as _i390;
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_dep/delete_department_use_case.dart'
@@ -228,6 +248,8 @@ import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manag
     as _i71;
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_materials/add_materials_usecase.dart'
     as _i848;
+import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_materials/delete_materials_use_case.dart'
+    as _i943;
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_materials/show_materials_usecase.dart'
     as _i1014;
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_materials/update_materials_usecase.dart'
@@ -244,10 +266,16 @@ import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manag
     as _i805;
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/manage_roles/update_matrix_roles_and_permissions_usecase.dart'
     as _i283;
+import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/order_delivery_time/get_order_delivery_time_usecase.dart'
+    as _i456;
+import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/order_delivery_time/update_order_delivery_time_usecase.dart'
+    as _i482;
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/show_employee/get_show_employee_usecase.dart'
     as _i433;
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/show_order_details/show_order_details_usecase.dart'
     as _i1025;
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/lab_manager_profile/lab_manager_profile_bloc.dart'
+    as _i1060;
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/create_departments/create_departments_bloc.dart'
     as _i4;
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/delete_department/delete_department_bloc.dart'
@@ -268,6 +296,8 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/man
     as _i499;
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/add_materials/add_materials_bloc.dart'
     as _i460;
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/delete_materials/delete_materials_bloc.dart'
+    as _i1037;
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/show_materials/show_materials_bloc.dart'
     as _i60;
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_materials/update_materials/update_materials_bloc.dart'
@@ -282,6 +312,10 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/man
     as _i574;
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_roles/update_matrix_roles_and_permissions/update_matrix_roles_and_permissions_bloc.dart'
     as _i606;
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/order_delivery_time/get_order_delivery_time/get_order_delivery_time_bloc.dart'
+    as _i769;
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/order_delivery_time/update_order_delivery_time/update_order_delivery_time_bloc.dart'
+    as _i203;
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/show_order_details/show_order_details_bloc.dart'
     as _i498;
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/order_details_page.dart'
@@ -361,6 +395,34 @@ import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/up
 import 'package:dental_link_dashboard/features/receptionist/presentation/cubit/receptionist_dashboard_cubit.dart'
     as _i236;
 import 'package:dental_link_dashboard/l10n/locale_cubit.dart' as _i609;
+import 'package:dental_link_dashboard/notifications/data/datasources/notifications_remote_data_source.dart'
+    as _i1034;
+import 'package:dental_link_dashboard/notifications/data/repositories/notifications_repository_impl.dart'
+    as _i525;
+import 'package:dental_link_dashboard/notifications/domain/repositories/notifications_repository.dart'
+    as _i1050;
+import 'package:dental_link_dashboard/notifications/domain/usecases/create_device_token_usecase.dart'
+    as _i1050;
+import 'package:dental_link_dashboard/notifications/domain/usecases/show_notifications_usecase.dart'
+    as _i1013;
+import 'package:dental_link_dashboard/notifications/presentation/bloc/notification_badge/notification_badge_bloc.dart'
+    as _i1037;
+import 'package:dental_link_dashboard/notifications/presentation/bloc/show_notifications/show_notifications_bloc.dart'
+    as _i782;
+import 'package:dental_link_dashboard/notifications/services/app_visibility_service.dart'
+    as _i236;
+import 'package:dental_link_dashboard/notifications/services/badge/badge_storage_service.dart'
+    as _i119;
+import 'package:dental_link_dashboard/notifications/services/badge/badge_storage_service_web.dart'
+    as _i490;
+import 'package:dental_link_dashboard/notifications/services/firebase/firebase_messaging_service.dart'
+    as _i468;
+import 'package:dental_link_dashboard/notifications/services/notification_event_bus.dart'
+    as _i239;
+import 'package:dental_link_dashboard/notifications/services/overlay/overlay_service.dart'
+    as _i910;
+import 'package:dental_link_dashboard/notifications/services/sound/notification_sound_service.dart'
+    as _i491;
 import 'package:flutter/material.dart' as _i409;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -391,6 +453,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i92.ThemeCubit>(() => _i92.ThemeCubit());
     gh.lazySingleton<_i620.NavigationCubit>(() => _i620.NavigationCubit());
     gh.lazySingleton<_i609.LocaleCubit>(() => _i609.LocaleCubit());
+    gh.lazySingleton<_i236.AppVisibilityService>(
+      () => _i236.AppVisibilityService(),
+    );
+    gh.lazySingleton<_i239.NotificationEventBus>(
+      () => _i239.NotificationEventBus(),
+    );
+    gh.lazySingleton<_i910.OverlayService>(() => _i910.OverlayService());
+    gh.lazySingleton<_i491.NotificationSoundService>(
+      () => _i491.NotificationSoundService(),
+    );
     gh.factory<_i553.DeleteEmployeeRemoteDataSource>(
       () => _i553.DeleteEmployeeRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
@@ -473,6 +545,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i825.AuthTokenStorage>(),
       ),
     );
+    gh.factory<_i501.ShowLabManagerProfileRemoteDataSource>(
+      () => _i501.ShowLabManagerProfileRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
+      ),
+    );
     gh.factory<_i262.PrintQrRemoteDataSource>(
       () => _i262.PrintQrRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
@@ -485,6 +563,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i825.AuthTokenStorage>(),
       ),
     );
+    gh.factory<_i1034.NotificationsRemoteDataSource>(
+      () => _i1034.NotificationsRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
+      ),
+    );
+    gh.lazySingleton<_i468.FirebaseMessagingService>(
+      () => _i468.FirebaseMessagingService(
+        gh<_i239.NotificationEventBus>(),
+        gh<_i910.OverlayService>(),
+        gh<_i491.NotificationSoundService>(),
+      ),
+    );
     gh.factory<_i860.ShowDeliveryTasksRepository>(
       () => _i137.ShowDeliveryTasksRepositoryImpl(
         gh<_i162.ShowDeliveryTasksRemoteDataSource>(),
@@ -495,6 +586,18 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i569.DeleteRoleRemoteDataSource>(
       () => _i569.DeleteRoleRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i310.DeleteMaterialsRemoteDataSource>(
+      () => _i310.DeleteMaterialsRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i1051.OrderDelivreyTimeRemoteDataSource>(
+      () => _i1051.OrderDelivreyTimeRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
         gh<_i825.AuthTokenStorage>(),
       ),
@@ -571,6 +674,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i825.AuthTokenStorage>(),
       ),
     );
+    gh.lazySingleton<_i119.BadgeStorageService>(
+      () => _i490.BadgeStorageServiceWeb(),
+    );
     gh.factory<_i893.AddMaterialsRemoteDataSource>(
       () => _i893.AddMaterialsRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
@@ -592,6 +698,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i89.AddMaterialsRepository>(
       () => _i257.AddMaterialsRepositoryImpl(
         gh<_i893.AddMaterialsRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i809.DeleteMaterialsRepository>(
+      () => _i441.DeleteMaterialsRepositoryImpl(
+        gh<_i310.DeleteMaterialsRemoteDataSource>(),
       ),
     );
     gh.factory<_i714.UpdateEmployeeRemoteDataSource>(
@@ -688,6 +799,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i787.ManageLabsBloc>(
       () => _i787.ManageLabsBloc(getLabsUseCase: gh<_i269.GetLabsUseCase>()),
     );
+    gh.factory<_i1050.NotificationsRepository>(
+      () => _i525.NotificationsRepositoryImpl(
+        gh<_i1034.NotificationsRemoteDataSource>(),
+      ),
+    );
     gh.factory<_i1033.ShowOrderDetailsRepository>(
       () => _i280.ShowOrderDetailsRepositoryImpl(
         gh<_i389.ShowOrderDetailsRemoteDataSource>(),
@@ -695,6 +811,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1017.DeleteEmployeeUseCase>(
       () => _i1017.DeleteEmployeeUseCase(gh<_i322.DeleteEmployeeRepository>()),
+    );
+    gh.factory<_i502.OrderDeliveryTimeRepository>(
+      () => _i1036.OrderDeliveryTimeRepositoryImpl(
+        gh<_i1051.OrderDelivreyTimeRemoteDataSource>(),
+      ),
     );
     gh.factory<_i687.LogoutUseCase>(
       () => _i687.LogoutUseCase(gh<_i707.LogoutRepository>()),
@@ -729,8 +850,23 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i181.CreateRoleRemoteDataSource>(),
       ),
     );
+    gh.factory<_i456.GetOrderDeliveryTimeUseCase>(
+      () => _i456.GetOrderDeliveryTimeUseCase(
+        gh<_i502.OrderDeliveryTimeRepository>(),
+      ),
+    );
+    gh.factory<_i482.UpdateOrderDeliveryTimeUsecase>(
+      () => _i482.UpdateOrderDeliveryTimeUsecase(
+        gh<_i502.OrderDeliveryTimeRepository>(),
+      ),
+    );
     gh.factory<_i60.ShowMaterialsBloc>(
       () => _i60.ShowMaterialsBloc(gh<_i1014.ShowMaterialsUsecase>()),
+    );
+    gh.factory<_i1049.ShowLabManagerProfileRepository>(
+      () => _i613.ShowLabManagerProfileRepositoryImpl(
+        gh<_i501.ShowLabManagerProfileRemoteDataSource>(),
+      ),
     );
     gh.factory<_i390.CreateDepartmentsUseCase>(
       () => _i390.CreateDepartmentsUseCase(
@@ -773,6 +909,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i955.ShowOrdersRepositoryImpl(
         gh<_i539.ShowOrdersRemoteDataSource>(),
       ),
+    );
+    gh.factory<_i1050.CreateDeviceTokenUseCase>(
+      () =>
+          _i1050.CreateDeviceTokenUseCase(gh<_i1050.NotificationsRepository>()),
+    );
+    gh.factory<_i1013.ShowNotificationsUseCase>(
+      () =>
+          _i1013.ShowNotificationsUseCase(gh<_i1050.NotificationsRepository>()),
     );
     gh.factory<_i482.DeleteDepartmentBloc>(
       () => _i482.DeleteDepartmentBloc(
@@ -827,6 +971,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i460.AddMaterialsBloc>(
       () => _i460.AddMaterialsBloc(gh<_i848.AddMaterialsUsecase>()),
     );
+    gh.factory<_i1037.NotificationBadgeBloc>(
+      () => _i1037.NotificationBadgeBloc(gh<_i119.BadgeStorageService>()),
+    );
     gh.factory<_i610.ShowDeliveryEmployeesUsecase>(
       () => _i610.ShowDeliveryEmployeesUsecase(
         gh<_i323.ShowDeliveryEmployeesRepository>(),
@@ -848,16 +995,27 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i525.LoginUseCase>(
       () => _i525.LoginUseCase(gh<_i747.LoginRepository>()),
     );
+    gh.factory<_i943.DeleteMaterialsUseCase>(
+      () => _i943.DeleteMaterialsUseCase(gh<_i809.DeleteMaterialsRepository>()),
+    );
     gh.factory<_i759.CreateLabManagerBloc>(
       () => _i759.CreateLabManagerBloc(
         createLabManagerUseCase: gh<_i899.CreateLabManagerUseCase>(),
       ),
+    );
+    gh.factory<_i782.ShowNotificationsBloc>(
+      () => _i782.ShowNotificationsBloc(gh<_i1013.ShowNotificationsUseCase>()),
     );
     gh.factory<_i386.CreateRoleBloc>(
       () => _i386.CreateRoleBloc(gh<_i196.CreateRoleUseCase>()),
     );
     gh.factory<_i498.ShowOrderDetailsBloc>(
       () => _i498.ShowOrderDetailsBloc(gh<_i1025.ShowOrderDetailsUseCase>()),
+    );
+    gh.factory<_i960.ShowLabManagerProfileUseCase>(
+      () => _i960.ShowLabManagerProfileUseCase(
+        gh<_i1049.ShowLabManagerProfileRepository>(),
+      ),
     );
     gh.factory<_i433.GetShowEmployeeUseCase>(
       () => _i433.GetShowEmployeeUseCase(gh<_i683.ShowEmployeeRepository>()),
@@ -886,6 +1044,11 @@ extension GetItInjectableX on _i174.GetIt {
         deleteLabManagerUseCase: gh<_i747.DeleteLabManagerUseCase>(),
       ),
     );
+    gh.factory<_i203.UpdateOrderDeliveryTimeBloc>(
+      () => _i203.UpdateOrderDeliveryTimeBloc(
+        gh<_i482.UpdateOrderDeliveryTimeUsecase>(),
+      ),
+    );
     gh.factory<_i186.CreateDeliveryAssignmentUsecase>(
       () => _i186.CreateDeliveryAssignmentUsecase(
         gh<_i321.CreateDeliveryAssignmentRepository>(),
@@ -893,6 +1056,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i557.LogoutBloc>(
       () => _i557.LogoutBloc(logoutUseCase: gh<_i687.LogoutUseCase>()),
+    );
+    gh.factory<_i1060.LabManagerProfileBloc>(
+      () => _i1060.LabManagerProfileBloc(
+        showLabManagerProfileUseCase: gh<_i960.ShowLabManagerProfileUseCase>(),
+      ),
     );
     gh.factory<_i346.EditLabManagerUseCase>(
       () => _i346.EditLabManagerUseCase(gh<_i797.EditLabManagerRepository>()),
@@ -920,6 +1088,11 @@ extension GetItInjectableX on _i174.GetIt {
         createDepartmentsUseCase: gh<_i390.CreateDepartmentsUseCase>(),
       ),
     );
+    gh.factory<_i769.GetOrderDeliveryTimeBloc>(
+      () => _i769.GetOrderDeliveryTimeBloc(
+        gh<_i456.GetOrderDeliveryTimeUseCase>(),
+      ),
+    );
     gh.factory<_i291.LoginBloc>(
       () => _i291.LoginBloc(loginUseCase: gh<_i525.LoginUseCase>()),
     );
@@ -944,6 +1117,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i169.PrintQrBloc>(
       () => _i169.PrintQrBloc(gh<_i893.PrintQrUseCase>()),
+    );
+    gh.factory<_i1037.DeleteMaterialsBloc>(
+      () => _i1037.DeleteMaterialsBloc(gh<_i943.DeleteMaterialsUseCase>()),
     );
     gh.factory<_i574.GetMatrixRolesAndPermissionsBloc>(
       () => _i574.GetMatrixRolesAndPermissionsBloc(

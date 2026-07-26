@@ -1,9 +1,12 @@
 import 'package:dental_link_dashboard/core/responsive/screen_sizes.dart';
+import 'package:dental_link_dashboard/core/services/locator.dart';
+import 'package:dental_link_dashboard/notifications/presentation/bloc/show_notifications/show_notifications_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:dental_link_dashboard/core/responsive/responsive.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_spacing.dart';
 
 import 'package:dental_link_dashboard/shared/widgets/app_side_nav_lab_manager.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LabManagerLayout extends StatefulWidget {
   final Widget child;
@@ -22,10 +25,13 @@ class _LabManagerLayoutState extends State<LabManagerLayout> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final isDesktop = Responsive.isDesktop(context);
+Widget build(BuildContext context) {
+  final isDesktop = Responsive.isDesktop(context);
 
-    return Scaffold(
+  return BlocProvider(
+    create: (_) => locator<ShowNotificationsBloc>(),
+
+    child: Scaffold(
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
@@ -56,15 +62,18 @@ class _LabManagerLayoutState extends State<LabManagerLayout> {
                   vertical: AppSpacing.md,
                 ),
 
-                // 👇 مهم جداً: نمرر فتح القائمة للـ pages
-                child: LayoutScope(openDrawer: openDrawer, child: widget.child),
+                child: LayoutScope(
+                  openDrawer: openDrawer,
+                  child: widget.child,
+                ),
               ),
             ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 /// يمرر function للصفحات

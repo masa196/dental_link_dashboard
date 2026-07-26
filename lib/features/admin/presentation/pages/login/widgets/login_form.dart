@@ -1,5 +1,9 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:dental_link_dashboard/notifications/services/firebase/firebase_messaging_service.dart';
+import 'package:dental_link_dashboard/notifications/domain/entities/device_token_entity.dart';
+import 'package:dental_link_dashboard/notifications/domain/usecases/create_device_token_usecase.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
 
 import 'package:dental_link_dashboard/core/auth/auth_token_storage.dart';
 import 'package:dental_link_dashboard/core/auth/user_role_cubit.dart';
@@ -26,13 +30,53 @@ import 'package:dental_link_dashboard/shared/widgets/app_text_field.dart';
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
 
+ Future<void> _registerDeviceToken() async {
+
+  try {
+
+    final messagingService =
+        locator<FirebaseMessagingService>();
+
+    final fcmToken =
+        await messagingService.getToken();
+
+
+    if (fcmToken == null ||
+        fcmToken.isEmpty) {
+
+      debugPrint(
+        "FCM token unavailable",
+      );
+
+      return;
+    }
+
+
+    await locator<CreateDeviceTokenUseCase>()
+        .call(
+          DeviceTokenEntity(
+            token: fcmToken,
+            deviceType: 'web',
+          ),
+        );
+
+
+  } catch(e){
+
+    debugPrint(
+      "Device token registration skipped: $e",
+    );
+
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
 
     return BlocConsumer<LoginBloc, LoginState>(
-      listener: (context, blocState) {
+      listener: (context, blocState) async {
         /// SUCCESS
         if (blocState.isSuccess) {
           context.read<LoginCubit>().clearRateLimitCountdown();
@@ -41,45 +85,67 @@ class LoginForm extends StatelessWidget {
           final userData = blocState.response?.data?.user;
           final roles = blocState.response?.data?.roles;
 
-          if (token != null && token.isNotEmpty) {
-            locator<AuthTokenStorage>().saveToken(token);
+          if (roles == null || roles.isEmpty) {
+            AppSnackbarHelper.showFailure(
+              context,
+              title: 'خطأ',
+              message: 'لم يتم العثور على دور للمستخدم.',
+            );
+            return;
           }
 
-          /// تعيين دور المستخدم
-          if (roles != null && roles.isNotEmpty && userData != null) {
-            final userRole = roles.first;
-            final userName = userData.name ?? 'مستخدم';
-            final userId = userData.id ?? 0;
+          final userRole = roles.first;
 
+          /// السماح فقط بالأدوار المدعومة
+          if (userRole != 'system_admin' &&
+              userRole != 'lab_manager' &&
+              userRole != 'receptionist') {
+            AppSnackbarHelper.showFailure(
+              context,
+              title: 'خطأ',
+              message: 'هذا الدور غير مدعوم في لوحة التحكم.',
+            );
+            return;
+          }
+
+          if (token != null && token.isNotEmpty) {
+            await locator<AuthTokenStorage>().saveToken(token);
+
+            try {
+              locator<FirebaseMessagingService>().startListening();
+
+              unawaited(_registerDeviceToken());
+            } catch (e) {
+              debugPrint("Firebase login setup failed: $e");
+            }
+          }
+
+          if (userData != null) {
             locator<UserRoleCubit>().setUserRole(
               role: userRole,
-              userName: userName,
-              userId: userId,
+              userName: userData.name ?? 'مستخدم',
+              userId: userData.id ?? 0,
             );
           }
-
-          final message = blocState.response?.message ?? 'Login successful';
 
           AppSnackbarHelper.showSuccess(
             context,
             title: 'نجاح',
-            message: message,
+            message: blocState.response?.message ?? 'Login successful',
           );
 
-          /// التوجيه بناءً على الدور
-          if (roles != null && roles.isNotEmpty) {
-            final userRole = roles.first;
-            if (userRole == 'lab_manager') {
+          switch (userRole) {
+            case 'lab_manager':
               LabManagerDashboardRoute().go(context);
-            } else if (userRole == 'receptionist') {
+              break;
+
+            case 'receptionist':
               ReceptionistDashboardRoute().go(context);
-            } else {
-              /// system_admin أو أي دور آخر
+              break;
+
+            case 'system_admin':
               ManageLabsRoute().go(context);
-            }
-          } else {
-            /// في حالة عدم وجود أدوار، انتقل إلى قسم الإدارة الافتراضي
-            ManageLabsRoute().go(context);
+              break;
           }
 
           return;

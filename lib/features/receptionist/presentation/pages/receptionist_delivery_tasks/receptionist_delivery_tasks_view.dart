@@ -3,6 +3,7 @@ import 'package:dental_link_dashboard/core/responsive/responsive.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/manage_delivery/show_delivery_tasks/show_delivery_tasks_bloc.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/manage_delivery/show_delivery_tasks/show_delivery_tasks_event.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/manage_delivery/show_delivery_tasks/show_delivery_tasks_state.dart';
+import 'package:dental_link_dashboard/notifications/presentation/widgets/notifications_dialog.dart';
 import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/pagination/floating_pagination.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_delivery_tasks/widgets/delivery_tasks_list.dart';
@@ -23,7 +24,11 @@ class ReceptionistDeliveryTasksView extends StatelessWidget {
           showMenuButton: !Responsive.isDesktop(context),
           onMenuPressed: ReceptionistLayoutScope.of(context).openDrawer,
           onSearch: (_) {},
-          onNotificationTap: () {},
+          onNotificationTap: () {
+              NotificationsDialog.show(context);
+            },
+
+            notificationCount: 0,
         ),
 
         /// ================= BODY =================

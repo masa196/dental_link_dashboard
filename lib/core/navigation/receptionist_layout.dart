@@ -1,8 +1,14 @@
+import 'package:dental_link_dashboard/core/services/locator.dart';
+import 'package:dental_link_dashboard/notifications/presentation/bloc/show_notifications/show_notifications_bloc.dart';
+
+import 'package:dental_link_dashboard/notifications/services/overlay/overlay_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dental_link_dashboard/core/responsive/responsive.dart';
 import 'package:dental_link_dashboard/core/responsive/screen_sizes.dart';
 import 'package:dental_link_dashboard/core/constants/app_values/app_spacing.dart';
 import 'package:dental_link_dashboard/shared/widgets/app_side_nav_receptionist.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 /// تخطيط صفحات موظف الاستقبال
 class ReceptionistLayout extends StatefulWidget {
@@ -16,16 +22,39 @@ class ReceptionistLayout extends StatefulWidget {
 
 class _ReceptionistLayoutState extends State<ReceptionistLayout> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  
+  
+
+ @override
+void initState() {
+  super.initState();
+}
+
+  bool _attached = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_attached) return;
+
+    locator<OverlayService>().attach(context);
+
+    _attached = true;
+  }
 
   void openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
   }
 
   @override
-  Widget build(BuildContext context) {
-    final isDesktop = Responsive.isDesktop(context);
+Widget build(BuildContext context) {
+  final isDesktop = Responsive.isDesktop(context);
 
-    return Scaffold(
+  return BlocProvider(
+    create: (_) => locator<ShowNotificationsBloc>(),
+
+    child: Scaffold(
       key: _scaffoldKey,
 
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -65,8 +94,9 @@ class _ReceptionistLayoutState extends State<ReceptionistLayout> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class ReceptionistLayoutScope extends InheritedWidget {
@@ -79,8 +109,8 @@ class ReceptionistLayoutScope extends InheritedWidget {
   });
 
   static ReceptionistLayoutScope of(BuildContext context) {
-    final scope =
-        context.dependOnInheritedWidgetOfExactType<ReceptionistLayoutScope>();
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<ReceptionistLayoutScope>();
 
     assert(scope != null, 'ReceptionistLayoutScope not found');
 
