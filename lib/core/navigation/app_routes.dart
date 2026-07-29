@@ -1,3 +1,4 @@
+import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/packages_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/domain/entities/employee_entity/employee_entity.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/departments_with_employee/departments_with_employee_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/roles/roles_bloc_event.dart';
@@ -8,6 +9,8 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/ma
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_roles/roles_permissions_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/order_details_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/orders/lab_manager_order_page.dart';
+import 'package:dental_link_dashboard/features/receptionist/presentation/pages/doctor_details/doctor_details_page.dart';
+import 'package:dental_link_dashboard/features/receptionist/presentation/pages/doctors/doctors_page.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_delivery_tasks/receptionist_delivery_tasks_page.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/show_materials/show_materials_page.dart';
 import 'package:flutter/material.dart';
@@ -104,6 +107,7 @@ class LoginRoute extends GoRouteData with $LoginRoute {
     ),
     TypedGoRoute<ProfileRoute>(path: '/profile'),
     TypedGoRoute<RolesSystemManagementRoute>(path: '/roles_management'),
+    TypedGoRoute<PackagesSystemManagementRoute>(path: '/packages_management'),
   ],
 )
 class MainShellRoute extends ShellRouteData {
@@ -178,6 +182,21 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   }
 }
 
+class PackagesSystemManagementRoute extends GoRouteData
+    with $PackagesSystemManagementRoute {
+  const PackagesSystemManagementRoute();
+
+  @override
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    debugPrint("PackagesSystemManagementRoute.buildPage");
+
+    return const PackagesPage().buildPage(pageAnimation: PageAnimation.fade);
+  }
+}
+
 /// ===== LAB MANAGER SHELL ROUTES =====
 @TypedShellRoute<LabManagerShellRoute>(
   routes: [
@@ -193,6 +212,11 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
     TypedGoRoute<LabManagerMaterialsRoute>(path: '/lab-manager/materials'),
     TypedGoRoute<LabManagerStaffRoute>(path: '/lab-manager/staff'),
     TypedGoRoute<RolesManagementRoute>(path: '/lab-manager/roles'),
+    TypedGoRoute<LabManagerShowDoctorsRoute>(path: '/lab-manager/doctors'),
+    TypedGoRoute<LabManagerDoctorDetailsRoute>(
+      path: '/lab-manager/doctors/:doctorId',
+    ),
+
     TypedGoRoute<LabManagerProfileRoute>(path: '/lab-manager/profile'),
   ],
 )
@@ -210,6 +234,40 @@ class LabManagerShellRoute extends ShellRouteData {
         child: navigator,
       ),
     );
+  }
+}
+
+class LabManagerShowDoctorsRoute extends GoRouteData
+    with $LabManagerShowDoctorsRoute {
+  const LabManagerShowDoctorsRoute();
+
+  @override
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    return const DoctorsPage(
+      mode: DoctorsPageMode.labManager,
+    ).buildPage(
+      pageAnimation: PageAnimation.fade,
+    );
+  }
+}
+
+class LabManagerDoctorDetailsRoute extends GoRouteData
+    with $LabManagerDoctorDetailsRoute {
+  const LabManagerDoctorDetailsRoute({required this.doctorId});
+
+  final int doctorId;
+
+  @override
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    return DoctorDetailsPage(
+      doctorId: doctorId,
+    ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }
 
@@ -442,9 +500,7 @@ class RolesManagementRoute extends GoRouteData with $RolesManagementRoute {
   }
 }
 
-
-class LabManagerProfileRoute extends GoRouteData
-    with $LabManagerProfileRoute {
+class LabManagerProfileRoute extends GoRouteData with $LabManagerProfileRoute {
   const LabManagerProfileRoute();
 
   @override
@@ -467,7 +523,10 @@ class LabManagerProfileRoute extends GoRouteData
     TypedGoRoute<ReceptionistShowMaterialsRoute>(
       path: '/receptionist/show-materials',
     ),
-    TypedGoRoute<ReceptionistBillingRoute>(path: '/receptionist/billing'),
+    TypedGoRoute<ReceptionistShowDoctorsRoute>(path: '/receptionist/doctors'),
+    TypedGoRoute<ReceptionistDoctorDetailsRoute>(
+      path: '/receptionist/doctors/:doctorId',
+    ),
     TypedGoRoute<ReceptionistInquiriesRoute>(path: '/receptionist/inquiries'),
   ],
 )
@@ -546,18 +605,37 @@ class ReceptionistShowMaterialsRoute extends GoRouteData
   }
 }
 
-// --- Receptionist Billing ---
-class ReceptionistBillingRoute extends GoRouteData
-    with $ReceptionistBillingRoute {
-  const ReceptionistBillingRoute();
+// --- Receptionist show Doctors ---
+class ReceptionistShowDoctorsRoute extends GoRouteData
+    with $ReceptionistShowDoctorsRoute {
+  const ReceptionistShowDoctorsRoute();
 
   @override
   CustomTransitionPage<void> buildPage(
     BuildContext context,
     GoRouterState state,
   ) {
-    return Scaffold(
-      body: Center(child: Text('Receptionist Billing Page')),
+    return const DoctorsPage(
+      mode: DoctorsPageMode.receptionist,
+    ).buildPage(
+      pageAnimation: PageAnimation.fade,
+    );
+  }
+}
+
+class ReceptionistDoctorDetailsRoute extends GoRouteData
+    with $ReceptionistDoctorDetailsRoute {
+  const ReceptionistDoctorDetailsRoute({required this.doctorId});
+
+  final int doctorId;
+
+  @override
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    return DoctorDetailsPage(
+      doctorId: doctorId,
     ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }

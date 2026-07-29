@@ -1,11 +1,9 @@
-
 import 'package:dental_link_dashboard/shared/dashboard_header/widgets/notification_bell.dart';
 import 'package:flutter/material.dart';
 import 'dashboard_search_bar.dart';
 import 'widgets/header_container.dart';
 import 'widgets/header_title.dart';
 import 'widgets/menu_button.dart';
-import 'widgets/profile_avatar.dart';
 
 class TabletHeader extends StatelessWidget {
   final ValueChanged<String>? onSearch;
@@ -16,6 +14,7 @@ class TabletHeader extends StatelessWidget {
   final bool showSearchBar;
   final Widget? trailing;
   final int notificationCount;
+  final bool showNotification;
 
   const TabletHeader({
     super.key,
@@ -25,6 +24,7 @@ class TabletHeader extends StatelessWidget {
     this.onMenuPressed,
     required this.title,
     this.showSearchBar = true,
+    this.showNotification = true,
     this.trailing,
     this.notificationCount = 0,
   });
@@ -55,13 +55,10 @@ class TabletHeader extends StatelessWidget {
 
                 if (trailing != null) ...[trailing!, const SizedBox(width: 16)],
 
-               NotificationBell(
-  onPressed: onNotificationTap,
-),
+                if (showNotification)
+                  NotificationBell(onPressed: onNotificationTap),
 
                 const SizedBox(width: 8),
-
-                const ProfileAvatar(),
               ],
             ),
           ),

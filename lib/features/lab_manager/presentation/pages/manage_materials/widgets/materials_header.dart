@@ -11,6 +11,7 @@ class MaterialsHeader extends StatelessWidget {
     this.onSearch,
     this.showAddButton = true,
     this.onNotificationTap,
+    this.addButtonLabel = "إضافة مادة",
   });
 
   final String title;
@@ -18,6 +19,7 @@ class MaterialsHeader extends StatelessWidget {
   final bool showAddButton;
   final ValueChanged<String>? onSearch;
   final VoidCallback? onNotificationTap;
+  final String addButtonLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,6 @@ class MaterialsHeader extends StatelessWidget {
       child: DashboardHeader(
         showMenuButton: !Responsive.isDesktop(context),
         title: title,
-
         onSearch: onSearch,
         onNotificationTap: onNotificationTap,
 
@@ -34,7 +35,7 @@ class MaterialsHeader extends StatelessWidget {
             ? FilledButton.icon(
                 onPressed: onAdd,
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text("إضافة مادة"),
+                label: Text(addButtonLabel),
               )
             : null,
       ),

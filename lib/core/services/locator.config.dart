@@ -30,6 +30,14 @@ import 'package:dental_link_dashboard/features/admin/data/datasources/login/logi
     as _i1002;
 import 'package:dental_link_dashboard/features/admin/data/datasources/manage_labs/labs_remote_data_source.dart'
     as _i301;
+import 'package:dental_link_dashboard/features/admin/data/datasources/manage_packages/add_package/add_package_remote_data_source.dart'
+    as _i969;
+import 'package:dental_link_dashboard/features/admin/data/datasources/manage_packages/delete_package/delete_materials_remote_data_source.dart'
+    as _i124;
+import 'package:dental_link_dashboard/features/admin/data/datasources/manage_packages/show_packages/show_packages_remote_data_source.dart'
+    as _i188;
+import 'package:dental_link_dashboard/features/admin/data/datasources/manage_packages/update_package/update_package_remote_data_source.dart'
+    as _i621;
 import 'package:dental_link_dashboard/features/admin/data/models/location/location_model.dart'
     as _i707;
 import 'package:dental_link_dashboard/features/admin/data/repositories/create_lab_manager/create_lab_manager_repository_impl.dart'
@@ -46,6 +54,14 @@ import 'package:dental_link_dashboard/features/admin/data/repositories/login/log
     as _i672;
 import 'package:dental_link_dashboard/features/admin/data/repositories/manage_labs/labs_repository_impl.dart'
     as _i345;
+import 'package:dental_link_dashboard/features/admin/data/repositories/manage_packages/add_package_repository_impl.dart'
+    as _i865;
+import 'package:dental_link_dashboard/features/admin/data/repositories/manage_packages/delete_package_repository_impl.dart'
+    as _i821;
+import 'package:dental_link_dashboard/features/admin/data/repositories/manage_packages/show_packages_repositrory_impl.dart'
+    as _i538;
+import 'package:dental_link_dashboard/features/admin/data/repositories/manage_packages/update_package_repository_impl.dart'
+    as _i121;
 import 'package:dental_link_dashboard/features/admin/domain/entities/create_lab_manager/create_lab_manager_entity.dart'
     as _i357;
 import 'package:dental_link_dashboard/features/admin/domain/repositories/create_lab_manager_repository.dart'
@@ -62,6 +78,14 @@ import 'package:dental_link_dashboard/features/admin/domain/repositories/login_r
     as _i747;
 import 'package:dental_link_dashboard/features/admin/domain/repositories/logout_repository.dart'
     as _i707;
+import 'package:dental_link_dashboard/features/admin/domain/repositories/manage_materials/add_package_repository.dart'
+    as _i1071;
+import 'package:dental_link_dashboard/features/admin/domain/repositories/manage_materials/delete_package_repository.dart'
+    as _i519;
+import 'package:dental_link_dashboard/features/admin/domain/repositories/manage_materials/show_packages_repository.dart'
+    as _i920;
+import 'package:dental_link_dashboard/features/admin/domain/repositories/manage_materials/update_package_repository.dart'
+    as _i789;
 import 'package:dental_link_dashboard/features/admin/domain/usecases/base_use_case.dart'
     as _i203;
 import 'package:dental_link_dashboard/features/admin/domain/usecases/create_lab_manager/create_lab_manager_use_case.dart'
@@ -80,6 +104,14 @@ import 'package:dental_link_dashboard/features/admin/domain/usecases/login/logou
     as _i687;
 import 'package:dental_link_dashboard/features/admin/domain/usecases/manage_labs/get_labs_usecase.dart'
     as _i269;
+import 'package:dental_link_dashboard/features/admin/domain/usecases/manage_packages/add_package_usecase.dart'
+    as _i544;
+import 'package:dental_link_dashboard/features/admin/domain/usecases/manage_packages/delete_package_use_case.dart'
+    as _i960;
+import 'package:dental_link_dashboard/features/admin/domain/usecases/manage_packages/show_packages_usecase.dart'
+    as _i354;
+import 'package:dental_link_dashboard/features/admin/domain/usecases/manage_packages/update_package_usecase.dart'
+    as _i884;
 import 'package:dental_link_dashboard/features/admin/presentation/bloc/labs/create_lab_manager/create_lab_manager_bloc.dart'
     as _i759;
 import 'package:dental_link_dashboard/features/admin/presentation/bloc/labs/delete_lab_manager/delete_lab_manager_bloc.dart'
@@ -94,6 +126,14 @@ import 'package:dental_link_dashboard/features/admin/presentation/bloc/login/log
     as _i291;
 import 'package:dental_link_dashboard/features/admin/presentation/bloc/logout/logout_bloc.dart'
     as _i557;
+import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_packages/add_package/add_package_bloc.dart'
+    as _i174;
+import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_packages/delete_package/delete_package_bloc.dart'
+    as _i469;
+import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_packages/show_packages/show_packages_bloc.dart'
+    as _i820;
+import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_packages/update_package/update_package_bloc.dart'
+    as _i119;
 import 'package:dental_link_dashboard/features/admin/presentation/cubit/create_lab_manager/create_lab_manager_cubit.dart'
     as _i831;
 import 'package:dental_link_dashboard/features/admin/presentation/cubit/edit_lab_manager/edit_lab_manager_cubit.dart'
@@ -332,6 +372,10 @@ import 'package:dental_link_dashboard/features/receptionist/data/datasources/man
     as _i539;
 import 'package:dental_link_dashboard/features/receptionist/data/datasources/manage_orders/update_order_status_remote_data_source.dart'
     as _i200;
+import 'package:dental_link_dashboard/features/receptionist/data/datasources/show_doctors/show_doctor_details_remote_data_source.dart'
+    as _i523;
+import 'package:dental_link_dashboard/features/receptionist/data/datasources/show_doctors/show_doctors_remote_data_source.dart'
+    as _i535;
 import 'package:dental_link_dashboard/features/receptionist/data/repositories/manage_delivery/create_delivery_assignment_repository_impl.dart'
     as _i560;
 import 'package:dental_link_dashboard/features/receptionist/data/repositories/manage_delivery/show_delivery_employees_repositrory_impl.dart'
@@ -348,6 +392,10 @@ import 'package:dental_link_dashboard/features/receptionist/data/repositories/ma
     as _i379;
 import 'package:dental_link_dashboard/features/receptionist/data/repositories/manage_orders/update_order_status_repository_impl.dart'
     as _i572;
+import 'package:dental_link_dashboard/features/receptionist/data/repositories/show_doctors/show_doctor_details_repository_impl.dart'
+    as _i307;
+import 'package:dental_link_dashboard/features/receptionist/data/repositories/show_doctors/show_doctors_repositrory_impl.dart'
+    as _i277;
 import 'package:dental_link_dashboard/features/receptionist/domain/repositories/manage_delivery/create_delivery_assignment_repository.dart'
     as _i321;
 import 'package:dental_link_dashboard/features/receptionist/domain/repositories/manage_delivery/show_delivery_employees_repositrory.dart'
@@ -364,6 +412,10 @@ import 'package:dental_link_dashboard/features/receptionist/domain/repositories/
     as _i785;
 import 'package:dental_link_dashboard/features/receptionist/domain/repositories/manage_orders/update_order_status_repository.dart'
     as _i320;
+import 'package:dental_link_dashboard/features/receptionist/domain/repositories/show_doctors/show_doctor_details_repository.dart'
+    as _i126;
+import 'package:dental_link_dashboard/features/receptionist/domain/repositories/show_doctors/show_doctors_repository.dart'
+    as _i332;
 import 'package:dental_link_dashboard/features/receptionist/domain/usecases/manage_delivery/create_delivery_assignment_usecase.dart'
     as _i186;
 import 'package:dental_link_dashboard/features/receptionist/domain/usecases/manage_delivery/show_delivery_employees_usecase.dart'
@@ -380,6 +432,10 @@ import 'package:dental_link_dashboard/features/receptionist/domain/usecases/mana
     as _i643;
 import 'package:dental_link_dashboard/features/receptionist/domain/usecases/manage_orders/update_order_status_usecase.dart'
     as _i515;
+import 'package:dental_link_dashboard/features/receptionist/domain/usecases/show_doctors/show_doctor_details_usecase.dart'
+    as _i802;
+import 'package:dental_link_dashboard/features/receptionist/domain/usecases/show_doctors/show_doctors_usecase.dart'
+    as _i953;
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/manage_delivery/create_delivery_assignment/create_delivery_assignment_bloc.dart'
     as _i978;
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/manage_delivery/show_delivery_employees/show_delivery_employees_bloc.dart'
@@ -388,6 +444,10 @@ import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/ma
     as _i175;
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/print_qr/print_qr_bloc.dart'
     as _i169;
+import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/show_doctor_details/show_doctor_details_bloc.dart'
+    as _i329;
+import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/show_doctors/show_doctors_bloc.dart'
+    as _i12;
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/show_orders/show_orders_bloc.dart'
     as _i645;
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/update_order_status/update_order_status_bloc.dart'
@@ -475,6 +535,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i825.AuthTokenStorage>(),
       ),
     );
+    gh.factory<_i621.UpdatePackageRemoteDataSource>(
+      () => _i621.UpdatePackageRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
+      ),
+    );
     gh.factory<_i389.ShowOrderDetailsRemoteDataSource>(
       () => _i389.ShowOrderDetailsRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
@@ -483,6 +549,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i745.UpdateDepartmentRemoteDataSource>(
       () => _i745.UpdateDepartmentRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i188.ShowPackagesRemoteDataSource>(
+      () => _i188.ShowPackagesRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
         gh<_i825.AuthTokenStorage>(),
       ),
@@ -523,6 +595,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i825.AuthTokenStorage>(),
       ),
     );
+    gh.factory<_i124.DeletePackageRemoteDataSource>(
+      () => _i124.DeletePackageRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
+      ),
+    );
     gh.factory<_i250.CreateDeliveryAssignmentRemoteDataSource>(
       () => _i250.CreateDeliveryAssignmentRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
@@ -549,6 +627,11 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i501.ShowLabManagerProfileRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
         gh<_i825.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i789.UpdatePackageRepository>(
+      () => _i121.UpdatePackagesRepositoryImpl(
+        gh<_i621.UpdatePackageRemoteDataSource>(),
       ),
     );
     gh.factory<_i262.PrintQrRemoteDataSource>(
@@ -584,6 +667,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i351.BaseLocationRemoteDataSource>(
       () => _i351.LocationRemoteDataSource(gh<_i996.DioClient>()),
     );
+    gh.factory<_i884.UpdatePackageUsecase>(
+      () => _i884.UpdatePackageUsecase(gh<_i789.UpdatePackageRepository>()),
+    );
     gh.factory<_i569.DeleteRoleRemoteDataSource>(
       () => _i569.DeleteRoleRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
@@ -604,6 +690,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i788.CreateEmployeeRemoteDataSource>(
       () => _i788.CreateEmployeeRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
+      ),
+    );
+    gh.factory<_i969.AddPackageRemoteDataSource>(
+      () => _i969.AddPackageRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
         gh<_i825.AuthTokenStorage>(),
       ),
@@ -689,6 +781,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i825.AuthTokenStorage>(),
       ),
     );
+    gh.factory<_i523.ShowDoctorDetailsRemoteDataSource>(
+      () => _i523.ShowDoctorDetailsRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
+      ),
+    );
     gh.factory<_i668.DeleteLabManagerRemoteDataSource>(
       () => _i668.DeleteLabManagerRemoteDataSourceImpl(
         gh<_i996.DioClient>(),
@@ -703,6 +801,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i809.DeleteMaterialsRepository>(
       () => _i441.DeleteMaterialsRepositoryImpl(
         gh<_i310.DeleteMaterialsRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i535.ShowDoctorsRemoteDataSource>(
+      () => _i535.ShowDoctorsRemoteDataSourceImpl(
+        gh<_i996.DioClient>(),
+        gh<_i825.AuthTokenStorage>(),
       ),
     );
     gh.factory<_i714.UpdateEmployeeRemoteDataSource>(
@@ -788,6 +892,16 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i160.DeleteDepartmentUseCase(gh<_i715.DeleteDepartmentRepository>()),
     );
+    gh.factory<_i126.ShowDoctorDetailsRepository>(
+      () => _i307.ShowDoctorDetailsRepositoryImpl(
+        gh<_i523.ShowDoctorDetailsRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i1071.AddPackageRepository>(
+      () => _i865.AddPackageRepositoryImpl(
+        gh<_i969.AddPackageRemoteDataSource>(),
+      ),
+    );
     gh.factory<_i321.CreateDeliveryAssignmentRepository>(
       () => _i560.CreateDeliveryAssignmentRepositoryImpl(
         gh<_i250.CreateDeliveryAssignmentRemoteDataSource>(),
@@ -840,6 +954,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i643.UnLockOrderUsecase>(
       () => _i643.UnLockOrderUsecase(gh<_i785.UnLockOrderRepository>()),
     );
+    gh.factory<_i519.DeletePackageRepository>(
+      () => _i821.DeletePackageRepositoryImpl(
+        gh<_i124.DeletePackageRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i920.ShowPackagesRepository>(
+      () => _i538.ShowPackagesRepositoryImpl(
+        gh<_i188.ShowPackagesRemoteDataSource>(),
+      ),
+    );
     gh.factory<_i314.GetMatrixRolesAndPermissionsRepository>(
       () => _i1059.GetMatrixRolesAndPermissionsRepositoryImpl(
         gh<_i677.GetMatrixRolesAndPermissionsRemoteDataSource>(),
@@ -848,6 +972,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i432.CreateRoleRepository>(
       () => _i140.CreateRoleRepositoryImpl(
         gh<_i181.CreateRoleRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i802.ShowDoctorDetailsUsecase>(
+      () => _i802.ShowDoctorDetailsUsecase(
+        gh<_i126.ShowDoctorDetailsRepository>(),
       ),
     );
     gh.factory<_i456.GetOrderDeliveryTimeUseCase>(
@@ -859,6 +988,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i482.UpdateOrderDeliveryTimeUsecase(
         gh<_i502.OrderDeliveryTimeRepository>(),
       ),
+    );
+    gh.factory<_i119.UpdatePackageBloc>(
+      () => _i119.UpdatePackageBloc(gh<_i884.UpdatePackageUsecase>()),
     );
     gh.factory<_i60.ShowMaterialsBloc>(
       () => _i60.ShowMaterialsBloc(gh<_i1014.ShowMaterialsUsecase>()),
@@ -965,8 +1097,19 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i747.DeleteLabManagerUseCase(gh<_i163.DeleteLabManagerRepository>()),
     );
+    gh.factory<_i544.AddPackageUsecase>(
+      () => _i544.AddPackageUsecase(gh<_i1071.AddPackageRepository>()),
+    );
+    gh.factory<_i329.ShowDoctorDetailsBloc>(
+      () => _i329.ShowDoctorDetailsBloc(gh<_i802.ShowDoctorDetailsUsecase>()),
+    );
     gh.factory<_i46.CreateEmployeeUseCase>(
       () => _i46.CreateEmployeeUseCase(gh<_i579.CreateEmployeeRepository>()),
+    );
+    gh.factory<_i332.ShowDoctorsRepository>(
+      () => _i277.ShowDoctorsRepositoryImpl(
+        gh<_i535.ShowDoctorsRemoteDataSource>(),
+      ),
     );
     gh.factory<_i460.AddMaterialsBloc>(
       () => _i460.AddMaterialsBloc(gh<_i848.AddMaterialsUsecase>()),
@@ -986,6 +1129,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i515.UpdateOrderStatusUseCase(
         gh<_i320.UpdateOrderStatusRepository>(),
       ),
+    );
+    gh.factory<_i354.ShowPackagesUsecase>(
+      () => _i354.ShowPackagesUsecase(gh<_i920.ShowPackagesRepository>()),
     );
     gh.factory<_i1019.UpdateEmployeeRepository>(
       () => _i723.UpdateEmployeeRepositoryImpl(
@@ -1028,6 +1174,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i475.LockOrderUsecase>(
       () => _i475.LockOrderUsecase(gh<_i804.LockOrderRepository>()),
     );
+    gh.factory<_i953.ShowDoctorsUsecase>(
+      () => _i953.ShowDoctorsUsecase(gh<_i332.ShowDoctorsRepository>()),
+    );
     gh.factory<_i375.GetAllPermissionsUseCase>(
       () => _i375.GetAllPermissionsUseCase(
         gh<_i1029.GetAllPermissionsRepository>(),
@@ -1061,6 +1210,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1060.LabManagerProfileBloc(
         showLabManagerProfileUseCase: gh<_i960.ShowLabManagerProfileUseCase>(),
       ),
+    );
+    gh.factory<_i174.AddPackageBloc>(
+      () => _i174.AddPackageBloc(gh<_i544.AddPackageUsecase>()),
+    );
+    gh.factory<_i960.DeletePackageUseCase>(
+      () => _i960.DeletePackageUseCase(gh<_i519.DeletePackageRepository>()),
     );
     gh.factory<_i346.EditLabManagerUseCase>(
       () => _i346.EditLabManagerUseCase(gh<_i797.EditLabManagerRepository>()),
@@ -1096,6 +1251,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i291.LoginBloc>(
       () => _i291.LoginBloc(loginUseCase: gh<_i525.LoginUseCase>()),
     );
+    gh.factory<_i820.ShowPackagesBloc>(
+      () => _i820.ShowPackagesBloc(gh<_i354.ShowPackagesUsecase>()),
+    );
     gh.factory<_i595.DeleteRoleBloc>(
       () => _i595.DeleteRoleBloc(gh<_i1004.DeleteRoleUseCase>()),
     );
@@ -1114,6 +1272,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1039.RolesBloc>(
       () => _i1039.RolesBloc(getRolesUseCase: gh<_i805.GetRolesUseCase>()),
+    );
+    gh.factory<_i469.DeletePackageBloc>(
+      () => _i469.DeletePackageBloc(gh<_i960.DeletePackageUseCase>()),
     );
     gh.factory<_i169.PrintQrBloc>(
       () => _i169.PrintQrBloc(gh<_i893.PrintQrUseCase>()),
@@ -1143,6 +1304,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i978.CreateDeliveryAssignmentBloc(
         gh<_i186.CreateDeliveryAssignmentUsecase>(),
       ),
+    );
+    gh.factory<_i12.ShowDoctorsBloc>(
+      () => _i12.ShowDoctorsBloc(gh<_i953.ShowDoctorsUsecase>()),
     );
     gh.factory<_i32.DepartmentsWithEmployeeBloc>(
       () => _i32.DepartmentsWithEmployeeBloc(

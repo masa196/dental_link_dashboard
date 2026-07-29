@@ -10,7 +10,7 @@ abstract class ShowDeliveryTasksEvent extends Equatable {
 class ShowDeliveryTasksRequested extends ShowDeliveryTasksEvent {
   const ShowDeliveryTasksRequested({
     this.page = 1,
-    this.perPage = 10,
+    this.perPage = 15,
     this.search,
   });
 

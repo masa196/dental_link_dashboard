@@ -8,15 +8,39 @@ class ApiEndpoints {
   static const String reverseLocation =
       'https://nominatim.openstreetmap.org/reverse';
 
+
+   ///////////////////////////System Admin Endpoints///////////////////////////
+   
+
+   //Authentication
   static const String login = '/auth/login';
   static const String logout = '/auth/logout';
+  
+  //Manage Labs
   static const String activeLabs = '/auth/labs';
   static const String inactiveLabs = '/auth/labs/inactive';
   static const String createLabs = '/admin/labs';
   static const String editLabs = '/admin/labs';
   static const String deleteLabs = '/admin/labs';
-  static const String departmentsWithEmployees =
-      '/auth/lab/departments/with-employees/list';
+
+  //Manage Packages
+  static const String packages = '/admin/packages';
+   static String updatePackage(int packageId) {
+   return '/admin/packages/$packageId';
+   }
+   static String deletePackage(int packageId) {
+   return '/admin/packages/$packageId';
+   }
+
+
+
+
+  ///////////////////////////////Lab Manager EndPoints/////////////////////////// 
+
+
+
+  //Manage Departments and Employees
+  static const String departmentsWithEmployees = '/auth/lab/departments/with-employees/list';
   static const String createDepartments = '/auth/lab/departments/bulk';
   static const String departments = '/auth/lab/departments';
   static const String employees = '/auth/lab/employees';
@@ -25,6 +49,36 @@ class ApiEndpoints {
     return '/auth/lab/departments/$departmentId/with-employees';
   }
 
+  //Management Roles and Permissions
+  static const String getRoles = '/auth/roles';
+  static const String matrixRolesAndPermissions = '/auth/lab/roles/matrix';
+  static const String allPermissions = '/auth/lab/permissions';
+  static const String createRole = '/auth/lab/roles';
+  static const String deleteRole = '/auth/lab/roles';
+
+
+    //Manage Materials
+  static const String materials = '/auth/lab/compensations';
+
+  static String updateMaterials(int materialId) {
+  return '/auth/lab/compensations/$materialId';
+   }
+
+   
+  //Manage Lab Manager Profile
+  static const String labManagerProfile = '/auth/me';
+
+     //Manage Delivery Settings
+  static const String deliverySettings = '/auth/lab/delivery-settings';
+
+
+////////////////////////////Receptionist EndPoints///////////////////////////
+
+
+  //Doctors
+  static const String showDoctors = '/auth/lab/doctors/balances';
+  static const String showDoctorDetails = '/auth/lab/doctors/orders';
+  
   //Manage Orders
   static const String orders = '/auth/orders';
   static String qrImage(int orderId) {
@@ -47,37 +101,18 @@ class ApiEndpoints {
   return '/auth/orders/$orderId/unlock';
    }
 
-//Manage Delivery Settings
-  static const String deliverySettings = '/auth/lab/delivery-settings';
-   
 
-
-//Management Roles and Permissions
-  static const String getRoles = '/auth/roles';
-  static const String matrixRolesAndPermissions = '/auth/lab/roles/matrix';
-  static const String allPermissions = '/auth/lab/permissions';
-  static const String createRole = '/auth/lab/roles';
-  static const String deleteRole = '/auth/lab/roles';
-
-  //Manage Delivery
+     //Manage Delivery
   static const String showDeliveryEmployees = '/auth/orders/delivery-employees';
   static const String showDeliveryTasks = '/auth/orders/delivery-tasks';
 
 
-  //Manage Materials
-  static const String materials = '/auth/lab/compensations';
-
-  static String updateMaterials(int materialId) {
-  return '/auth/lab/compensations/$materialId';
-   }
-
+  
    //notifications
   static const String createDeviceToken =
     '/auth/notifications/device-tokens';
   static const String showNotifications = '/auth/notifications';
 
 
-  //Manage Lab Manager Profile
-  static const String labManagerProfile = '/auth/me';
 
 }

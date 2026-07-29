@@ -1,13 +1,10 @@
-
 import 'package:dental_link_dashboard/shared/dashboard_header/widgets/notification_bell.dart';
 import 'package:flutter/material.dart';
-
 
 import 'dashboard_search_bar.dart';
 import 'widgets/header_container.dart';
 import 'widgets/header_title.dart';
 import 'widgets/menu_button.dart';
-import 'widgets/profile_avatar.dart';
 
 class MobileHeader extends StatelessWidget {
   final ValueChanged<String>? onSearch;
@@ -18,6 +15,7 @@ class MobileHeader extends StatelessWidget {
   final bool showSearchBar;
   final Widget? trailing;
   final int notificationCount;
+  final bool showNotification;
 
   const MobileHeader({
     super.key,
@@ -27,6 +25,7 @@ class MobileHeader extends StatelessWidget {
     this.onMenuPressed,
     required this.title,
     this.showSearchBar = true,
+    this.showNotification = true,
     this.trailing,
     this.notificationCount = 0,
   });
@@ -57,13 +56,10 @@ class MobileHeader extends StatelessWidget {
                 ),
               ),
 
-             NotificationBell(
-  onPressed: onNotificationTap,
-),
+              if (showNotification)
+                NotificationBell(onPressed: onNotificationTap),
 
               const SizedBox(width: 4),
-
-              const ProfileAvatar(),
             ],
           ),
 

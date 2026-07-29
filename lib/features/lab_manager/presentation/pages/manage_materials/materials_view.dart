@@ -10,7 +10,7 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/ma
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/materials_grid.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/materials_header.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/materials_mode.dart';
-import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/pagination/floating_pagination.dart';
+import 'package:dental_link_dashboard/shared/pagination/floating_pagination.dart';
 import 'package:dental_link_dashboard/notifications/presentation/widgets/notifications_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -145,6 +145,11 @@ class MaterialsView extends StatelessWidget {
                           ShowMaterialsRequested(page: 1, search: value),
                         );
                       },
+                       onNotificationTap: mode.canEdit
+                      ? null
+                      : () {
+                          NotificationsDialog.show(context);
+                        },
                     ),
                     content,
                   ],

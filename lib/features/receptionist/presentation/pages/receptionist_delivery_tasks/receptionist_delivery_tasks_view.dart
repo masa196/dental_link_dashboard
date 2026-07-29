@@ -5,7 +5,7 @@ import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/ma
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/manage_delivery/show_delivery_tasks/show_delivery_tasks_state.dart';
 import 'package:dental_link_dashboard/notifications/presentation/widgets/notifications_dialog.dart';
 import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
-import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/pagination/floating_pagination.dart';
+import 'package:dental_link_dashboard/shared/pagination/floating_pagination.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_delivery_tasks/widgets/delivery_tasks_list.dart';
 
 import 'package:flutter/material.dart';

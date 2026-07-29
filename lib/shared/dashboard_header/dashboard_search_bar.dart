@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class DashboardSearchBar extends StatelessWidget {
   final ValueChanged<String>? onChanged;
+  final String? hintText;
 
-  const DashboardSearchBar({super.key, this.onChanged});
+  const DashboardSearchBar({super.key, this.onChanged, this.hintText});
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +14,10 @@ class DashboardSearchBar extends StatelessWidget {
     return SizedBox(
       height: 38,
       child: TextField(
-         onChanged: (value) {
-    debugPrint("SEARCH VALUE: $value");
-    onChanged?.call(value);
-  },
+        onChanged: (value) {
+          debugPrint("SEARCH VALUE: $value");
+          onChanged?.call(value);
+        },
         textAlign: TextAlign.right,
         style: TextStyle(
           color: scheme.onSurface,
@@ -28,7 +29,7 @@ class DashboardSearchBar extends StatelessWidget {
             size: 18,
             color: scheme.onSurfaceVariant,
           ),
-          hintText: 'بحث سريع...',
+          hintText: hintText ?? 'بحث سريع...',
           hintStyle: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
           filled: true,
 

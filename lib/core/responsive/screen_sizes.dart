@@ -10,6 +10,10 @@ class ScreenSizes {
 class AppSizes {
   AppSizes._();
 
+
+  static const double dashboardMinWidth = 650;
+  static const double dashboardMinHeight = 500;
+
   static const EdgeInsets cardPadding = EdgeInsets.all(24);
   static const double cardRadius = 24;
   static const double buttonHeight = 52;

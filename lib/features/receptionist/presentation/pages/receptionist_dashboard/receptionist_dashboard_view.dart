@@ -17,7 +17,7 @@ import 'package:dental_link_dashboard/notifications/presentation/widgets/notific
 import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/shared/orders_filters_bar.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/tabs/dashboard_tab_model.dart';
-import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/pagination/floating_pagination.dart';
+import 'package:dental_link_dashboard/shared/pagination/floating_pagination.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/shared/orders_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

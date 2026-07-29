@@ -69,7 +69,7 @@ class LabManagerSideNav extends StatelessWidget {
                       ),
 
                       _NavItem(
-                        icon: Icons.people_outlined,
+                        icon: Icons.production_quantity_limits,
                         label: isArabic
                             ? 'المواد والأسعار'
                             : 'materials & Prices',
@@ -80,7 +80,7 @@ class LabManagerSideNav extends StatelessWidget {
                       ),
 
                       _NavItem(
-                        icon: Icons.badge_outlined,
+                        icon: Icons.people_outlined,
                         label: isArabic ? 'الموظفون' : 'Staff',
                         active: location.startsWith('/lab-manager/employees'),
                         compact: compact,
@@ -89,11 +89,19 @@ class LabManagerSideNav extends StatelessWidget {
                       ),
 
                       _NavItem(
-                        icon: Icons.description_outlined,
+                        icon: Icons.badge_outlined,
                         label: isArabic ? 'إدارة الأدوار' : 'Roles Management',
                         active: location.startsWith('/lab-manager/roles'),
                         compact: compact,
                         onTap: () => const RolesManagementRoute().go(context),
+                      ),
+
+                      _NavItem(
+                        icon: Icons.payments_outlined,
+                        label: isArabic ? ' الأطباء' : 'Doctors',
+                        active: location.startsWith('/lab-manager/doctors'),
+                        compact: compact,
+                        onTap: () => const LabManagerShowDoctorsRoute().go(context),
                       ),
 
                       const Spacer(),

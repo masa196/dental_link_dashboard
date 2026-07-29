@@ -88,11 +88,11 @@ class ReceptionistSideNav extends StatelessWidget {
 
                       _NavItem(
                         icon: Icons.payments_outlined,
-                        label: isArabic ? 'الفواتير' : 'Billing',
-                        active: location.startsWith('/receptionist/billing'),
+                        label: isArabic ? 'Doctors' : 'الأطباء',
+                        active: location.startsWith('/receptionist/doctors'),
                         compact: compact,
                         onTap: () =>
-                            const ReceptionistBillingRoute().go(context),
+                            const ReceptionistShowDoctorsRoute().go(context),
                       ),
 
                       _NavItem(
