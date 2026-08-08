@@ -32,18 +32,13 @@ class ProfileInfoField extends StatelessWidget {
         horizontal: AppSpacing.md,
         vertical: AppSpacing.md,
       ),
-
       decoration: BoxDecoration(
         color: backgroundColor,
-
         borderRadius: BorderRadius.circular(
           AppRadius.pill,
         ),
       ),
-
       child: Row(
-        textDirection: TextDirection.rtl,
-
         children: [
           Container(
             width: 34,
@@ -67,32 +62,30 @@ class ProfileInfoField extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.end,
-
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Text(
                   label,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: AppTypography.fs12,
                     fontWeight: FontWeight.w500,
-                    color: scheme.onSurface
-                        .withValues(
-                          alpha: 0.65,
-                        ),
+                    color: scheme.onSurface.withValues(
+                      alpha: 0.65,
+                    ),
                   ),
                 ),
+
                 const SizedBox(
-                  height: AppSpacing.xs,
+                  height: AppSpacing.sm,
                 ),
+
                 Text(
                   value,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: AppTypography.fs14,
-                    fontWeight:FontWeight.w700,
+                    fontWeight: FontWeight.w700,
                     color: scheme.onSurface,
                   ),
                 ),

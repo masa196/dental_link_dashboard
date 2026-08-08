@@ -3,6 +3,8 @@ import 'package:dental_link_dashboard/features/lab_manager/domain/entities/emplo
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/departments_with_employee/departments_with_employee_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/roles/roles_bloc_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/show_employee/employee_page_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_order_stages/get_order_stages/get_order_stages_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_order_stages/update_order_stages/update_order_stages_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/lab_manager_profile/lab_manager_profile_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/edit_employee/edit_employee_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/materials_page.dart';
@@ -35,6 +37,8 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/ma
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_dashboard/receptionist_dashboard_page.dart';
 
 part 'app_routes.g.dart';
+
+enum OrderDetailsSource { labManagerOrders, receptionistOrders, doctorDetails }
 
 abstract class AppRouter {
   static final GoRouter config = GoRouter(
@@ -216,6 +220,9 @@ class PackagesSystemManagementRoute extends GoRouteData
     TypedGoRoute<LabManagerDoctorDetailsRoute>(
       path: '/lab-manager/doctors/:doctorId',
     ),
+    TypedGoRoute<DoctorOrderDetailsRoute>(
+      path: '/lab-manager/doctors/:doctorId/orders/:orderId',
+    ),
 
     TypedGoRoute<LabManagerProfileRoute>(path: '/lab-manager/profile'),
   ],
@@ -248,9 +255,7 @@ class LabManagerShowDoctorsRoute extends GoRouteData
   ) {
     return const DoctorsPage(
       mode: DoctorsPageMode.labManager,
-    ).buildPage(
-      pageAnimation: PageAnimation.fade,
-    );
+    ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }
 
@@ -266,11 +271,35 @@ class LabManagerDoctorDetailsRoute extends GoRouteData
     GoRouterState state,
   ) {
     return DoctorDetailsPage(
+      mode: DoctorsPageMode.labManager,
       doctorId: doctorId,
     ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }
 
+class DoctorOrderDetailsRoute extends GoRouteData
+    with $DoctorOrderDetailsRoute {
+  const DoctorOrderDetailsRoute({
+    required this.doctorId,
+    required this.orderId,
+  });
+
+  final int doctorId;
+  final int orderId;
+
+  @override
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    return OrderDetailsPage(
+      orderId: orderId,
+      source: OrderDetailsSource.doctorDetails,
+    ).buildPage(
+      pageAnimation: PageAnimation.fade,
+    );
+  }
+}
 class LabManagerDashboardRoute extends GoRouteData
     with $LabManagerDashboardRoute {
   const LabManagerDashboardRoute();
@@ -295,7 +324,6 @@ class LabManagerEmployeesRoute extends GoRouteData
     BuildContext context,
     GoRouterState state,
   ) {
-    // 🛡️ نقوم بلف صفحة الأقسام بالـ Blocs المشتركة لضمان وجود الكاش للأدوار والأقسام معاً
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -303,10 +331,14 @@ class LabManagerEmployeesRoute extends GoRouteData
               locator<DepartmentsWithEmployeeBloc>()
                 ..add(const DepartmentsWithEmployeeFetchRequested()),
         ),
+
         BlocProvider(
           create: (context) =>
               locator<RolesBloc>()..add(const RolesFetchRequested()),
         ),
+
+        BlocProvider(create: (context) => locator<GetOrderStagesBloc>()),
+        BlocProvider(create: (context) => locator<UpdateOrderStagesBloc>()),
       ],
       child: DepartmentsPage(
         key: state.pageKey,
@@ -454,9 +486,13 @@ class LabManagerOrdersRoute extends GoRouteData with $LabManagerOrdersRoute {
 }
 
 class OrderDetailsRoute extends GoRouteData with $OrderDetailsRoute {
-  const OrderDetailsRoute({required this.orderId});
+  const OrderDetailsRoute({
+    required this.orderId,
+    this.source = OrderDetailsSource.labManagerOrders,
+  });
 
   final int orderId;
+  final OrderDetailsSource source;
 
   @override
   CustomTransitionPage<void> buildPage(
@@ -465,6 +501,7 @@ class OrderDetailsRoute extends GoRouteData with $OrderDetailsRoute {
   ) {
     return OrderDetailsPage(
       orderId: orderId,
+      source: source,
     ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }
@@ -527,6 +564,9 @@ class LabManagerProfileRoute extends GoRouteData with $LabManagerProfileRoute {
     TypedGoRoute<ReceptionistDoctorDetailsRoute>(
       path: '/receptionist/doctors/:doctorId',
     ),
+    TypedGoRoute<ReceptionistDoctorOrderDetailsRoute>(
+  path: '/receptionist/doctors/:doctorId/orders/:orderId',
+),
     TypedGoRoute<ReceptionistInquiriesRoute>(path: '/receptionist/inquiries'),
   ],
 )
@@ -569,6 +609,7 @@ class ReceptionistOrderDetailsRoute extends GoRouteData
   ) {
     return OrderDetailsPage(
       orderId: orderId,
+      source: OrderDetailsSource.receptionistOrders,
     ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }
@@ -617,9 +658,7 @@ class ReceptionistShowDoctorsRoute extends GoRouteData
   ) {
     return const DoctorsPage(
       mode: DoctorsPageMode.receptionist,
-    ).buildPage(
-      pageAnimation: PageAnimation.fade,
-    );
+    ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }
 
@@ -635,11 +674,36 @@ class ReceptionistDoctorDetailsRoute extends GoRouteData
     GoRouterState state,
   ) {
     return DoctorDetailsPage(
+      mode: DoctorsPageMode.receptionist,
       doctorId: doctorId,
     ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }
 
+
+class ReceptionistDoctorOrderDetailsRoute extends GoRouteData
+    with $ReceptionistDoctorOrderDetailsRoute {
+  const ReceptionistDoctorOrderDetailsRoute({
+    required this.doctorId,
+    required this.orderId,
+  });
+
+  final int doctorId;
+  final int orderId;
+
+  @override
+  CustomTransitionPage<void> buildPage(
+    BuildContext context,
+    GoRouterState state,
+  ) {
+    return OrderDetailsPage(
+      orderId: orderId,
+      source: OrderDetailsSource.doctorDetails,
+    ).buildPage(
+      pageAnimation: PageAnimation.fade,
+    );
+  }
+}
 // --- Receptionist Inquiries ---
 class ReceptionistInquiriesRoute extends GoRouteData
     with $ReceptionistInquiriesRoute {

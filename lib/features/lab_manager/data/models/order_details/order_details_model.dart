@@ -95,9 +95,17 @@ class  OrderDetails extends Equatable {
         required this.price,
         required this.remainingAmount,
         required this.paidAmount,
+        required this.isPaid,
+        required this.beforeImagePath,
+        required this.afterImagePath,
         required this.requiresResubmission,
         required this.resubmissionReason,
         required this.resubmissionRequestedAt,
+        required this.toothShadeName,
+        required this.materialType,
+        required this.caseName,
+        required this.isPublished,
+        required this.portfolioId,
         required this.createdAt,
         required this.updatedAt,
         required this.doctor,
@@ -156,6 +164,16 @@ class  OrderDetails extends Equatable {
     @JsonKey(name: 'paid_amount') 
     final String? paidAmount;
 
+    @JsonKey(name: 'is_paid') 
+    final bool? isPaid;
+
+     @JsonKey(name: 'before_image_path') 
+    final dynamic beforeImagePath;
+
+    @JsonKey(name: 'after_image_path') 
+    final dynamic afterImagePath;
+
+
     @JsonKey(name: 'requires_resubmission') 
     final bool? requiresResubmission;
 
@@ -164,6 +182,22 @@ class  OrderDetails extends Equatable {
 
     @JsonKey(name: 'resubmission_requested_at') 
     final dynamic resubmissionRequestedAt;
+
+     @JsonKey(name: 'tooth_shade_name') 
+    final String? toothShadeName;
+
+    @JsonKey(name: 'material_type') 
+    final String? materialType;
+
+    @JsonKey(name: 'case_name') 
+    final dynamic caseName;
+
+    @JsonKey(name: 'is_published') 
+    final dynamic isPublished;
+
+     @JsonKey(name: 'portfolio_id') 
+    final int? portfolioId;
+
 
     @JsonKey(name: 'created_at') 
     final DateTime? createdAt;

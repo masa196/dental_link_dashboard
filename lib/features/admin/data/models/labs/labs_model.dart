@@ -106,6 +106,7 @@ class LabModel extends Equatable {
     required this.address,
     required this.rating,
     required this.photo,
+     required this.isActive,
     required this.createdAt,
     required this.updatedAt,
     required this.manager,
@@ -128,6 +129,9 @@ class LabModel extends Equatable {
 
   @JsonKey(name: 'photo')
   final String? photo;
+
+   @JsonKey(name: 'is_active') 
+    final bool? isActive;
 
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;

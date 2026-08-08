@@ -13,6 +13,7 @@ class EditLabManagerEntity {
   final Uint8List? photo;
   final String? photoName;
   final LocationEntity? location;
+  final bool isActive;
 
   const EditLabManagerEntity({
     required this.labId,
@@ -25,6 +26,7 @@ class EditLabManagerEntity {
     this.photo,
     this.photoName,
     this.location,
+    this.isActive = true,
   });
 
   bool get hasPassword =>
@@ -41,6 +43,7 @@ class EditLabManagerEntity {
     Uint8List? photo,
     String? photoName,
     LocationEntity? location,
+    bool? isActive,
   }) {
     return EditLabManagerEntity(
       labId: labId ?? this.labId,
@@ -53,6 +56,7 @@ class EditLabManagerEntity {
       photo: photo ?? this.photo,
       photoName: photoName ?? this.photoName,
       location: location ?? this.location,
+      isActive: isActive ?? this.isActive,
     );
   }
 
@@ -68,6 +72,7 @@ class EditLabManagerEntity {
       'address': location?.name,
       'latitude': location?.lat,
       'longitude': location?.lng,
+      'is_active': isActive,
     };
   }
 }

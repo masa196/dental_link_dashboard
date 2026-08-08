@@ -52,6 +52,7 @@ LabModel _$LabModelFromJson(Map<String, dynamic> json) => LabModel(
   address: json['address'] as String?,
   rating: json['rating'] as String?,
   photo: json['photo'] as String?,
+  isActive: json['is_active'] as bool?,
   createdAt: json['created_at'] == null
       ? null
       : DateTime.parse(json['created_at'] as String),

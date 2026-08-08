@@ -65,9 +65,17 @@ OrderDetails _$OrderDetailsFromJson(Map<String, dynamic> json) => OrderDetails(
   price: json['price'] as String?,
   remainingAmount: json['remaining_amount'] as String?,
   paidAmount: json['paid_amount'] as String?,
+  isPaid: json['is_paid'] as bool?,
+  beforeImagePath: json['before_image_path'],
+  afterImagePath: json['after_image_path'],
   requiresResubmission: json['requires_resubmission'] as bool?,
   resubmissionReason: json['resubmission_reason'],
   resubmissionRequestedAt: json['resubmission_requested_at'],
+  toothShadeName: json['tooth_shade_name'] as String?,
+  materialType: json['material_type'] as String?,
+  caseName: json['case_name'],
+  isPublished: json['is_published'],
+  portfolioId: (json['portfolio_id'] as num?)?.toInt(),
   createdAt: json['created_at'] == null
       ? null
       : DateTime.parse(json['created_at'] as String),

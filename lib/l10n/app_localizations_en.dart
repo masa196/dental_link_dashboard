@@ -178,4 +178,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get labStatus => 'Lab status';
+
+  @override
+  String get labAvailable => 'The lab is available in the system';
+
+  @override
+  String get labUnavailable => 'The lab is unavailable in the system';
 }

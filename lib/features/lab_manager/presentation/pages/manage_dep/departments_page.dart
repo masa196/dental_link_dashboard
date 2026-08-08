@@ -1,6 +1,11 @@
 import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
 import 'package:dental_link_dashboard/core/responsive/responsive.dart';
+import 'package:dental_link_dashboard/core/services/locator.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/roles/roles_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_order_stages/get_order_stages/get_order_stages_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_order_stages/get_order_stages/get_order_stages_event.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_order_stages/update_order_stages/update_order_stages_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_dep/manage_order_stages/order_stages_dialog.dart';
 import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,196 +40,187 @@ class DepartmentsPage extends StatelessWidget {
       textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
-        body: BlocBuilder<DepartmentsWithEmployeeBloc, DepartmentsWithEmployeeState>(
-          builder: (context, state) {
-            // أ. حالة التحميل الأولي
-            if (state.isInitialLoading ||
-                (state.status == DepartmentsWithEmployeeStatus.initial &&
-                    !state.hasData)) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        body:
+            BlocBuilder<
+              DepartmentsWithEmployeeBloc,
+              DepartmentsWithEmployeeState
+            >(
+              builder: (context, state) {
+                // أ. حالة التحميل الأولي
+                if (state.isInitialLoading ||
+                    (state.status == DepartmentsWithEmployeeStatus.initial &&
+                        !state.hasData)) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            // ب. حالة الفشل في جلب البيانات
-            if (state.status == DepartmentsWithEmployeeStatus.failure) {
-              return Center(
-                child: _EmptyDepartmentsState(
-                  scheme: scheme,
-                  message:
-                      state.failure?.message ??
-                      (isArabic
-                          ? 'تعذر تحميل الأقسام الآن'
-                          : 'Unable to load departments right now'),
-                ),
-              );
-            }
+                // ب. حالة الفشل في جلب البيانات
+                if (state.status == DepartmentsWithEmployeeStatus.failure) {
+                  return Center(
+                    child: _EmptyDepartmentsState(
+                      scheme: scheme,
+                      message:
+                          state.failure?.message ??
+                          (isArabic
+                              ? 'تعذر تحميل الأقسام الآن'
+                              : 'Unable to load departments right now'),
+                    ),
+                  );
+                }
 
-            // ج. شاشة الحالة الفارغة (نجح الطلب ولكن لا توجد بيانات)
-            if (state.status == DepartmentsWithEmployeeStatus.success &&
-                !state.hasData) {
-              return Center(
-                child: _EmptyDepartmentsState(
-                  scheme: scheme,
-                  message: isArabic
-                      ? 'أنشئ أقسام مخبرك الان واضف موظفي المخبر لبدأ العمل'
-                      : 'Create your lab sections now and add lab staff to get started',
-                ),
-              );
-            }
+                // ج. شاشة الحالة الفارغة (نجح الطلب ولكن لا توجد بيانات)
+                if (state.status == DepartmentsWithEmployeeStatus.success &&
+                    !state.hasData) {
+                  return Center(
+                    child: _EmptyDepartmentsState(
+                      scheme: scheme,
+                      message: isArabic
+                          ? 'أنشئ أقسام مخبرك الان واضف موظفي المخبر لبدأ العمل'
+                          : 'Create your lab sections now and add lab staff to get started',
+                    ),
+                  );
+                }
 
-            // د. عرض الواجهة الطبيعية عند وجود البيانات واستقرارها
-           return Column(
-  crossAxisAlignment: CrossAxisAlignment.stretch,
-  children: [
+                // د. عرض الواجهة الطبيعية عند وجود البيانات واستقرارها
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    DashboardHeader(
+                      showSearchBar: false,
+                      title: isArabic
+                          ? 'دليل الموظفين والأقسام'
+                          : 'Employees & Departments',
 
-    DashboardHeader(
-      showSearchBar: false,
-      title: isArabic
-          ? 'دليل الموظفين والأقسام'
-          : 'Employees & Departments',
+                      showMenuButton: !Responsive.isDesktop(context),
 
-      showMenuButton: !Responsive.isDesktop(context),
+                      trailing: Wrap(
+                        spacing: AppSpacing.md,
 
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () => _openOrderStagesDialog(
+                              context,
+                              state.departments,
+                            ),
+                            icon: const Icon(Icons.route_outlined),
+                            label: Text(
+                              isArabic ? 'مراحل الطلبية' : 'Order Workflow',
+                            ),
+                          ),
 
-      trailing: Wrap(
-        spacing: AppSpacing.md,
+                          ElevatedButton.icon(
+                            onPressed: () => _handleCreateDepartment(context),
 
-        children: [
+                            icon: const Icon(Icons.add),
 
-          ElevatedButton.icon(
-            onPressed: () =>
-                _handleCreateDepartment(context),
+                            label: Text(isArabic ? 'إضافة قسم' : 'Add Section'),
 
-            icon: const Icon(
-              Icons.add,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: scheme.primary,
+                              foregroundColor: scheme.onPrimary,
+
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.lg,
+                                vertical: AppSpacing.md,
+                              ),
+                            ),
+                          ),
+
+                          OutlinedButton.icon(
+                            onPressed: () => _openCreateEmployeePage(
+                              context,
+                              departments: state.departments,
+                            ),
+
+                            icon: const Icon(Icons.person_add_alt_1),
+
+                            label: Text(
+                              isArabic ? 'إضافة موظف' : 'Add Employee',
+                            ),
+
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: scheme.primary,
+
+                              side: BorderSide(
+                                color: scheme.primary.withValues(alpha: 0.35),
+                              ),
+
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.lg,
+                                vertical: AppSpacing.md,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: AppSpacing.lg),
+
+                    Divider(color: theme.dividerColor, thickness: 1),
+
+                    const SizedBox(height: AppSpacing.lg),
+
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            for (final d in state.departments) ...[
+                              _DepartmentSection(
+                                department: d,
+
+                                scheme: scheme,
+
+                                isArabic: isArabic,
+
+                                isMobile: isMobile,
+
+                                onEditDepartment: () =>
+                                    _handleEditDepartment(context, d),
+
+                                onDeleteDepartment: () =>
+                                    _handleDeleteDepartment(context, d),
+
+                                onViewAllEmployees: () =>
+                                    _openEmployeePage(context, d),
+                              ),
+
+                              const SizedBox(height: AppSpacing.xl),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
-
-            label: Text(
-              isArabic
-                  ? 'إضافة قسم'
-                  : 'Add Section',
-            ),
-
-            style: ElevatedButton.styleFrom(
-              backgroundColor: scheme.primary,
-              foregroundColor: scheme.onPrimary,
-
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.md,
-              ),
-            ),
-          ),
-
-
-          OutlinedButton.icon(
-            onPressed: () =>
-                _openCreateEmployeePage(
-                  context,
-                  departments: state.departments,
-                ),
-
-            icon: const Icon(
-              Icons.person_add_alt_1,
-            ),
-
-            label: Text(
-              isArabic
-                  ? 'إضافة موظف'
-                  : 'Add Employee',
-            ),
-
-            style: OutlinedButton.styleFrom(
-              foregroundColor: scheme.primary,
-
-              side: BorderSide(
-                color: scheme.primary.withValues(
-                  alpha: 0.35,
-                ),
-              ),
-
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.md,
-              ),
-            ),
-          ),
-
-        ],
       ),
-    ),
+    );
+  }
 
+  Future<void> _openOrderStagesDialog(
+    BuildContext context,
+    List<DepartmentItem> departments,
+  ) async {
+    final getOrderStagesBloc = context.read<GetOrderStagesBloc>();
 
-    const SizedBox(
-      height: AppSpacing.lg,
-    ),
+    getOrderStagesBloc.add(const GetOrderStagesRequested());
 
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
 
-    Divider(
-      color: theme.dividerColor,
-      thickness: 1,
-    ),
+      builder: (_) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: getOrderStagesBloc),
 
-
-    const SizedBox(
-      height: AppSpacing.lg,
-    ),
-
-
-    Expanded(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-
-            for (final d in state.departments) ...[
-
-              _DepartmentSection(
-                department: d,
-
-                scheme: scheme,
-
-                isArabic: isArabic,
-
-                isMobile: isMobile,
-
-
-                onEditDepartment: () =>
-                    _handleEditDepartment(
-                      context,
-                      d,
-                    ),
-
-
-                onDeleteDepartment: () =>
-                    _handleDeleteDepartment(
-                      context,
-                      d,
-                    ),
-
-
-                onViewAllEmployees: () =>
-                    _openEmployeePage(
-                      context,
-                      d,
-                    ),
-              ),
-
-
-              const SizedBox(
-                height: AppSpacing.xl,
-              ),
-
-            ],
-
+            BlocProvider(create: (_) => locator<UpdateOrderStagesBloc>()),
           ],
-        ),
-      ),
-    ),
 
-  ],
-);
-          },
-        ),
-      ),
+          child: OrderStagesDialog(departments: departments),
+        );
+      },
     );
   }
 

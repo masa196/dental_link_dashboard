@@ -94,7 +94,13 @@ class CreateNewLabDialog extends StatelessWidget {
                       );
                     },
                   ),
+
                   const SizedBox(height: AppSpacing.md),
+
+                  const _LabStatusField(),
+
+                  const SizedBox(height: AppSpacing.md),
+
                   Align(
                     alignment: AlignmentDirectional.center,
                     child: SizedBox(width: 400, child: _EmailField()),
@@ -233,6 +239,89 @@ class _EmailField extends StatelessWidget {
           error: state.emailError,
           onChanged: (v) =>
               context.read<CreateLabManagerCubit>().onEmailChanged(v),
+        );
+      },
+    );
+  }
+}
+
+class _LabStatusField extends StatelessWidget {
+  const _LabStatusField();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CreateLabManagerCubit, CreateLabManagerCubitState>(
+      buildWhen: (previous, current) =>
+          previous.entity.isActive != current.entity.isActive,
+      builder: (context, state) {
+        final isActive = state.entity.isActive;
+
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: context.scheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(AppRadius.lg),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? context.scheme.primary.withValues(alpha: 0.10)
+                      : context.scheme.onSurface.withValues(alpha: 0.06),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isActive
+                      ? Icons.check_circle_outline
+                      : Icons.block_outlined,
+                  size: 21,
+                  color: isActive
+                      ? context.scheme.primary
+                      : context.scheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.l10n.labStatus,
+                      style: const TextStyle(
+                        fontSize: AppTypography.fs16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      isActive
+                          ? context.l10n.labAvailable
+                          : context.l10n.labUnavailable,
+                      style: TextStyle(
+                        fontSize: AppTypography.fs14,
+                        color: context.scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Switch(
+                value: isActive,
+                onChanged: (value) {
+                  context
+                      .read<CreateLabManagerCubit>()
+                      .onIsActiveChanged(value);
+                },
+              ),
+            ],
+          ),
         );
       },
     );

@@ -37,6 +37,7 @@ class EditLabManagerCubit extends Cubit<EditLabManagerCubitState> {
               lng: lab.longitude,
             )
           : null,
+      isActive: lab.isActive ?? true,
     );
 
     emit(state.copyWith(entity: initialEntity));
@@ -77,6 +78,16 @@ class EditLabManagerCubit extends Cubit<EditLabManagerCubitState> {
       ),
     );
   }
+
+  void updateIsActive(bool value) {
+  emit(
+    state.copyWith(
+      entity: state.entity.copyWith(
+        isActive: value,
+      ),
+    ),
+  );
+}
 
   void updatePassword(String value) {
     emit(

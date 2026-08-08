@@ -56,6 +56,9 @@
   "invalidEmail": "صيغة البريد الإلكتروني غير صحيحة",
   "phoneOnlyDigits": "يجب أن يحتوي رقم الهاتف على أرقام فقط",
   "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
-  "passwordsDoNotMatch": "كلمات المرور غير متطابقة"
+  "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+  "labStatus": "حالة المخبر",
+  "labAvailable": "المخبر متاح في النظام",
+  "labUnavailable": "المخبر غير متاح في النظام"
 
 }

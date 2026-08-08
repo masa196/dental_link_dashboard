@@ -3,6 +3,7 @@
 import 'package:dental_link_dashboard/core/responsive/responsive.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/models/order_details/order_details_model.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/widgets/attachments/attachments_card.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/widgets/gallery/lab_gallery_card.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/widgets/notes_card.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/widgets/order_details_layout.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/widgets/order_summary_card.dart';
@@ -72,9 +73,9 @@ class _LoadedBody extends StatelessWidget {
             ),
           ),
 
-           onNotificationTap: () {
-              NotificationsDialog.show(context);
-            },
+          onNotificationTap: () {
+            NotificationsDialog.show(context);
+          },
         ),
 
         Expanded(
@@ -89,6 +90,11 @@ class _LoadedBody extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 NotesCard(notes: order.notes),
+
+                if (order.status == 'completed') ...[
+                  const SizedBox(height: 24),
+                  LabGalleryCard(order: order),
+                ],
               ],
             ),
             right: Column(

@@ -101,11 +101,12 @@ class LabManagerSideNav extends StatelessWidget {
                         label: isArabic ? ' الأطباء' : 'Doctors',
                         active: location.startsWith('/lab-manager/doctors'),
                         compact: compact,
-                        onTap: () => const LabManagerShowDoctorsRoute().go(context),
+                        onTap: () =>
+                            const LabManagerShowDoctorsRoute().go(context),
                       ),
 
                       const Spacer(),
-                     _NavItem(
+                      _NavItem(
                         icon: Icons.person_outline,
                         label: isArabic ? 'الملف الشخصي' : 'Profile',
                         active: location.startsWith('/lab-manager/profile'),
@@ -180,6 +181,8 @@ class LabManagerSideNav extends StatelessWidget {
       if (state.isSuccess) {
         await locator<AuthTokenStorage>().clearToken();
         locator<UserRoleCubit>().clearUserRole();
+        debugPrint('[Logout] API success');
+        debugPrint('[Logout] Clearing token');
 
         AppSnackbarHelper.showSuccess(
           context,
@@ -191,6 +194,7 @@ class LabManagerSideNav extends StatelessWidget {
 
         await sub.cancel();
         await bloc.close();
+        
       }
 
       if (state.isFailure) {

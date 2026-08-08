@@ -436,6 +436,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordsDoNotMatch;
+
+  /// No description provided for @labStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab status'**
+  String get labStatus;
+
+  /// No description provided for @labAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The lab is available in the system'**
+  String get labAvailable;
+
+  /// No description provided for @labUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The lab is unavailable in the system'**
+  String get labUnavailable;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -226,6 +226,10 @@ RouteBase get $labManagerShellRoute => ShellRouteData.$route(
       factory: $LabManagerDoctorDetailsRoute._fromState,
     ),
     GoRouteData.$route(
+      path: '/lab-manager/doctors/:doctorId/orders/:orderId',
+      factory: $DoctorOrderDetailsRoute._fromState,
+    ),
+    GoRouteData.$route(
       path: '/lab-manager/profile',
       factory: $LabManagerProfileRoute._fromState,
     ),
@@ -380,14 +384,26 @@ mixin $LabManagerOrdersRoute on GoRouteData {
 }
 
 mixin $OrderDetailsRoute on GoRouteData {
-  static OrderDetailsRoute _fromState(GoRouterState state) =>
-      OrderDetailsRoute(orderId: int.parse(state.pathParameters['orderId']!));
+  static OrderDetailsRoute _fromState(GoRouterState state) => OrderDetailsRoute(
+    orderId: int.parse(state.pathParameters['orderId']!),
+    source:
+        _$convertMapValue(
+          'source',
+          state.uri.queryParameters,
+          _$OrderDetailsSourceEnumMap._$fromName,
+        ) ??
+        OrderDetailsSource.labManagerOrders,
+  );
 
   OrderDetailsRoute get _self => this as OrderDetailsRoute;
 
   @override
   String get location => GoRouteData.$location(
     '/lab-manager/orders/${Uri.encodeComponent(_self.orderId.toString())}',
+    queryParams: {
+      if (_self.source != OrderDetailsSource.labManagerOrders)
+        'source': _$OrderDetailsSourceEnumMap[_self.source],
+    },
   );
 
   @override
@@ -403,6 +419,12 @@ mixin $OrderDetailsRoute on GoRouteData {
   @override
   void replace(BuildContext context) => context.replace(location);
 }
+
+const _$OrderDetailsSourceEnumMap = {
+  OrderDetailsSource.labManagerOrders: 'lab-manager-orders',
+  OrderDetailsSource.receptionistOrders: 'receptionist-orders',
+  OrderDetailsSource.doctorDetails: 'doctor-details',
+};
 
 mixin $LabManagerMaterialsRoute on GoRouteData {
   static LabManagerMaterialsRoute _fromState(GoRouterState state) =>
@@ -516,6 +538,34 @@ mixin $LabManagerDoctorDetailsRoute on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
+mixin $DoctorOrderDetailsRoute on GoRouteData {
+  static DoctorOrderDetailsRoute _fromState(GoRouterState state) =>
+      DoctorOrderDetailsRoute(
+        doctorId: int.parse(state.pathParameters['doctorId']!),
+        orderId: int.parse(state.pathParameters['orderId']!),
+      );
+
+  DoctorOrderDetailsRoute get _self => this as DoctorOrderDetailsRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/lab-manager/doctors/${Uri.encodeComponent(_self.doctorId.toString())}/orders/${Uri.encodeComponent(_self.orderId.toString())}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
 mixin $LabManagerProfileRoute on GoRouteData {
   static LabManagerProfileRoute _fromState(GoRouterState state) =>
       const LabManagerProfileRoute();
@@ -535,6 +585,20 @@ mixin $LabManagerProfileRoute on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+
+extension<T extends Enum> on Map<T, String> {
+  T? _$fromName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }
 
 RouteBase get $receptionistShellRoute => ShellRouteData.$route(
@@ -563,6 +627,10 @@ RouteBase get $receptionistShellRoute => ShellRouteData.$route(
     GoRouteData.$route(
       path: '/receptionist/doctors/:doctorId',
       factory: $ReceptionistDoctorDetailsRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: '/receptionist/doctors/:doctorId/orders/:orderId',
+      factory: $ReceptionistDoctorOrderDetailsRoute._fromState,
     ),
     GoRouteData.$route(
       path: '/receptionist/inquiries',
@@ -700,6 +768,35 @@ mixin $ReceptionistDoctorDetailsRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
     '/receptionist/doctors/${Uri.encodeComponent(_self.doctorId.toString())}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ReceptionistDoctorOrderDetailsRoute on GoRouteData {
+  static ReceptionistDoctorOrderDetailsRoute _fromState(GoRouterState state) =>
+      ReceptionistDoctorOrderDetailsRoute(
+        doctorId: int.parse(state.pathParameters['doctorId']!),
+        orderId: int.parse(state.pathParameters['orderId']!),
+      );
+
+  ReceptionistDoctorOrderDetailsRoute get _self =>
+      this as ReceptionistDoctorOrderDetailsRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/receptionist/doctors/${Uri.encodeComponent(_self.doctorId.toString())}/orders/${Uri.encodeComponent(_self.orderId.toString())}',
   );
 
   @override

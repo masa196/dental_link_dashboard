@@ -1,4 +1,5 @@
-﻿import 'package:dental_link_dashboard/notifications/presentation/bloc/notification_badge/notification_badge_bloc.dart';
+﻿import 'package:dental_link_dashboard/core/auth/auth_session_listener.dart';
+import 'package:dental_link_dashboard/notifications/presentation/bloc/notification_badge/notification_badge_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dental_link_dashboard/core/auth/user_role_cubit.dart';
@@ -22,24 +23,26 @@ class DentalLinkDashboardApp extends StatelessWidget {
         BlocProvider.value(value: locator<UserRoleCubit>()),
 
         BlocProvider(
-          create: (_) =>
-              locator<NotificationBadgeBloc>()
-              //  ..add(const InitializeNotificationBadge()),
+          create: (_) => locator<NotificationBadgeBloc>(),
+          //  ..add(const InitializeNotificationBadge()),
         ),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
           return BlocBuilder<ThemeCubit, ThemeMode>(
             builder: (context, mode) {
-              return MaterialApp.router(
-                debugShowCheckedModeBanner: false,
-                locale: locale,
-                supportedLocales: AppLocalizations.supportedLocales,
-                localizationsDelegates: AppLocalizations.localizationsDelegates,
-                theme: LightThemeData.theme,
-                darkTheme: DarkThemeData.theme,
-                themeMode: mode,
-                routerConfig: AppRouter.config,
+              return AuthSessionListener(
+                child: MaterialApp.router(
+                  debugShowCheckedModeBanner: false,
+                  locale: locale,
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
+                  theme: LightThemeData.theme,
+                  darkTheme: DarkThemeData.theme,
+                  themeMode: mode,
+                  routerConfig: AppRouter.config,
+                ),
               );
             },
           );

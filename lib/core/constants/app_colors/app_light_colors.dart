@@ -35,4 +35,9 @@ class AppLightColors {
   static const Color info = Color(0xFF016273);
   static const Color infoStrong = Color(0xFF0A7084);
   static const Color infoSurface = Color(0xFFE6F4F8);
+
+  static const Color textSecondary = Color(0xFF7C8A94);
+  static const Color avatarBackground = Color(0xFFE6E9EC);
+  static const Color statisticsBackground = Color(0xFFF8FAFB);
+  static const Color avatarBorder = Color(0xFFF1F3F5);
 }

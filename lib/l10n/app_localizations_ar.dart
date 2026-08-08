@@ -178,4 +178,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'كلمات المرور غير متطابقة';
+
+  @override
+  String get labStatus => 'حالة المخبر';
+
+  @override
+  String get labAvailable => 'المخبر متاح في النظام';
+
+  @override
+  String get labUnavailable => 'المخبر غير متاح في النظام';
 }

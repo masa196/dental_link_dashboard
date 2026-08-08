@@ -21,12 +21,18 @@ class CreateLabManagerCubit extends Cubit<CreateLabManagerCubitState> {
   void onPhoneChanged(String v) => _updateEntity(state.entity.copyWith(phone: v));
   void onPasswordChanged(String v) => _updateEntity(state.entity.copyWith(password: v));
   void onConfirmPasswordChanged(String v) => _updateEntity(state.entity.copyWith(passwordConfirmation: v));
+  void onIsActiveChanged(bool value) =>
+    _updateEntity(
+      state.entity.copyWith(isActive: value),
+    );
   
   void onPhotoChanged(Uint8List bytes, String name) => 
       _updateEntity(state.entity.copyWith(photo: bytes, photoName: name));
       
   void onLocationChanged(LocationEntity? loc) => 
       _updateEntity(state.entity.copyWith(location: loc));
+
+      
 
   void togglePasswordVisibility() => 
       _updateEntity(state.entity.copyWith(hidePassword: !(state.entity.hidePassword ?? true)));

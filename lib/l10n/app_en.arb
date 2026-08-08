@@ -56,6 +56,9 @@
   "invalidEmail": "Invalid email format",
   "phoneOnlyDigits": "Phone number must contain digits only",
   "passwordTooShort": "Password must be at least 8 characters",
-  "passwordsDoNotMatch": "Passwords do not match"
+  "passwordsDoNotMatch": "Passwords do not match",
+  "labStatus": "Lab status",
+  "labAvailable": "The lab is available in the system",
+  "labUnavailable": "The lab is unavailable in the system"
   
 }

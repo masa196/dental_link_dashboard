@@ -54,8 +54,7 @@ class ProfileCard extends StatelessWidget {
         children: [
 
           Row(
-            textDirection: TextDirection.rtl,
-
+        
             children: [
 
               Container(

@@ -1,16 +1,18 @@
 import 'package:equatable/equatable.dart';
 
 class ShowDoctorDetailsEntity extends Equatable {
+
   const ShowDoctorDetailsEntity({
     required this.doctorId,
-    this.status,
+    this.paymentStatus,
     this.perPage = 15,
     this.page = 1,
   });
 
+
   final int doctorId;
 
-  final String? status;
+  final String? paymentStatus;
 
   final int perPage;
 
@@ -21,17 +23,17 @@ class ShowDoctorDetailsEntity extends Equatable {
     return {
       'per_page': perPage,
       'page': page,
-      if (status != null && status!.isNotEmpty)
-        'status': status,
+      if(paymentStatus != null && paymentStatus!.isNotEmpty)
+        'status': paymentStatus,
     };
   }
 
 
   @override
   List<Object?> get props => [
-        doctorId,
-        status,
-        perPage,
-        page,
-      ];
+    doctorId,
+    paymentStatus,
+    perPage,
+    page,
+  ];
 }

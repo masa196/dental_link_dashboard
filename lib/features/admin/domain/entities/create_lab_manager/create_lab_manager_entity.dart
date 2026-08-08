@@ -15,6 +15,8 @@ class CreateLabManagerEntity {
   final String? photoName;
   final LocationEntity? location;
 
+   final bool isActive;
+
   const CreateLabManagerEntity({
     this.labName,
     this.managerName,
@@ -27,6 +29,7 @@ class CreateLabManagerEntity {
     this.photo,
     this.photoName,
     this.location,
+    this.isActive = true,
   });
 
   CreateLabManagerEntity copyWith({
@@ -43,6 +46,7 @@ class CreateLabManagerEntity {
     LocationEntity? location,
     Uint8List? photo,
     String? photoName,
+    bool? isActive,
   }) {
     return CreateLabManagerEntity(
       labName: labName ?? this.labName,
@@ -56,6 +60,7 @@ class CreateLabManagerEntity {
       location: location ?? this.location,
       photo: photo ?? this.photo,
       photoName: photoName ?? this.photoName,
+        isActive: isActive ?? this.isActive,
     );
   }
 
@@ -70,6 +75,7 @@ class CreateLabManagerEntity {
       'address': location?.name,
       'latitude': location?.lat,
       'longitude': location?.lng,
+      'is_active': isActive ? 1 : 0,
     };
   }
 }
