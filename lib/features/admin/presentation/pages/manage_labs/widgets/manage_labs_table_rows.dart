@@ -1,3 +1,4 @@
+import 'package:dental_link_dashboard/core/navigation/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,6 +17,7 @@ import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_l
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_labs/widgets/lab_photo_network_image.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/widgets/department_snackbar_helper.dart';
 import 'package:dental_link_dashboard/l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class ManageLabsHeaderRow extends StatelessWidget {
   const ManageLabsHeaderRow({
@@ -287,7 +289,14 @@ class ManageLabsActionsCell extends StatelessWidget {
                 size: AppSpacing.lgMinus,
                 color: actionColor,
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.push(
+                  PackageHistorySysAdminRoute(
+                    labId: (data.id ?? 0).toString(),
+                  ).location,
+                  extra: data.labName ?? data.name ?? '—',
+                );
+              },
             ),
           ),
 

@@ -136,6 +136,7 @@ class MaterialsView extends StatelessWidget {
                   children: [
                     MaterialsHeader(
                       title: "إدارة المواد",
+                      hintText:"ابحث عن طريق اسم المادة أو نوعها",
                       showAddButton: mode.canEdit,
 
                       onAdd: () => _showAddDialog(context),
@@ -160,7 +161,10 @@ class MaterialsView extends StatelessWidget {
             return Column(
               children: [
                 MaterialsHeader(
+                  
                   title: "إدارة المواد",
+                    hintText: "ابحث عن طريق اسم المادة أو نوعها",
+
                   showAddButton: mode.canEdit,
 
                   onAdd: () => _showAddDialog(context),

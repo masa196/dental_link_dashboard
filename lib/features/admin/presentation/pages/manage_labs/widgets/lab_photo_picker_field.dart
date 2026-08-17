@@ -33,35 +33,50 @@ class LabPhotoPickerField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (showTitle) ...[
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: AppTypography.fs16,
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: AppSpacing.xsPlus),
         ],
+
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(compact ? AppSpacing.smPlus : AppSpacing.md),
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).dividerColor),
-            borderRadius: BorderRadius.circular(compact ? 24 : 12),
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? AppSpacing.sm : AppSpacing.md,
+            vertical: compact ? AppSpacing.sm : AppSpacing.smPlus,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
+            borderRadius: BorderRadius.circular(
+              compact ? 20 : 16,
+            ),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.65),
+            ),
+          ),
+          child: Row(
             children: [
+              // -------------------------------------------------------------
+              // PHOTO PREVIEW
+              // -------------------------------------------------------------
               _PhotoPickerTrigger(
                 compact: compact,
                 photoBytes: photoBytes,
                 photoUrl: photoUrl,
                 onPressed: () async {
                   onPressed?.call();
+
                   final result = await FilePicker.platform.pickFiles(
                     type: FileType.image,
                     withData: true,
@@ -69,6 +84,7 @@ class LabPhotoPickerField extends StatelessWidget {
 
                   final file = result?.files.single;
                   final bytes = file?.bytes;
+
                   if (file == null || bytes == null) {
                     return;
                   }
@@ -76,10 +92,52 @@ class LabPhotoPickerField extends StatelessWidget {
                   await onPicked(bytes, file.name);
                 },
               ),
-              SizedBox(height: compact ? AppSpacing.sm : AppSpacing.md),
+
+              const SizedBox(width: AppSpacing.md),
+
+              // -------------------------------------------------------------
+              // PHOTO INFORMATION
+              // -------------------------------------------------------------
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      photoName ?? title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: AppTypography.fs14,
+                        fontWeight: FontWeight.w600,
+                        color: scheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      photoName != null
+                          ? 'Photo selected'
+                          : 'Upload a photo for the lab',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: AppTypography.fs12,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: AppSpacing.sm),
+
+              // -------------------------------------------------------------
+              // CHOOSE PHOTO
+              // -------------------------------------------------------------
               OutlinedButton.icon(
                 onPressed: () async {
                   onPressed?.call();
+
                   final result = await FilePicker.platform.pickFiles(
                     type: FileType.image,
                     withData: true,
@@ -87,24 +145,42 @@ class LabPhotoPickerField extends StatelessWidget {
 
                   final file = result?.files.single;
                   final bytes = file?.bytes;
+
                   if (file == null || bytes == null) {
                     return;
                   }
 
                   await onPicked(bytes, file.name);
                 },
-                icon: const Icon(Icons.upload_file_outlined),
+                icon: const Icon(
+                  Icons.upload_file_outlined,
+                  size: 18,
+                ),
                 label: const Text('Choose Photo'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
+                  ),
+                  minimumSize: const Size(0, 40),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  side: BorderSide(
+                    color: scheme.outlineVariant,
+                  ),
+                ),
               ),
             ],
           ),
         ),
+
         if (errorText != null) ...[
           const SizedBox(height: AppSpacing.xsPlus),
           Text(
             errorText!,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.error,
+              color: scheme.error,
               fontSize: AppTypography.fs12,
             ),
           ),
@@ -129,7 +205,10 @@ class _PhotoPickerTrigger extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = compact ? 72.0 : 96.0;
+    final scheme = Theme.of(context).colorScheme;
+
+    // Smaller and more balanced than the previous 96px circle.
+    final size = compact ? 60.0 : 72.0;
 
     return InkWell(
       onTap: onPressed,
@@ -137,15 +216,21 @@ class _PhotoPickerTrigger extends StatelessWidget {
       child: Container(
         width: size,
         height: size,
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(2.5),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Theme.of(context).dividerColor, width: 1.2),
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          color: scheme.surface,
+          border: Border.all(
+            color: scheme.outlineVariant,
+            width: 1.2,
+          ),
         ),
         child: ClipOval(
           child: photoBytes != null
-              ? Image.memory(photoBytes!, fit: BoxFit.cover)
+              ? Image.memory(
+                  photoBytes!,
+                  fit: BoxFit.cover,
+                )
               : LabPhotoNetworkImage(
                   photoUrl: photoUrl,
                   width: size,

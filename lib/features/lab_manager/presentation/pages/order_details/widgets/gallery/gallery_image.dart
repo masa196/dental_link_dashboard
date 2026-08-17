@@ -1,3 +1,4 @@
+import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
 import 'package:flutter/material.dart';
 
 class GalleryImage extends StatelessWidget {
@@ -20,9 +21,9 @@ class GalleryImage extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
           InkWell(
@@ -31,7 +32,8 @@ class GalleryImage extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
-                imageUrl,
+                ApiEndpoints.resolveFileUrl(imageUrl),
+                headers: ApiEndpoints.fileHeaders,
                 height: 120,
                 width: double.infinity,
                 fit: BoxFit.contain,

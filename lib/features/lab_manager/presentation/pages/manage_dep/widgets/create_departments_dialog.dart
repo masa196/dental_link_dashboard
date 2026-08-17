@@ -132,7 +132,7 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
                             ],
                           ),
                           const SizedBox(height: AppSpacing.lg),
-                          _BuildModeTabs(isArabic: isArabic),
+                        
                           const SizedBox(height: AppSpacing.lg),
                           _BuildCountSection(
                             isArabic: isArabic,
@@ -299,72 +299,9 @@ class _CreateDepartmentsDialogState extends State<CreateDepartmentsDialog> {
   }
 }
 
-class _BuildModeTabs extends StatelessWidget {
-  const _BuildModeTabs({required this.isArabic});
 
-  final bool isArabic;
 
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.scheme;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        _TabPill(
-          label: isArabic ? 'الأقسام العامة' : 'General sections',
-          selected: false,
-          scheme: scheme,
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        _TabPill(
-          label: isArabic ? 'أقسام مخصصة' : 'Custom sections',
-          selected: true,
-          scheme: scheme,
-        ),
-      ],
-    );
-  }
-}
-
-class _TabPill extends StatelessWidget {
-  const _TabPill({
-    required this.label,
-    required this.selected,
-    required this.scheme,
-  });
-
-  final String label;
-  final bool selected;
-  final ColorScheme scheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: selected
-            ? scheme.primary.withValues(alpha: 0.12)
-            : scheme.surface,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: selected ? scheme.primary : scheme.outlineVariant,
-          width: selected ? 1.2 : 1,
-        ),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: selected
-              ? scheme.primary
-              : scheme.onSurface.withValues(alpha: 0.7),
-          fontWeight: FontWeight.w700,
-          fontSize: AppTypography.fs12,
-        ),
-      ),
-    );
-  }
-}
 
 class _BuildCountSection extends StatelessWidget {
   const _BuildCountSection({

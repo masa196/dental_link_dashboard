@@ -34,6 +34,7 @@ class WorkflowStep extends Equatable {
     if (isCurrent) {
       switch (status) {
         case 'assigned':
+        case 'pending_assignment':
           return const Color(0xff64748B);
 
         case 'in_progress':
@@ -54,6 +55,7 @@ class WorkflowStep extends Equatable {
   String get statusLabel {
     switch (status) {
       case 'assigned':
+      case 'pending_assignment':
         return 'Assigned';
 
       case 'in_progress':
@@ -71,5 +73,11 @@ class WorkflowStep extends Equatable {
   }
 
   @override
-  List<Object?> get props => [title, progress, isCurrent, status, hasStatus];
+  List<Object?> get props => [
+        title,
+        progress,
+        isCurrent,
+        status,
+        hasStatus,
+      ];
 }

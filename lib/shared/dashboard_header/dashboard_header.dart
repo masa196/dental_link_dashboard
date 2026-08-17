@@ -14,6 +14,7 @@ class DashboardHeader extends StatelessWidget {
    final Widget? trailing;
    final int notificationCount;
    final bool showNotification;
+   final String? hintText;
 
 
 const DashboardHeader({
@@ -27,6 +28,7 @@ const DashboardHeader({
   this.showNotification = true,
    this.trailing,
    this.notificationCount = 0,
+    this.hintText,
 });
 
   @override
@@ -46,6 +48,7 @@ Widget build(BuildContext context) {
           trailing: trailing,
           notificationCount: notificationCount,
            showNotification: showNotification,
+              hintText: hintText,
         );
       } else if (width >= 700) {
         header = TabletHeader(
@@ -58,6 +61,7 @@ Widget build(BuildContext context) {
           trailing: trailing,
           notificationCount: notificationCount,
            showNotification: showNotification,
+              hintText: hintText,
         );
       } else {
         header = MobileHeader(
@@ -70,6 +74,7 @@ Widget build(BuildContext context) {
           trailing: trailing,
           notificationCount: notificationCount,
            showNotification: showNotification,
+              hintText: hintText,
         );
       }
 

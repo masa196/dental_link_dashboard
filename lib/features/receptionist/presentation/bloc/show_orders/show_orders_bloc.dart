@@ -21,24 +21,40 @@ class ShowOrdersBloc extends Bloc<ShowOrdersEvent, ShowOrdersState> {
     ShowOrdersRequested event,
     Emitter<ShowOrdersState> emit,
   ) async {
-    // 🔥 CORE FIX: normalize priority properly
+    // Preserve the existing priority logic.
     final priority = event.clearPriority
         ? null
         : (event.priority ?? state.currentPriority);
 
-    // 🔥 HARD RESET when ALL is selected
+    // Normalize search.
+    final String? search;
+
+    if (event.clearSearch) {
+      search = null;
+    } else if (event.search != null) {
+      final normalizedSearch = event.search!.trim();
+
+      search = normalizedSearch.isEmpty ? null : normalizedSearch;
+    } else {
+      search = state.currentSearch;
+    }
+
+    // HARD RESET when ALL is selected.
     final isReset = event.clearPriority;
 
     if (isReset) {
-      emit(const ShowOrdersState(
-        orders: [],
-        currentPage: 1,
-        lastPage: 1,
-        currentStatus: null,
-        currentPriority: null,
-        isLoading: true,
-        failure: null,
-      ));
+      emit(
+        ShowOrdersState(
+          orders: const [],
+          currentPage: 1,
+          lastPage: 1,
+          currentStatus: null,
+          currentPriority: null,
+          currentSearch: search,
+          isLoading: true,
+          failure: null,
+        ),
+      );
     } else {
       emit(
         state.copyWith(
@@ -46,6 +62,8 @@ class ShowOrdersBloc extends Bloc<ShowOrdersEvent, ShowOrdersState> {
           failure: null,
           currentStatus: event.status,
           currentPriority: priority,
+          currentSearch: search,
+          clearSearch: search == null,
         ),
       );
     }
@@ -56,15 +74,18 @@ class ShowOrdersBloc extends Bloc<ShowOrdersEvent, ShowOrdersState> {
         perPage: event.perPage,
         status: event.status,
         priority: priority,
+        search: search,
       ),
     );
 
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          isLoading: false,
-          failure: failure,
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            failure: failure,
+          ),
+        );
       },
       (response) {
         final orders = response.data?.data ?? [];
@@ -76,9 +97,12 @@ class ShowOrdersBloc extends Bloc<ShowOrdersEvent, ShowOrdersState> {
               page: event.page - 1,
               perPage: event.perPage,
               priority: priority,
+              search: search,
               clearPriority: event.clearPriority,
+              clearSearch: search == null,
             ),
           );
+
           return;
         }
 
@@ -90,6 +114,8 @@ class ShowOrdersBloc extends Bloc<ShowOrdersEvent, ShowOrdersState> {
             lastPage: response.data?.lastPage ?? 1,
             currentStatus: event.status,
             currentPriority: priority,
+            currentSearch: search,
+            clearSearch: search == null,
           ),
         );
       },
@@ -107,6 +133,7 @@ class ShowOrdersBloc extends Bloc<ShowOrdersEvent, ShowOrdersState> {
         status: state.currentStatus!,
         page: state.currentPage,
         priority: state.currentPriority,
+        search: state.currentSearch,
       ),
     );
   }

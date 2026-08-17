@@ -225,7 +225,8 @@ List<OrderTimelineStep> get timelineSteps {
 
     if (status == 'completed') {
       timelineStatus = TimelineStatus.completed;
-    } else if (status == 'assigned' ||
+    } else if (status == 'pending_assignment' ||
+        status == 'assigned' ||
         status == 'in_progress' ||
         status == 'pending_review') {
       timelineStatus = TimelineStatus.current;
@@ -245,6 +246,9 @@ List<OrderTimelineStep> get timelineSteps {
 
 double _statusProgress(String? status) {
   switch (status) {
+    case 'pending_assignment':
+      return .15;
+
     case 'assigned':
       return .25;
 

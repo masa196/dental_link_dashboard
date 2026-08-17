@@ -43,6 +43,7 @@ class OrderTimelineStep {
     if (isCurrent) {
       switch (status) {
         case 'assigned':
+        case 'pending_assignment':
           return const Color(0xff64748B);
 
         case 'in_progress':
@@ -65,6 +66,7 @@ class OrderTimelineStep {
   String get statusLabel {
     switch (status) {
       case 'assigned':
+      case 'pending_assignment':
         return 'Assigned';
 
       case 'in_progress':

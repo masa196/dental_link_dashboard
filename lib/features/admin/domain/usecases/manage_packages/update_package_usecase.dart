@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:dental_link_dashboard/core/error/app_error.dart';
 import 'package:dental_link_dashboard/features/admin/domain/usecases/base_use_case.dart';
 import 'package:dental_link_dashboard/features/admin/domain/entities/packages_entity/update_package_entity.dart';
-import 'package:dental_link_dashboard/features/admin/domain/repositories/manage_materials/update_package_repository.dart';
+import 'package:dental_link_dashboard/features/admin/domain/repositories/manage_packages/update_package_repository.dart';
 
 @injectable
 class UpdatePackageUsecase

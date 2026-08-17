@@ -9,6 +9,7 @@ class MaterialsHeader extends StatelessWidget {
     required this.title,
     this.onAdd,
     this.onSearch,
+    this.hintText,
     this.showAddButton = true,
     this.onNotificationTap,
     this.addButtonLabel = "إضافة مادة",
@@ -20,6 +21,7 @@ class MaterialsHeader extends StatelessWidget {
   final ValueChanged<String>? onSearch;
   final VoidCallback? onNotificationTap;
   final String addButtonLabel;
+  final String? hintText;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class MaterialsHeader extends StatelessWidget {
         showMenuButton: !Responsive.isDesktop(context),
         title: title,
         onSearch: onSearch,
+        hintText: hintText,
         onNotificationTap: onNotificationTap,
 
         trailing: showAddButton

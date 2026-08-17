@@ -32,77 +32,114 @@ class ManageLabsCompactList extends StatelessWidget {
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final borderColor = Theme.of(context).dividerColor;
-    final background = Theme.of(context).cardColor;
+Widget build(BuildContext context) {
+  final l10n = context.l10n;
+  final borderColor = Theme.of(context).dividerColor;
+  final background = Theme.of(context).cardColor;
 
-    final labs = state.labs;
+  final labs = state.labs;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(AppRadius.xlPlus),
-        border: Border.all(color: borderColor),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: isLoading && labs.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : isFailure && labs.isEmpty
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            context.isArabic
-                                ? 'تعذر تحميل المخابر'
-                                : 'Unable to load labs',
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-                          TextButton(
-                            onPressed: onRetry,
-                            child: Text(
-                              context.isArabic ? 'إعادة المحاولة' : 'Retry',
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      const double minCompactWidth = 300;
+
+      final bool enableHorizontalScroll =
+          constraints.maxWidth < minCompactWidth;
+
+      final Widget content = SizedBox(
+        width: enableHorizontalScroll
+            ? minCompactWidth
+            : constraints.maxWidth,
+        child: Column(
+          children: [
+            Expanded(
+              child: isLoading && labs.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : isFailure && labs.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              context.isArabic
+                                  ? 'تعذر تحميل المخابر'
+                                  : 'Unable to load labs',
+                              textAlign: TextAlign.center,
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: AppSpacing.md),
+                            TextButton(
+                              onPressed: onRetry,
+                              child: Text(
+                                context.isArabic
+                                    ? 'إعادة المحاولة'
+                                    : 'Retry',
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                    )
+                  : labs.isEmpty
+                  ? Center(
+                      child: Text(
+                        context.isArabic
+                            ? 'لا توجد مخابر لعرضها'
+                            : 'No labs available',
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      itemCount: labs.length,
+                      separatorBuilder: (_, _) =>
+                          Divider(
+                            height: AppSpacing.lg,
+                            color: borderColor,
+                          ),
+                      itemBuilder: (context, index) {
+                        return ManageLabsCompactCard(
+                          state: state,
+                          index: index,
+                          l10n: l10n,
+                        );
+                      },
                     ),
-                  )
-                : labs.isEmpty
-                ? Center(
-                    child: Text(
-                      context.isArabic
-                          ? 'لا توجد مخابر لعرضها'
-                          : 'No labs available',
-                    ),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    itemCount: labs.length,
-                    separatorBuilder: (_, _) =>
-                        Divider(height: AppSpacing.lg, color: borderColor),
-                    itemBuilder: (context, index) {
-                      return ManageLabsCompactCard(
-                        state: state,
-                        index: index,
-                        l10n: l10n,
-                      );
-                    },
-                  ),
+            ),
+
+            if (isLoading && labs.isNotEmpty)
+              const LinearProgressIndicator(
+                minHeight: 2,
+              ),
+
+            footer,
+          ],
+        ),
+      );
+
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(
+            AppRadius.xlPlus,
           ),
-          if (isLoading && labs.isNotEmpty)
-            const LinearProgressIndicator(minHeight: 2),
-          footer,
-        ],
-      ),
-    );
-  }
+          border: Border.all(
+            color: borderColor,
+          ),
+        ),
+        child: enableHorizontalScroll
+            ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: content,
+              )
+            : content,
+      );
+    },
+  );
+}
 }
 
 class ManageLabsCompactCard extends StatelessWidget {

@@ -1,7 +1,21 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
-  static const String baseUrl = 'http://127.0.0.1:8000/api';
+  static const String baseUrl =
+      'http://127.0.0.1:8000/api';
+
+  static const Map<String, String> fileHeaders = {
+    'ngrok-skip-browser-warning': 'true',
+  };
+
+  static String resolveFileUrl(String url) {
+    final fileUri = Uri.parse(url);
+    final baseUri = Uri.parse(baseUrl);
+
+    return fileUri
+        .replace(scheme: baseUri.scheme, host: baseUri.host, port: baseUri.port)
+        .toString();
+  }
 
   static const String searchLocation =
       'https://nominatim.openstreetmap.org/search';
@@ -20,6 +34,7 @@ class ApiEndpoints {
   static const String createLabs = '/admin/labs';
   static const String editLabs = '/admin/labs';
   static const String deleteLabs = '/admin/labs';
+  static const String labStatistics = '/admin/labs/stats';
 
   //Manage Packages
   static const String packages = '/admin/packages';
@@ -29,6 +44,14 @@ class ApiEndpoints {
 
   static String deletePackage(int packageId) {
     return '/admin/packages/$packageId';
+  }
+
+  static String getPackageHistorySysAdmin(int labId) {
+    return '/admin/labs/$labId/package/history';
+  }
+
+  static String assignPackageToLab(int labId) {
+    return '/admin/labs/$labId/package';
   }
 
   ///////////////////////////////Lab Manager EndPoints///////////////////////////
@@ -80,6 +103,13 @@ class ApiEndpoints {
   //Strip Link
 
   static const String stripeLink = '/auth/lab/stripe/account-link';
+
+  //System Logs
+  static const String getSystemLogs = '/auth/system-logs';
+
+  //profile
+  //Change Password
+  static const String changePassword = '/auth/change-password';
 
   ////////////////////////////Receptionist EndPoints///////////////////////////
 

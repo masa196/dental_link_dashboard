@@ -38,6 +38,7 @@ class DoctorsView extends StatelessWidget {
           children: [
             DashboardHeader(
               title: "متابعة الأطباء والديون",
+              hintText: "ابحث عن اسم الطبيب أو رقمه",
               showMenuButton: !Responsive.isDesktop(context),
               notificationCount: 0,
               onNotificationTap: () {

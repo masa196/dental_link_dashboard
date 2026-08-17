@@ -105,11 +105,25 @@ class LabManagerDashboardView extends StatelessWidget {
             builder: (context) {
               return DashboardHeader(
                 title: "ادارة الطلبات ",
+                hintText: "ابحث عن اسم الطبيب",
                 showMenuButton: !Responsive.isDesktop(context),
                 onMenuPressed: LayoutScope.of(context).openDrawer,
-                onSearch: (_) {},
-                onNotificationTap: () {},
+                showNotification: false,
+                onSearch: (value) {
+                  final ordersBloc = context.read<ShowOrdersBloc>();
 
+                  final search = value.trim();
+
+                  ordersBloc.add(
+                    ShowOrdersRequested(
+                      status: ordersBloc.state.currentStatus ?? 'new',
+                      page: 1,
+                      priority: ordersBloc.state.currentPriority,
+                      search: search,
+                      clearSearch: search.isEmpty,
+                    ),
+                  );
+                },
                 trailing: ElevatedButton.icon(
                   onPressed: () {
                     context.read<GetOrderDeliveryTimeBloc>().add(
@@ -173,11 +187,10 @@ class LabManagerDashboardView extends StatelessWidget {
                             ShowOrdersRequested(
                               status: tab.apiStatus,
                               page: 1,
-
-                              // 🔥 FIX: لا تربط ALL بأي priority
                               priority: isFirstTab
                                   ? null
                                   : ordersBloc.state.currentPriority,
+                              search: ordersBloc.state.currentSearch,
                             ),
                           );
                         },
@@ -201,6 +214,8 @@ class LabManagerDashboardView extends StatelessWidget {
                             ShowOrdersRequested(
                               status: state.currentStatus!,
                               page: page,
+                              priority: state.currentPriority,
+                              search: state.currentSearch,
                             ),
                           );
                         },

@@ -7,6 +7,7 @@ import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_pa
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/dialogs/add_package_dialog.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/dialogs/delete_package_dialog.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/dialogs/update_package_dialog.dart';
+import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/packages_page.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/widgets/packages_grid.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/materials_header.dart';
 import 'package:dental_link_dashboard/shared/pagination/floating_pagination.dart';
@@ -14,11 +15,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PackagesView extends StatelessWidget {
-  const PackagesView({super.key});
+  const PackagesView({super.key, required this.mode});
 
- 
+  final PackagesPageMode mode;
+
+  bool get isAdmin => mode == PackagesPageMode.admin;
 
   void _showAddDialog(BuildContext context) {
+    if (!isAdmin) return;
+
     showDialog(
       context: context,
       builder: (_) {
@@ -55,46 +60,47 @@ class PackagesView extends StatelessWidget {
                 children: [
                   PackagesGrid(
                     packages: state.packages,
-                 
-
-                    onEdit: (package) {
-                      showDialog(
-                        context: context,
-                        builder: (_) {
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider.value(
-                                value: context.read<UpdatePackageBloc>(),
-                              ),
-
-                              BlocProvider.value(
-                                value: context.read<ShowPackagesBloc>(),
-                              ),
-                            ],
-
-                            child: UpdatePackageDialog(package: package),
-                          );
-                        },
-                      );
-                    },
-                    onDelete: (package) {
-                      showDialog(
-                        context: context,
-                        builder: (_) {
-                          return MultiBlocProvider(
-                            providers: [
-                              BlocProvider.value(
-                                value: context.read<DeletePackageBloc>(),
-                              ),
-                              BlocProvider.value(
-                                value: context.read<ShowPackagesBloc>(),
-                              ),
-                            ],
-                            child: DeletePackageDialog(package: package),
-                          );
-                        },
-                      );
-                    },
+                    mode: mode,
+                    onEdit: isAdmin
+                        ? (package) {
+                            showDialog(
+                              context: context,
+                              builder: (_) {
+                                return MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider.value(
+                                      value: context.read<UpdatePackageBloc>(),
+                                    ),
+                                    BlocProvider.value(
+                                      value: context.read<ShowPackagesBloc>(),
+                                    ),
+                                  ],
+                                  child: UpdatePackageDialog(package: package),
+                                );
+                              },
+                            );
+                          }
+                        : null,
+                    onDelete: isAdmin
+                        ? (package) {
+                            showDialog(
+                              context: context,
+                              builder: (_) {
+                                return MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider.value(
+                                      value: context.read<DeletePackageBloc>(),
+                                    ),
+                                    BlocProvider.value(
+                                      value: context.read<ShowPackagesBloc>(),
+                                    ),
+                                  ],
+                                  child: DeletePackageDialog(package: package),
+                                );
+                              },
+                            );
+                          }
+                        : null,
                   ),
 
                   if (state.isLoading) ...[
@@ -134,16 +140,14 @@ class PackagesView extends StatelessWidget {
                   children: [
                     MaterialsHeader(
                       title: "إدارة الباقات",
-                      showAddButton: true,
-
-                      onAdd: () => _showAddDialog(context),
-
+                      addButtonLabel: "إضافة باقة",
+                      showAddButton: isAdmin,
+                      onAdd: isAdmin ? () => _showAddDialog(context) : null,
                       onSearch: (value) {
                         context.read<ShowPackagesBloc>().add(
                           ShowPackagesRequested(page: 1, search: value),
-                        );                 
+                        );
                       },
-                      
                     ),
                     content,
                   ],
@@ -153,22 +157,18 @@ class PackagesView extends StatelessWidget {
 
             return Column(
               children: [
-                
-
                 MaterialsHeader(
                   title: "إدارة الباقات",
-                   addButtonLabel: "إضافة باقة",
-                  showAddButton: true,
-
-                  onAdd: () => _showAddDialog(context),
-
+                  addButtonLabel: "إضافة باقة",
+                  showAddButton: isAdmin,
+                  onAdd: isAdmin ? () => _showAddDialog(context) : null,
                   onSearch: (value) {
                     context.read<ShowPackagesBloc>().add(
                       ShowPackagesRequested(page: 1, search: value),
                     );
-                  }
+                  },
                 ),
-              Expanded(child: SingleChildScrollView(child: content)),
+                Expanded(child: SingleChildScrollView(child: content)),
               ],
             );
           },

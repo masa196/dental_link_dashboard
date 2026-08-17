@@ -13,6 +13,7 @@ class DesktopHeader extends StatelessWidget {
   final Widget? trailing;
   final int notificationCount;
   final bool showNotification;
+  final String? hintText;
 
   const DesktopHeader({
     super.key,
@@ -23,6 +24,7 @@ class DesktopHeader extends StatelessWidget {
     this.showNotification = true,
     this.trailing,
     this.notificationCount = 0,
+    this.hintText,
   });
 
   @override
@@ -42,7 +44,10 @@ class DesktopHeader extends StatelessWidget {
                 if (showSearchBar) ...[
                   SizedBox(
                     width: 300,
-                    child: DashboardSearchBar(onChanged: onSearch),
+                    child: DashboardSearchBar(
+                      onChanged: onSearch,
+                      hintText: hintText,
+                    ),
                   ),
                   const SizedBox(width: 12),
                 ],

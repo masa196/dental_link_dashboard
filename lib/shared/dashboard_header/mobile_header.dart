@@ -16,6 +16,7 @@ class MobileHeader extends StatelessWidget {
   final Widget? trailing;
   final int notificationCount;
   final bool showNotification;
+  final String? hintText;
 
   const MobileHeader({
     super.key,
@@ -28,6 +29,7 @@ class MobileHeader extends StatelessWidget {
     this.showNotification = true,
     this.trailing,
     this.notificationCount = 0,
+    this.hintText,
   });
 
   @override
@@ -66,7 +68,10 @@ class MobileHeader extends StatelessWidget {
           if (showSearchBar) ...[
             SizedBox(
               width: 220,
-              child: DashboardSearchBar(onChanged: onSearch),
+              child: DashboardSearchBar(
+                onChanged: onSearch,
+                hintText: hintText,
+              ),
             ),
             const SizedBox(width: 12),
           ],

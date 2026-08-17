@@ -14,12 +14,6 @@ class DoctorsError extends StatelessWidget {
 
       padding: const EdgeInsets.all(32),
 
-      decoration: BoxDecoration(
-        color: scheme.onSurfaceVariant,
-
-        borderRadius: BorderRadius.circular(24),
-      ),
-
       child: Column(
         mainAxisSize: MainAxisSize.min,
 

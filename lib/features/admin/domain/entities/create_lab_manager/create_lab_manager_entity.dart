@@ -75,7 +75,7 @@ class CreateLabManagerEntity {
       'address': location?.name,
       'latitude': location?.lat,
       'longitude': location?.lng,
-      'is_active': isActive ? 1 : 0,
+      'is_active': isActive ? '1' : '0',
     };
   }
 }

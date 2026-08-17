@@ -26,6 +26,7 @@ class CreateNewLabDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final screenHeight = MediaQuery.sizeOf(context).height;
 
     return MultiBlocProvider(
       providers: [
@@ -34,102 +35,115 @@ class CreateNewLabDialog extends StatelessWidget {
         BlocProvider(create: (_) => locator<SearchLocationBloc>()),
       ],
       child: Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.xxl),
         ),
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 550),
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: BlocListener<CreateLabManagerBloc, CreateLabManagerBlocState>(
-            listener: (context, blocState) {
-              if (blocState.status == CreateLabManagerRemoteStatus.success) {
-                final successMessage =
-                    blocState.responseModel?.message ?? context.l10n.success;
-                Navigator.of(context).pop(successMessage);
-                return;
-              }
+        clipBehavior: Clip.antiAlias,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 620,
+            maxHeight: screenHeight * 0.90,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.xl,
+              AppSpacing.lg,
+              AppSpacing.xl,
+              AppSpacing.lg,
+            ),
+            child: BlocListener<CreateLabManagerBloc, CreateLabManagerBlocState>(
+              listener: (context, blocState) {
+                if (blocState.status == CreateLabManagerRemoteStatus.success) {
+                  final successMessage =
+                      blocState.responseModel?.message ?? context.l10n.success;
 
-              if (blocState.status == CreateLabManagerRemoteStatus.failure) {
-                AppSnackbarHelper.showFailure(
-                  context,
-                  title: context.l10n.error,
-                  message: blocState.failure?.message ?? context.l10n.error,
-                  failure: blocState.failure,
-                );
-              }
-            },
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.addNewLab,
-                    style: TextStyle(
-                      fontSize: AppTypography.fs18,
-                      fontWeight: FontWeight.w700,
-                      color: context.scheme.primary,
+                  Navigator.of(context).pop(successMessage);
+                  return;
+                }
+
+                if (blocState.status == CreateLabManagerRemoteStatus.failure) {
+                  AppSnackbarHelper.showFailure(
+                    context,
+                    title: context.l10n.error,
+                    message: blocState.failure?.message ?? context.l10n.error,
+                    failure: blocState.failure,
+                  );
+                }
+              },
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // -------------------------------------------------------
+                    // HEADER
+                    // -------------------------------------------------------
+                    _DialogHeader(title: l10n.addNewLab),
+
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // -------------------------------------------------------
+                    // BASIC INFORMATION
+                    // -------------------------------------------------------
+                    const _BuildResponsiveGrid(),
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    // -------------------------------------------------------
+                    // LAB LOGO
+                    // -------------------------------------------------------
+                    BlocBuilder<
+                      CreateLabManagerCubit,
+                      CreateLabManagerCubitState
+                    >(
+                      buildWhen: (p, c) =>
+                          p.entity.photo != c.entity.photo ||
+                          p.entity.photoName != c.entity.photoName,
+                      builder: (context, state) {
+                        return LabPhotoPickerField(
+                          title: l10n.labLogo,
+                          photoBytes: state.entity.photo,
+                          photoName: state.entity.photoName,
+                          onPicked: (bytes, fileName) async {
+                            context
+                                .read<CreateLabManagerCubit>()
+                                .onPhotoChanged(bytes, fileName);
+                          },
+                        );
+                      },
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  const _BuildResponsiveGrid(),
-                  const SizedBox(height: AppSpacing.md),
-                  BlocBuilder<
-                    CreateLabManagerCubit,
-                    CreateLabManagerCubitState
-                  >(
-                    buildWhen: (p, c) =>
-                        p.entity.photo != c.entity.photo ||
-                        p.entity.photoName != c.entity.photoName,
-                    builder: (context, state) {
-                      return LabPhotoPickerField(
-                        title: l10n.labLogo,
-                        photoBytes: state.entity.photo,
-                        photoName: state.entity.photoName,
-                        onPicked: (bytes, fileName) async {
-                          context.read<CreateLabManagerCubit>().onPhotoChanged(
-                            bytes,
-                            fileName,
-                          );
-                        },
-                      );
-                    },
-                  ),
 
-                  const SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: AppSpacing.md),
 
-                  const _LabStatusField(),
+                    // -------------------------------------------------------
+                    // LAB STATUS
+                    // -------------------------------------------------------
+                    const _LabStatusField(),
 
-                  const SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: AppSpacing.md),
 
-                  Align(
-                    alignment: AlignmentDirectional.center,
-                    child: SizedBox(width: 400, child: _EmailField()),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Row(
-                    children: [
-                      Expanded(child: _PasswordField()),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(child: _ConfirmPasswordField()),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  Row(
-                    children: [
-                      Expanded(flex: 2, child: _SubmitButton()),
-                      const SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text(
-                            l10n.cancel,
-                            style: TextStyle(color: context.scheme.onSurface),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    // -------------------------------------------------------
+                    // EMAIL
+                    // -------------------------------------------------------
+                    _EmailField(),
+
+                    const SizedBox(height: AppSpacing.md),
+
+                    // -------------------------------------------------------
+                    // PASSWORDS
+                    // -------------------------------------------------------
+                    const _PasswordFieldsRow(),
+
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // -------------------------------------------------------
+                    // ACTIONS
+                    // -------------------------------------------------------
+                    _DialogActions(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -139,8 +153,70 @@ class CreateNewLabDialog extends StatelessWidget {
   }
 }
 
+// ===========================================================================
+// HEADER
+// ===========================================================================
+
+class _DialogHeader extends StatelessWidget {
+  const _DialogHeader({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: context.scheme.primary.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          child: Icon(
+            Icons.science_outlined,
+            size: 21,
+            color: context.scheme.primary,
+          ),
+        ),
+
+        const SizedBox(width: AppSpacing.md),
+
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: AppTypography.fs20,
+              fontWeight: FontWeight.w700,
+              color: context.scheme.onSurface,
+            ),
+          ),
+        ),
+
+        IconButton(
+          tooltip: context.l10n.cancel,
+          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(
+            Icons.close,
+            size: 21,
+            color: context.scheme.onSurfaceVariant,
+          ),
+          style: IconButton.styleFrom(
+            backgroundColor: context.scheme.surfaceContainerHighest,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ===========================================================================
+// RESPONSIVE BASIC INFORMATION GRID
+// ===========================================================================
+
 class _BuildResponsiveGrid extends StatelessWidget {
   const _BuildResponsiveGrid();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -153,7 +229,9 @@ class _BuildResponsiveGrid extends StatelessWidget {
             Expanded(child: _ManagerNameField()),
           ],
         ),
+
         const SizedBox(height: AppSpacing.md),
+
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -166,6 +244,10 @@ class _BuildResponsiveGrid extends StatelessWidget {
     );
   }
 }
+
+// ===========================================================================
+// LAB NAME
+// ===========================================================================
 
 class _LabNameField extends StatelessWidget {
   @override
@@ -187,6 +269,10 @@ class _LabNameField extends StatelessWidget {
   }
 }
 
+// ===========================================================================
+// MANAGER NAME
+// ===========================================================================
+
 class _ManagerNameField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -207,6 +293,10 @@ class _ManagerNameField extends StatelessWidget {
   }
 }
 
+// ===========================================================================
+// PHONE
+// ===========================================================================
+
 class _PhoneField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -225,6 +315,10 @@ class _PhoneField extends StatelessWidget {
     );
   }
 }
+
+// ===========================================================================
+// EMAIL
+// ===========================================================================
 
 class _EmailField extends StatelessWidget {
   @override
@@ -245,6 +339,10 @@ class _EmailField extends StatelessWidget {
   }
 }
 
+// ===========================================================================
+// LAB STATUS
+// ===========================================================================
+
 class _LabStatusField extends StatelessWidget {
   const _LabStatusField();
 
@@ -256,74 +354,99 @@ class _LabStatusField extends StatelessWidget {
       builder: (context, state) {
         final isActive = state.entity.isActive;
 
-        return Container(
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
           width: double.infinity,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+            vertical: AppSpacing.smPlus,
           ),
           decoration: BoxDecoration(
-            color: context.scheme.surfaceContainerHighest,
+            color: isActive
+                ? context.scheme.primary.withValues(alpha: 0.06)
+                : context.scheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(AppRadius.lg),
           ),
           child: Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 38,
+                height: 38,
                 decoration: BoxDecoration(
                   color: isActive
-                      ? context.scheme.primary.withValues(alpha: 0.10)
+                      ? context.scheme.primary.withValues(alpha: 0.12)
                       : context.scheme.onSurface.withValues(alpha: 0.06),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  isActive
-                      ? Icons.check_circle_outline
-                      : Icons.block_outlined,
-                  size: 21,
+                  isActive ? Icons.check_circle_outline : Icons.block_outlined,
+                  size: 20,
                   color: isActive
                       ? context.scheme.primary
                       : context.scheme.onSurfaceVariant,
                 ),
               ),
+
               const SizedBox(width: AppSpacing.md),
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       context.l10n.labStatus,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: AppTypography.fs16,
                         fontWeight: FontWeight.w600,
+                        color: context.scheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.xs),
+                    const SizedBox(height: 2),
                     Text(
                       isActive
                           ? context.l10n.labAvailable
                           : context.l10n.labUnavailable,
                       style: TextStyle(
-                        fontSize: AppTypography.fs14,
+                        fontSize: AppTypography.fs13,
                         color: context.scheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
               ),
-              Switch(
+
+              Switch.adaptive(
                 value: isActive,
                 onChanged: (value) {
-                  context
-                      .read<CreateLabManagerCubit>()
-                      .onIsActiveChanged(value);
+                  context.read<CreateLabManagerCubit>().onIsActiveChanged(
+                    value,
+                  );
                 },
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+// ===========================================================================
+// PASSWORD FIELDS
+// ===========================================================================
+
+class _PasswordFieldsRow extends StatelessWidget {
+  const _PasswordFieldsRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: _PasswordField()),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(child: _ConfirmPasswordField()),
+      ],
     );
   }
 }
@@ -376,13 +499,16 @@ class _ConfirmPasswordField extends StatelessWidget {
   }
 }
 
+// ===========================================================================
+// LOCATION SEARCH
+// ===========================================================================
+
 class _LocationSearchField extends StatelessWidget {
   const _LocationSearchField();
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CreateLabManagerCubit, CreateLabManagerCubitState>(
-      // إعادة البناء فقط عند تغيير العنوان أو ظهور/اختفاء الخطأ
       buildWhen: (p, c) =>
           p.entity.location != c.entity.location ||
           p.locationError != c.locationError,
@@ -394,21 +520,26 @@ class _LocationSearchField extends StatelessWidget {
               children: [
                 Text(
                   context.l10n.address,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: AppTypography.fs16,
+                    color: context.scheme.onSurface,
                   ),
                 ),
+
                 const SizedBox(height: AppSpacing.xsPlus),
+
                 Autocomplete<LocationModel>(
                   displayStringForOption: (option) => option.name,
                   optionsBuilder: (TextEditingValue textEditingValue) {
                     if (textEditingValue.text.trim().isEmpty) {
                       return const Iterable<LocationModel>.empty();
                     }
+
                     if (searchState is SearchLocationLoaded) {
                       return searchState.model;
                     }
+
                     return const Iterable<LocationModel>.empty();
                   },
                   onSelected: (selection) {
@@ -435,7 +566,9 @@ class _LocationSearchField extends StatelessWidget {
                                     isSelected: false,
                                   ),
                                 );
+
                             if (value.trim().isEmpty) return;
+
                             context.read<SearchLocationBloc>().add(
                               SearchLocationEvent(
                                 CreateLabManagerEntity(
@@ -475,6 +608,7 @@ class _LocationSearchField extends StatelessWidget {
                                 }
 
                                 controller.text = result.name;
+
                                 context
                                     .read<CreateLabManagerCubit>()
                                     .onLocationChanged(
@@ -492,21 +626,27 @@ class _LocationSearchField extends StatelessWidget {
                       },
                   optionsViewBuilder: (context, onSelected, options) {
                     return Align(
-                      alignment: Alignment.topLeft,
+                      alignment: AlignmentDirectional.topStart,
                       child: Material(
                         elevation: 4,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                        clipBehavior: Clip.antiAlias,
                         child: Container(
                           width: 350,
                           constraints: const BoxConstraints(maxHeight: 250),
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.surface,
                           child: ListView.builder(
                             padding: EdgeInsets.zero,
                             itemCount: options.length,
                             itemBuilder: (context, index) {
                               final option = options.elementAt(index);
+
                               return ListTile(
-                                leading: const Icon(Icons.location_on_outlined),
+                                dense: true,
+                                leading: Icon(
+                                  Icons.location_on_outlined,
+                                  color: context.scheme.primary,
+                                ),
                                 title: Text(
                                   option.name,
                                   maxLines: 2,
@@ -530,6 +670,49 @@ class _LocationSearchField extends StatelessWidget {
   }
 }
 
+// ===========================================================================
+// ACTIONS
+// ===========================================================================
+
+class _DialogActions extends StatelessWidget {
+  const _DialogActions();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(flex: 2, child: _SubmitButton()),
+
+        const SizedBox(width: AppSpacing.md),
+
+        Expanded(
+          child: OutlinedButton(
+            onPressed: () => Navigator.pop(context),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+              side: BorderSide(color: context.scheme.outlineVariant),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
+            ),
+            child: Text(
+              context.l10n.cancel,
+              style: TextStyle(
+                color: context.scheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ===========================================================================
+// SUBMIT BUTTON
+// ===========================================================================
+
 class _SubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -544,7 +727,9 @@ class _SubmitButton extends StatelessWidget {
               ? null
               : () {
                   final cubit = context.read<CreateLabManagerCubit>();
+
                   final isValid = cubit.validate(context.l10n);
+
                   if (isValid) {
                     context.read<CreateLabManagerBloc>().add(
                       CreateLabManagerSubmitted(params: cubit.state.entity),
@@ -563,12 +748,19 @@ class _SubmitButton extends StatelessWidget {
           ),
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.md),
+            ),
           ),
         );
       },
     );
   }
 }
+
+// ===========================================================================
+// GENERIC TEXT FIELD
+// ===========================================================================
 
 class _BuildTextField extends StatelessWidget {
   final String label;
@@ -594,12 +786,15 @@ class _BuildTextField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: AppTypography.fs16,
+            color: context.scheme.onSurface,
           ),
         ),
+
         const SizedBox(height: AppSpacing.xsPlus),
+
         TextField(
           obscureText: isPassword,
           onChanged: onChanged,
@@ -617,7 +812,10 @@ class _BuildTextField extends StatelessWidget {
             suffixIcon: onPasswordToggle != null
                 ? IconButton(
                     icon: Icon(
-                      isPassword ? Icons.visibility_off : Icons.visibility,
+                      isPassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      size: 20,
                     ),
                     onPressed: onPasswordToggle,
                   )

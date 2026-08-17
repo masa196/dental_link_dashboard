@@ -1,3 +1,4 @@
+import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dental_link_dashboard/core/constants/app_fonts/app_typography.dart';
@@ -28,7 +29,9 @@ class EditEmployeeProfileCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: scheme.surface,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.16)),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.16),
+            ),
             boxShadow: [
               BoxShadow(
                 color: scheme.shadow.withValues(alpha: 0.06),
@@ -50,16 +53,45 @@ class EditEmployeeProfileCard extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [scheme.primary.withValues(alpha: 0.16), scheme.surfaceContainerLow],
+                        colors: [
+                          scheme.primary.withValues(alpha: 0.16),
+                          scheme.surfaceContainerLow,
+                        ],
                       ),
-                      border: Border.all(color: scheme.primary.withValues(alpha: 0.22), width: 2.6),
+                      border: Border.all(
+                        color: scheme.primary.withValues(alpha: 0.22),
+                        width: 2.6,
+                      ),
                     ),
                     child: ClipOval(
                       child: state.profileImageBytes != null
-                          ? Image.memory(state.profileImageBytes!, fit: BoxFit.cover)
-                          : (state.profileImagePath != null && state.profileImagePath!.isNotEmpty
-                              ? Image.network(state.profileImagePath!, fit: BoxFit.cover)
-                              : Icon(Icons.person_rounded, size: 64, color: scheme.onSurface.withValues(alpha: 0.30))),
+                          ? Image.memory(
+                              state.profileImageBytes!,
+                              fit: BoxFit.cover,
+                            )
+                          : (state.profileImagePath != null &&
+                                    state.profileImagePath!.isNotEmpty
+                                ? Image.network(
+                                    ApiEndpoints.resolveFileUrl(
+                                      state.profileImagePath!,
+                                    ),
+                                    headers: ApiEndpoints.fileHeaders,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, _, _) => Icon(
+                                      Icons.person_rounded,
+                                      size: 64,
+                                      color: scheme.onSurface.withValues(
+                                        alpha: 0.30,
+                                      ),
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.person_rounded,
+                                    size: 64,
+                                    color: scheme.onSurface.withValues(
+                                      alpha: 0.30,
+                                    ),
+                                  )),
                     ),
                   ),
                   PositionedDirectional(
@@ -74,7 +106,11 @@ class EditEmployeeProfileCard extends StatelessWidget {
                         customBorder: const CircleBorder(),
                         child: const Padding(
                           padding: EdgeInsets.all(9),
-                          child: Icon(Icons.camera_alt_rounded, size: 17, color: Colors.white),
+                          child: Icon(
+                            Icons.camera_alt_rounded,
+                            size: 17,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -84,7 +120,11 @@ class EditEmployeeProfileCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 isArabic ? 'الصورة الشخصية' : 'Employee photo',
-                style: TextStyle(fontSize: AppTypography.fs14, fontWeight: FontWeight.w700, color: scheme.onSurface),
+                style: TextStyle(
+                  fontSize: AppTypography.fs14,
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onSurface,
+                ),
               ),
               const SizedBox(height: 12),
               SizedBox(
@@ -98,7 +138,9 @@ class EditEmployeeProfileCard extends StatelessWidget {
                     foregroundColor: scheme.primary,
                     elevation: 0,
                     minimumSize: const Size.fromHeight(42),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.lg),
+                    ),
                   ),
                 ),
               ),

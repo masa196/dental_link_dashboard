@@ -46,210 +46,253 @@ class _DialogBody extends StatelessWidget {
 
   final LabModel lab;
 
+  static const double maxDialogWidth = 550;
+  static const double horizontalScrollThreshold = 300;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.xxl),
-      ),
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 550),
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: BlocListener<EditLabManagerBloc, EditLabManagerBlocState>(
-          listener: (context, blocState) {
-            if (blocState.status == EditLabManagerRemoteStatus.success) {
-              Navigator.of(
-                context,
-              ).pop(blocState.responseModel?.message ?? context.l10n.success);
-            }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final shouldScrollHorizontally =
+            constraints.maxWidth < horizontalScrollThreshold;
 
-            if (blocState.status == EditLabManagerRemoteStatus.failure) {
-              AppSnackbarHelper.showFailure(
-                context,
-                title: context.l10n.error,
-                message: blocState.failure?.message ?? context.l10n.error,
-                failure: blocState.failure,
-              );
-            }
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.editingLaboratoryInformation,
-                  style: TextStyle(
-                    fontSize: AppTypography.fs18,
-                    fontWeight: FontWeight.w700,
-                    color: context.scheme.primary,
+        final dialogContent = Container(
+          constraints: const BoxConstraints(
+            maxWidth: maxDialogWidth,
+          ),
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: BlocListener<EditLabManagerBloc, EditLabManagerBlocState>(
+            listener: (context, blocState) {
+              if (blocState.status == EditLabManagerRemoteStatus.success) {
+                Navigator.of(context).pop(
+                  blocState.responseModel?.message ??
+                      context.l10n.success,
+                );
+              }
+
+              if (blocState.status == EditLabManagerRemoteStatus.failure) {
+                AppSnackbarHelper.showFailure(
+                  context,
+                  title: context.l10n.error,
+                  message:
+                      blocState.failure?.message ?? context.l10n.error,
+                  failure: blocState.failure,
+                );
+              }
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.editingLaboratoryInformation,
+                    style: TextStyle(
+                      fontSize: AppTypography.fs18,
+                      fontWeight: FontWeight.w700,
+                      color: context.scheme.primary,
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: AppSpacing.xl),
+                  const SizedBox(height: AppSpacing.xl),
 
-                Row(
-                  children: const [
-                    Expanded(
-                      child: _LabTextField(
-                        title: 'labName',
-                        hint: '',
-                        icon: Icons.business_outlined,
-                        valueSelector: _Selectors.labName,
-                        errorSelector: _Selectors.labNameError,
-                        onChanged: _CubitActions.updateLabName,
-                      ),
-                    ),
-                    SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: _LabTextField(
-                        title: 'labManager',
-                        hint: '',
-                        icon: Icons.person_outline,
-                        valueSelector: _Selectors.managerName,
-                        errorSelector: _Selectors.managerNameError,
-                        onChanged: _CubitActions.updateManagerName,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: AppSpacing.md),
-
-                Row(
-                  children: const [
-                    Expanded(child: _LocationField()),
-                    SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: _LabTextField(
-                        title: 'phone',
-                        hint: '',
-                        icon: Icons.phone_outlined,
-                        valueSelector: _Selectors.phone,
-                        errorSelector: _Selectors.phoneError,
-                        onChanged: _CubitActions.updatePhone,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: AppSpacing.md),
-
-                const _LabTextField(
-                  title: 'email',
-                  hint: '',
-                  icon: Icons.email_outlined,
-                  valueSelector: _Selectors.email,
-                  errorSelector: _Selectors.emailError,
-                  onChanged: _CubitActions.updateEmail,
-                ),
-
-                const SizedBox(height: AppSpacing.md),
-
-                BlocBuilder<EditLabManagerCubit, EditLabManagerCubitState>(
-                  builder: (context, state) {
-                    return LabPhotoPickerField(
-                      title: 'Photo',
-                      photoBytes: state.photo,
-                      photoUrl: lab.photo,
-                      photoName: state.photoName,
-                      onPicked: (bytes, fileName) async {
-                        context.read<EditLabManagerCubit>().updatePhoto(
-                          bytes,
-                          fileName,
-                        );
-                      },
-                    );
-                  },
-                ),
-
-                const SizedBox(height: AppSpacing.md),
-                const SizedBox(height: AppSpacing.md),
-
-                const _LabStatusField(),
-
-                const SizedBox(height: AppSpacing.md),
-
-                const Row(
-                  children: [
-                    Expanded(child: _PasswordField(isConfirmation: false)),
-                    SizedBox(width: AppSpacing.md),
-                    Expanded(child: _PasswordField(isConfirmation: true)),
-                  ],
-                ),
-
-                const SizedBox(height: AppSpacing.xl),
-
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child:
-                          BlocBuilder<
-                            EditLabManagerBloc,
-                            EditLabManagerBlocState
-                          >(
-                            builder: (context, blocState) {
-                              final isLoading =
-                                  blocState.status ==
-                                  EditLabManagerRemoteStatus.loading;
-
-                              return FilledButton.icon(
-                                onPressed: isLoading
-                                    ? null
-                                    : () {
-                                        final cubit = context
-                                            .read<EditLabManagerCubit>();
-
-                                        if (cubit.validateInputs()) {
-                                          context
-                                              .read<EditLabManagerBloc>()
-                                              .add(
-                                                EditLabManagerSubmitted(
-                                                  params: cubit.state.entity,
-                                                ),
-                                              );
-                                        }
-                                      },
-                                icon: isLoading
-                                    ? const SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : const Icon(Icons.save, size: 18),
-                                label: Text(context.l10n.saveChanges),
-                                style: FilledButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: AppSpacing.md,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                    ),
-
-                    const SizedBox(width: AppSpacing.md),
-
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(
-                          context.l10n.cancel,
-                          style: TextStyle(color: context.scheme.onSurface),
+                  Row(
+                    children: const [
+                      Expanded(
+                        child: _LabTextField(
+                          title: 'labName',
+                          hint: '',
+                          icon: Icons.business_outlined,
+                          valueSelector: _Selectors.labName,
+                          errorSelector: _Selectors.labNameError,
+                          onChanged: _CubitActions.updateLabName,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: _LabTextField(
+                          title: 'labManager',
+                          hint: '',
+                          icon: Icons.person_outline,
+                          valueSelector: _Selectors.managerName,
+                          errorSelector: _Selectors.managerNameError,
+                          onChanged: _CubitActions.updateManagerName,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  Row(
+                    children: const [
+                      Expanded(child: _LocationField()),
+                      SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: _LabTextField(
+                          title: 'phone',
+                          hint: '',
+                          icon: Icons.phone_outlined,
+                          valueSelector: _Selectors.phone,
+                          errorSelector: _Selectors.phoneError,
+                          onChanged: _CubitActions.updatePhone,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  const _LabTextField(
+                    title: 'email',
+                    hint: '',
+                    icon: Icons.email_outlined,
+                    valueSelector: _Selectors.email,
+                    errorSelector: _Selectors.emailError,
+                    onChanged: _CubitActions.updateEmail,
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  BlocBuilder<
+                    EditLabManagerCubit,
+                    EditLabManagerCubitState
+                  >(
+                    builder: (context, state) {
+                      return LabPhotoPickerField(
+                        title: 'Photo',
+                        photoBytes: state.photo,
+                        photoUrl: lab.photo,
+                        photoName: state.photoName,
+                        onPicked: (bytes, fileName) async {
+                          context
+                              .read<EditLabManagerCubit>()
+                              .updatePhoto(bytes, fileName);
+                        },
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: AppSpacing.md),
+                  const SizedBox(height: AppSpacing.md),
+
+                  const _LabStatusField(),
+
+                  const SizedBox(height: AppSpacing.md),
+
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: _PasswordField(
+                          isConfirmation: false,
+                        ),
+                      ),
+                      SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: _PasswordField(
+                          isConfirmation: true,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: AppSpacing.xl),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: BlocBuilder<
+                          EditLabManagerBloc,
+                          EditLabManagerBlocState
+                        >(
+                          builder: (context, blocState) {
+                            final isLoading =
+                                blocState.status ==
+                                EditLabManagerRemoteStatus.loading;
+
+                            return FilledButton.icon(
+                              onPressed: isLoading
+                                  ? null
+                                  : () {
+                                      final cubit = context
+                                          .read<EditLabManagerCubit>();
+
+                                      if (cubit.validateInputs()) {
+                                        context
+                                            .read<EditLabManagerBloc>()
+                                            .add(
+                                              EditLabManagerSubmitted(
+                                                params: cubit.state.entity,
+                                              ),
+                                            );
+                                      }
+                                    },
+                              icon: isLoading
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Icon(
+                                      Icons.save,
+                                      size: 18,
+                                    ),
+                              label: Text(
+                                context.l10n.saveChanges,
+                              ),
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: AppSpacing.md,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(width: AppSpacing.md),
+
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            context.l10n.cancel,
+                            style: TextStyle(
+                              color: context.scheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.xxl),
+          ),
+          child: shouldScrollHorizontally
+              ? SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: maxDialogWidth,
+                    ),
+                    child: dialogContent,
+                  ),
+                )
+              : dialogContent,
+        );
+      },
     );
   }
 }

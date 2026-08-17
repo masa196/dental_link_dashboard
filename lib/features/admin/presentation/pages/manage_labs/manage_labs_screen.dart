@@ -1,4 +1,10 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:dental_link_dashboard/core/extensions/context_extensions.dart';
+import 'package:dental_link_dashboard/core/responsive/responsive.dart';
+import 'package:dental_link_dashboard/features/admin/presentation/bloc/lab_statistics/lab_statistics_bloc.dart';
+import 'package:dental_link_dashboard/features/admin/presentation/bloc/lab_statistics/lab_statistics_bloc_event.dart';
+import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_labs/widgets/add_lab_button.dart';
+import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:dental_link_dashboard/core/constants/app_values/app_spacing.dart';
@@ -7,8 +13,7 @@ import 'package:dental_link_dashboard/features/admin/presentation/bloc/labs/mana
 import 'package:dental_link_dashboard/features/admin/presentation/bloc/labs/manage_labs/manage_labs_bloc_event.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/cubit/manage_labs/manage_labs_cubit.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/cubit/manage_labs/manage_labs_cubit_state.dart';
-import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_labs/widgets/manage_labs_header.dart';
-import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_labs/widgets/manage_labs_stats.dart';
+import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_labs/widgets/labs_statistics.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_labs/widgets/manage_labs_table.dart';
 
 class ManageLabsScreen extends StatelessWidget {
@@ -20,6 +25,9 @@ class ManageLabsScreen extends StatelessWidget {
     this.onMenuTap,
     this.showMenu = false,
   });
+
+  static const double shortHeightThreshold = 400;
+  static const double shortHeightTable = 300;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +46,10 @@ class ManageLabsScreen extends StatelessWidget {
               ),
             ),
         ),
+        BlocProvider(
+          create: (_) => locator<LabStatisticsBloc>()
+            ..add(const LabStatisticsFetchRequested()),
+        ),
       ],
       child: BlocListener<ManageLabsCubit, ManageLabsUiState>(
         listenWhen: (previous, current) =>
@@ -52,17 +64,59 @@ class ManageLabsScreen extends StatelessWidget {
                 ),
               );
         },
-        child: Column(
-          children: [
-            ManageLabsHeader(
-              showMenu: showMenu,
-              onMenuTap: onMenuTap,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            const ManageLabsStats(),
-            const SizedBox(height: AppSpacing.lg),
-            const Expanded(child: ManageLabsTable()),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isShortHeight =
+                constraints.maxHeight < shortHeightThreshold;
+
+            final header = DashboardHeader(
+              title: context.l10n.manageLabsTitle,
+              showMenuButton: !Responsive.isDesktop(context),
+              showSearchBar: false,
+              showNotification: false,
+              trailing: const AddLabButton(),
+            );
+
+            final statistics = const LabsStatistics();
+
+            // Normal height
+            if (!isShortHeight) {
+              return Column(
+                children: [
+                  header,
+                  const SizedBox(height: AppSpacing.lg),
+                  statistics,
+                  const SizedBox(height: AppSpacing.lg),
+                  const Expanded(
+                    child: ManageLabsTable(),
+                  ),
+                ],
+              );
+            }
+
+            // Short height:
+            // Header + statistics + table become vertically scrollable.
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  header,
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  statistics,
+
+                  const SizedBox(height: AppSpacing.lg),
+
+                  const SizedBox(
+                    height: shortHeightTable,
+                    child: ManageLabsTable(),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

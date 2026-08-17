@@ -11,6 +11,7 @@ class ShowOrdersState extends Equatable {
     this.lastPage = 1,
     this.currentStatus,
     this.currentPriority,
+    this.currentSearch,
   });
 
   final List<OrderModel> orders;
@@ -22,6 +23,7 @@ class ShowOrdersState extends Equatable {
 
   final String? currentStatus;
   final String? currentPriority;
+  final String? currentSearch;
 
   ShowOrdersState copyWith({
     List<OrderModel>? orders,
@@ -31,6 +33,8 @@ class ShowOrdersState extends Equatable {
     int? lastPage,
     String? currentStatus,
     String? currentPriority,
+    String? currentSearch,
+    bool clearSearch = false,
   }) {
     return ShowOrdersState(
       orders: orders ?? this.orders,
@@ -40,6 +44,9 @@ class ShowOrdersState extends Equatable {
       lastPage: lastPage ?? this.lastPage,
       currentStatus: currentStatus ?? this.currentStatus,
       currentPriority: currentPriority ?? this.currentPriority,
+      currentSearch: clearSearch
+          ? null
+          : currentSearch ?? this.currentSearch,
     );
   }
 
@@ -52,5 +59,6 @@ class ShowOrdersState extends Equatable {
         lastPage,
         currentStatus,
         currentPriority,
+        currentSearch,
       ];
 }

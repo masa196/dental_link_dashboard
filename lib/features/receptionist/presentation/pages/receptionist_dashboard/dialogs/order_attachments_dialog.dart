@@ -1,3 +1,4 @@
+import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
 import 'package:dental_link_dashboard/features/receptionist/data/models/orders_model/orders_model.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -7,11 +8,14 @@ class OrderAttachmentsDialog extends StatelessWidget {
 
   final List<FileElement> files;
 
-  Future<void> _openFile(String url) async {
-    final uri = Uri.parse(url);
+Future<void> _openFile(String url) async {
+  final fixedUrl = ApiEndpoints.resolveFileUrl(url);
 
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
+  await launchUrl(
+    Uri.parse(fixedUrl),
+    mode: LaunchMode.externalApplication,
+  );
+}
 
   @override
   Widget build(BuildContext context) {

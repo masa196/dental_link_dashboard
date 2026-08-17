@@ -239,10 +239,10 @@ class OrderModel extends Equatable {
   });
 }
 
-
 double _mapTaskStatusToProgress(String? status) {
   switch (status) {
     case 'assigned':
+    case 'pending_assignment':
       return 0.0;
 
     case 'in_progress':

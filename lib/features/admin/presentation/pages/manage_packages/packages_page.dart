@@ -8,14 +8,23 @@ import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_p
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+enum PackagesPageMode {
+  admin,
+  labManager,
+}
+
 class PackagesPage extends StatelessWidget {
-  const PackagesPage({super.key});
+  const PackagesPage({
+    super.key,
+    this.mode = PackagesPageMode.admin,
+  });
+
+  final PackagesPageMode mode;
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-
         BlocProvider(
           lazy: false,
           create: (_) =>
@@ -23,26 +32,23 @@ class PackagesPage extends StatelessWidget {
                 ..add(const ShowPackagesRequested()),
         ),
 
-        BlocProvider(
-          create: (_) =>
-              locator<AddPackageBloc>(),
-        ),
+        // هذه الـ Blocs نحتاجها فقط في وضع Admin
+        if (mode == PackagesPageMode.admin)
+          BlocProvider(
+            create: (_) => locator<AddPackageBloc>(),
+          ),
 
-         BlocProvider(
-          create: (_) =>
-              locator<UpdatePackageBloc>(),
-        ),
+        if (mode == PackagesPageMode.admin)
+          BlocProvider(
+            create: (_) => locator<UpdatePackageBloc>(),
+          ),
 
-        BlocProvider(
-          create: (_) =>
-              locator<DeletePackageBloc>(),
-        ),
-
+        if (mode == PackagesPageMode.admin)
+          BlocProvider(
+            create: (_) => locator<DeletePackageBloc>(),
+          ),
       ],
-
-      child: const PackagesView(
-
-      ),
+      child: PackagesView(mode: mode),
     );
   }
 }

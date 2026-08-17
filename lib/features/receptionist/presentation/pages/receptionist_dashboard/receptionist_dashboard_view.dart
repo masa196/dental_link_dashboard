@@ -61,6 +61,8 @@ class ReceptionistDashboardView extends StatelessWidget {
                 ShowOrdersRequested(
                   status: ordersState.currentStatus!,
                   page: ordersState.currentPage,
+                  priority: ordersState.currentPriority,
+                  search: ordersState.currentSearch,
                 ),
               );
             }
@@ -81,6 +83,8 @@ class ReceptionistDashboardView extends StatelessWidget {
                 ShowOrdersRequested(
                   status: ordersState.currentStatus!,
                   page: ordersState.currentPage,
+                  priority: ordersState.currentPriority,
+                  search: ordersState.currentSearch,
                 ),
               );
             }
@@ -100,9 +104,24 @@ class ReceptionistDashboardView extends StatelessWidget {
         children: [
           DashboardHeader(
             title: "ادارة الطلبات",
+            hintText: "ابحث عن اسم الطبيب",
             showMenuButton: !Responsive.isDesktop(context),
             onMenuPressed: ReceptionistLayoutScope.of(context).openDrawer,
-            onSearch: (_) {},
+            onSearch: (value) {
+              final ordersBloc = context.read<ShowOrdersBloc>();
+
+              final search = value.trim();
+
+              ordersBloc.add(
+                ShowOrdersRequested(
+                  status: ordersBloc.state.currentStatus ?? 'new',
+                  page: 1,
+                  priority: ordersBloc.state.currentPriority,
+                  search: search,
+                  clearSearch: search.isEmpty,
+                ),
+              );
+            },
 
             onNotificationTap: () {
               NotificationsDialog.show(context);
@@ -140,11 +159,10 @@ class ReceptionistDashboardView extends StatelessWidget {
                             ShowOrdersRequested(
                               status: tab.apiStatus,
                               page: 1,
-
-                              // 🔥 FIX: لا تربط ALL بأي priority
                               priority: isFirstTab
                                   ? null
                                   : ordersBloc.state.currentPriority,
+                              search: ordersBloc.state.currentSearch,
                             ),
                           );
                         },
@@ -168,6 +186,8 @@ class ReceptionistDashboardView extends StatelessWidget {
                             ShowOrdersRequested(
                               status: state.currentStatus!,
                               page: page,
+                              priority: state.currentPriority,
+                              search: state.currentSearch,
                             ),
                           );
                         },

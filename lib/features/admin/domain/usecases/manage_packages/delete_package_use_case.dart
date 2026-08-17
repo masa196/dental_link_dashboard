@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:dental_link_dashboard/features/admin/domain/repositories/manage_materials/delete_package_repository.dart';
+import 'package:dental_link_dashboard/features/admin/domain/repositories/manage_packages/delete_package_repository.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:dental_link_dashboard/core/error/app_error.dart';

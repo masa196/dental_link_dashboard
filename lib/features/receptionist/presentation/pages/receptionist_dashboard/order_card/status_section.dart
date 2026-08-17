@@ -7,6 +7,7 @@ class StatusSection extends StatelessWidget {
   final OrderModel order;
   final bool showAttachment;
   final VoidCallback? onAttachmentsPressed;
+
   const StatusSection({
     super.key,
     required this.order,
@@ -22,7 +23,9 @@ class StatusSection extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 120),
+          constraints: const BoxConstraints(
+            maxWidth: 120,
+          ),
           child: FittedBox(
             fit: BoxFit.scaleDown,
             child: OutlinePill(
@@ -36,34 +39,53 @@ class StatusSection extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-       InkWell(
-  onTap: showAttachment
-      ? onAttachmentsPressed
-      : null,
-  borderRadius: BorderRadius.circular(10),
-  child: Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: 6,
-      vertical: 10,
-    ),
-    decoration: BoxDecoration(
-      color: scheme.surface,
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: scheme.outline),
-    ),
-    child: const Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.attach_file,size:14),
-        SizedBox(width:6),
-        Text(
-          "ملحقات الطلبية",
-          style: TextStyle(fontSize:12),
+        ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 160,
+          ),
+          child: InkWell(
+            onTap: showAttachment
+                ? onAttachmentsPressed
+                : null,
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 10,
+              ),
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: scheme.outline,
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.attach_file,
+                    size: 14,
+                  ),
+
+                  const SizedBox(width: 6),
+
+                  Expanded(
+                    child: Text(
+                      "ملحقات الطلبية",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-      ],
-    ),
-  ),
-),
       ],
     );
   }

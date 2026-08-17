@@ -47,7 +47,7 @@ class DoctorsEmpty extends StatelessWidget {
             const SizedBox(height: 8),
 
             Text(
-              "لم يتم العثور على أي طبيب مطابق للبحث الحالي",
+              "لم يتم العثور على أي طبيب",
               textAlign: TextAlign.center,
               style: Theme.of(context)
                   .textTheme

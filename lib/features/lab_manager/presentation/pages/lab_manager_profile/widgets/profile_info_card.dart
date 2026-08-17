@@ -45,11 +45,11 @@ class ProfileInfoCard extends StatelessWidget {
           height: AppSpacing.md,
         ),
 
-        ProfileInfoField(
+    /*    ProfileInfoField(
           icon: Icons.location_on_outlined,
           label: 'الموقع',
           value: user.location?.toString() ?? '-',
-        ),
+        ),*/
       ],
     );
   }
@@ -73,13 +73,14 @@ class ProfileInfoCard extends StatelessWidget {
         const SizedBox(
           height: AppSpacing.md,
         ),
-
+     
+     /*
         ProfileInfoField(
           icon: Icons.calendar_month_outlined,
           label: 'تاريخ الميلاد',
           value: user.birthdate?.toString() ?? '-',
         ),
-
+*/
         const SizedBox(
           height: AppSpacing.md,
         ),

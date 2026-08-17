@@ -1,7 +1,6 @@
 import 'package:dental_link_dashboard/features/lab_manager/data/models/show_materials/show_materials_model.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/material_card.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/materials_mode.dart';
-
 import 'package:flutter/material.dart';
 
 class MaterialsGrid extends StatelessWidget {
@@ -9,17 +8,14 @@ class MaterialsGrid extends StatelessWidget {
     super.key,
     required this.materials,
     required this.mode,
-
     this.onEdit,
     this.onDelete,
   });
 
   final List<MaterialItem> materials;
-
   final MaterialsMode mode;
 
   final ValueChanged<MaterialItem>? onEdit;
-
   final ValueChanged<MaterialItem>? onDelete;
 
   @override
@@ -28,49 +24,66 @@ class MaterialsGrid extends StatelessWidget {
       builder: (_, constraints) {
         final columns = _columns(constraints.maxWidth);
 
-        return GridView.builder(
-          shrinkWrap: true,
+        const cardWidth = 280.0;
+        const spacing = 22.0;
 
-          physics: const NeverScrollableScrollPhysics(),
+        final cardHeight = mode.canEdit ? 350.0 : 260.0;
 
-          itemCount: materials.length,
+        final totalWidth =
+            (cardWidth * columns) +
+            (spacing * (columns - 1));
 
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: columns,
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: totalWidth < constraints.maxWidth
+                ? constraints.maxWidth
+                : totalWidth,
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: materials.length,
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                crossAxisSpacing: spacing,
+                mainAxisSpacing: spacing,
+                mainAxisExtent: cardHeight,
+                childAspectRatio: cardWidth / cardHeight,
+              ),
+              itemBuilder: (_, index) {
+                final material = materials[index];
 
-            crossAxisSpacing: 24,
-
-            mainAxisSpacing: 24,
-
-            childAspectRatio: mode.canEdit ? .95 : 1.1,
+                return SizedBox(
+                  width: cardWidth,
+                  child: MaterialCard(
+                    material: material,
+                    mode: mode,
+                    onEdit: () {
+                      onEdit?.call(material);
+                    },
+                    onDelete: () {
+                      onDelete?.call(material);
+                    },
+                  ),
+                );
+              },
+            ),
           ),
-
-          itemBuilder: (_, index) {
-            final material = materials[index];
-
-            return MaterialCard(
-              material: material,
-              mode: mode,
-              onEdit: () {
-                onEdit?.call(material);
-              },
-              onDelete: () {
-                onDelete?.call(material);
-              },
-            );
-          },
         );
       },
     );
   }
 
   int _columns(double width) {
-    if (width >= 1200) return 4;
+    if (width >= 1200) {
+      return 4;
+    }
 
-    if (width >= 1100) return 3;
+    if (width >= 900) {
+      return 3;
+    }
 
-    if (width >= 600) return 2;
-
-    return 1;
+    return 3;
   }
 }

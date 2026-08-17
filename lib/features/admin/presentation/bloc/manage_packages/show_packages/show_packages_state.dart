@@ -13,15 +13,10 @@ class ShowPackagesState extends Equatable {
   });
 
   final List<PackageItemModel> packages;
-
   final AppFailure? failure;
-
   final bool isLoading;
-
   final int currentPage;
-
   final int lastPage;
-
   final String? currentSearch;
 
   ShowPackagesState copyWith({

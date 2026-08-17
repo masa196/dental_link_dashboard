@@ -1,3 +1,4 @@
+import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/models/order_details/order_details_model.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -95,9 +96,14 @@ class AttachmentsCard extends StatelessWidget {
     );
   }
 
-  Future<void> _openFile(String url) async {
-    final uri = Uri.parse(url);
+ Future<void> _openFile(String url) async {
+  final fixedUrl = ApiEndpoints.resolveFileUrl(url);
 
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
+  final uri = Uri.parse(fixedUrl);
+
+  await launchUrl(
+    uri,
+    mode: LaunchMode.externalApplication,
+  );
+}
 }

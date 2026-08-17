@@ -47,6 +47,10 @@ RouteBase get $mainShellRoute => ShellRouteData.$route(
           path: 'details/:labId',
           factory: $LabDetailsRoute._fromState,
         ),
+        GoRouteData.$route(
+          path: 'package-history/:labId',
+          factory: $PackageHistorySysAdminRoute._fromState,
+        ),
       ],
     ),
     GoRouteData.$route(path: '/profile', factory: $ProfileRoute._fromState),
@@ -96,6 +100,31 @@ mixin $LabDetailsRoute on GoRouteData {
   @override
   String get location => GoRouteData.$location(
     '/manage-labs/details/${Uri.encodeComponent(_self.labId)}',
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $PackageHistorySysAdminRoute on GoRouteData {
+  static PackageHistorySysAdminRoute _fromState(GoRouterState state) =>
+      PackageHistorySysAdminRoute(labId: state.pathParameters['labId']!);
+
+  PackageHistorySysAdminRoute get _self => this as PackageHistorySysAdminRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/manage-labs/package-history/${Uri.encodeComponent(_self.labId)}',
   );
 
   @override
@@ -228,6 +257,14 @@ RouteBase get $labManagerShellRoute => ShellRouteData.$route(
     GoRouteData.$route(
       path: '/lab-manager/doctors/:doctorId/orders/:orderId',
       factory: $DoctorOrderDetailsRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: '/lab-manager/system-logs',
+      factory: $LabManagerSystemLogsRoute._fromState,
+    ),
+    GoRouteData.$route(
+      path: '/lab-manager/packages',
+      factory: $LabManagerPackagesRoute._fromState,
     ),
     GoRouteData.$route(
       path: '/lab-manager/profile',
@@ -551,6 +588,48 @@ mixin $DoctorOrderDetailsRoute on GoRouteData {
   String get location => GoRouteData.$location(
     '/lab-manager/doctors/${Uri.encodeComponent(_self.doctorId.toString())}/orders/${Uri.encodeComponent(_self.orderId.toString())}',
   );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $LabManagerSystemLogsRoute on GoRouteData {
+  static LabManagerSystemLogsRoute _fromState(GoRouterState state) =>
+      const LabManagerSystemLogsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/lab-manager/system-logs');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $LabManagerPackagesRoute on GoRouteData {
+  static LabManagerPackagesRoute _fromState(GoRouterState state) =>
+      const LabManagerPackagesRoute();
+
+  @override
+  String get location => GoRouteData.$location('/lab-manager/packages');
 
   @override
   void go(BuildContext context) => context.go(location);

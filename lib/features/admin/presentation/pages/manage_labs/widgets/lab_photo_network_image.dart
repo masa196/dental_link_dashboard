@@ -1,3 +1,4 @@
+import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
 import 'package:flutter/material.dart';
 
 class LabPhotoNetworkImage extends StatelessWidget {
@@ -16,9 +17,9 @@ class LabPhotoNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final url = photoUrl?.trim();
+    final rawUrl = photoUrl?.trim();
 
-    if (url == null || url.isEmpty) {
+    if (rawUrl == null || rawUrl.isEmpty) {
       return _PhotoFallback(
         width: width,
         height: height,
@@ -26,18 +27,29 @@ class LabPhotoNetworkImage extends StatelessWidget {
       );
     }
 
+    final resolvedUrl = ApiEndpoints.resolveFileUrl(rawUrl);
+
+    debugPrint('Lab photo raw URL: $rawUrl');
+    debugPrint('Lab photo resolved URL: $resolvedUrl');
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: Image.network(
-        url,
+        resolvedUrl,
         width: width,
         height: height,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _PhotoFallback(
-          width: width,
-          height: height,
-          borderRadius: borderRadius,
-        ),
+        headers: ApiEndpoints.fileHeaders,
+        errorBuilder: (context, error, stackTrace) {
+          debugPrint('Failed to load lab photo: $resolvedUrl');
+          debugPrint('Image error: $error');
+
+          return _PhotoFallback(
+            width: width,
+            height: height,
+            borderRadius: borderRadius,
+          );
+        },
       ),
     );
   }

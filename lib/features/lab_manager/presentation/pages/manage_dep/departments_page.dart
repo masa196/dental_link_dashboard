@@ -762,13 +762,8 @@ class _EmployeeCompactCard extends StatelessWidget {
 
   String? _resolveImageUrl(String? raw) {
     if (raw == null || raw.isEmpty) return null;
-    if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
-    final baseUri = Uri.parse(
-      ApiEndpoints.baseUrl.endsWith('/')
-          ? ApiEndpoints.baseUrl
-          : '${ApiEndpoints.baseUrl}/',
-    );
-    return baseUri.resolve(raw).toString();
+
+    return ApiEndpoints.resolveFileUrl(raw);
   }
 }
 
@@ -806,6 +801,7 @@ class _EmployeeAvatar extends StatelessWidget {
             )
           : Image.network(
               imageUrl!,
+              headers: ApiEndpoints.fileHeaders,
               fit: BoxFit.cover,
               errorBuilder: (_, _, _) => Center(
                 child: Text(

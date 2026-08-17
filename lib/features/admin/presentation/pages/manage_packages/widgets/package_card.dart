@@ -1,19 +1,20 @@
 import 'package:dental_link_dashboard/features/admin/data/models/packages/packages_model.dart';
+import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/packages_page.dart';
 import 'package:flutter/material.dart';
 
 class PackageCard extends StatefulWidget {
   const PackageCard({
     super.key,
     required this.package,
+    required this.mode,
     this.onEdit,
     this.onDelete,
   });
 
   final PackageItemModel package;
-
   final VoidCallback? onEdit;
-
   final VoidCallback? onDelete;
+  final PackagesPageMode mode;
 
   @override
   State<PackageCard> createState() => _PackageCardState();
@@ -25,6 +26,7 @@ class _PackageCardState extends State<PackageCard> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final isAdmin = widget.mode == PackagesPageMode.admin;
 
     return MouseRegion(
       onEnter: (_) {
@@ -32,7 +34,6 @@ class _PackageCardState extends State<PackageCard> {
           hovered = true;
         });
       },
-
       onExit: (_) {
         setState(() {
           hovered = false;
@@ -41,16 +42,12 @@ class _PackageCardState extends State<PackageCard> {
 
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-
         transform: hovered
             ? Matrix4.translationValues(0, -4, 0)
             : Matrix4.identity(),
-
         padding: const EdgeInsets.all(18),
-
         decoration: BoxDecoration(
           color: scheme.surface,
-
           borderRadius: BorderRadius.circular(26),
 
           boxShadow: [
@@ -58,9 +55,7 @@ class _PackageCardState extends State<PackageCard> {
               color: hovered
                   ? scheme.primary.withValues(alpha: .12)
                   : Colors.black.withValues(alpha: .04),
-
               blurRadius: hovered ? 28 : 18,
-
               offset: const Offset(0, 12),
             ),
           ],
@@ -68,162 +63,106 @@ class _PackageCardState extends State<PackageCard> {
 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
             _StatusBadge(active: widget.package.isActive),
-
             const SizedBox(height: 12),
-
             Text(
               widget.package.name ?? "-",
-
               maxLines: 2,
-
               overflow: TextOverflow.ellipsis,
-
               textDirection: TextDirection.rtl,
-
               style: TextStyle(
                 fontSize: 18,
-
                 fontWeight: FontWeight.w800,
-
                 color: scheme.onSurface,
               ),
             ),
-
             const SizedBox(height: 10),
-
             _DurationCard(days: widget.package.durationDays),
-
             const SizedBox(height: 10),
-
             _DescriptionCard(description: widget.package.description),
-
             const SizedBox(height: 8),
-
             Divider(color: scheme.outlineVariant),
-
             const SizedBox(height: 4),
-
             Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "السعر",
 
-  width: double.infinity,
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
 
-  padding: const EdgeInsets.symmetric(
-    vertical: 8,
-  ),
+                      fontSize: 15,
 
-  child: Row(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
 
-    mainAxisAlignment:
-    MainAxisAlignment.spaceBetween,
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: widget.package.price ?? "0",
 
+                          style: TextStyle(
+                            fontSize: 20,
 
-    children: [
+                            fontWeight: FontWeight.w900,
 
-      Text(
+                            color: scheme.primary,
+                          ),
+                        ),
 
-        "السعر",
+                        TextSpan(
+                          text: " ل.س",
 
-        style: TextStyle(
+                          style: TextStyle(
+                            fontSize: 14,
 
-          color:
-          scheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w700,
 
-          fontSize: 15,
-
-          fontWeight:
-          FontWeight.w600,
-
-        ),
-
-      ),
-
-
-      RichText(
-
-        text: TextSpan(
-
-          children: [
-
-            TextSpan(
-
-              text:
-              widget.package.price ?? "0",
-
-
-              style: TextStyle(
-
-                fontSize: 20,
-
-                fontWeight:
-                FontWeight.w900,
-
-                color:
-                scheme.primary,
-
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-
             ),
-
-
-            TextSpan(
-
-              text:
-              " ل.س",
-
-
-              style: TextStyle(
-
-                fontSize: 14,
-
-                fontWeight:
-                FontWeight.w700,
-
-                color:
-                scheme.onSurfaceVariant,
-
-              ),
-
-            ),
-
-          ],
-
-        ),
-
-      ),
-
-    ],
-
-  ),
-
-),
             const SizedBox(height: 14),
 
-            Row(
-              children: [
-                Expanded(
-                  child: _ActionButton(
-                    title: "تعديل",
-                    color: scheme.primary,
-                    background: scheme.primary.withValues(alpha: .12),
-                    onTap: widget.onEdit,
-                  ),
-                ),
+            if (isAdmin) ...[
+              const SizedBox(height: 14),
 
-                const SizedBox(width: 10),
-
-                Expanded(
-                  child: _ActionButton(
-                    title: "حذف",
-                    color: scheme.error,
-                    background: scheme.error.withValues(alpha: .12),
-                    onTap: widget.onDelete,
+              Row(
+                children: [
+                  Expanded(
+                    child: _ActionButton(
+                      title: "تعديل",
+                      color: scheme.primary,
+                      background: scheme.primary.withValues(alpha: .12),
+                      onTap: widget.onEdit,
+                    ),
                   ),
-                ),
-              ],
-            ),
+
+                  const SizedBox(width: 10),
+
+                  Expanded(
+                    child: _ActionButton(
+                      title: "حذف",
+                      color: scheme.error,
+                      background: scheme.error.withValues(alpha: .12),
+                      onTap: widget.onDelete,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
@@ -358,96 +297,60 @@ class _DurationCard extends StatelessWidget {
     );
   }
 
- String _formatDuration(int? days) {
-
-  if (days == null || days <= 0) {
-    return "-";
-  }
-
-
-  // سنة كاملة
-  if (days >= 360 && days <= 370) {
-    return "سنة";
-  }
-
-
-  final months = days ~/ 30;
-
-  final remainingDays = days % 30;
-
-
-
-  if (months > 0 && remainingDays == 0) {
-
-
-    if (months == 1) {
-      return "شهر واحد";
+  String _formatDuration(int? days) {
+    if (days == null || days <= 0) {
+      return "-";
     }
 
-
-    if (months == 2) {
-      return "شهران";
+    // سنة كاملة
+    if (days >= 360 && days <= 370) {
+      return "سنة";
     }
 
+    final months = days ~/ 30;
 
-    return "$months أشهر";
+    final remainingDays = days % 30;
 
-  }
+    if (months > 0 && remainingDays == 0) {
+      if (months == 1) {
+        return "شهر واحد";
+      }
 
+      if (months == 2) {
+        return "شهران";
+      }
 
-
-  if (months > 0) {
-
-
-    if (months == 1) {
-
-      return "شهر و $remainingDays يوم";
-
+      return "$months أشهر";
     }
 
+    if (months > 0) {
+      if (months == 1) {
+        return "شهر و $remainingDays يوم";
+      }
 
-    return "$months أشهر و $remainingDays يوم";
+      return "$months أشهر و $remainingDays يوم";
+    }
 
+    return "$days يوم";
   }
-
-
-
-  return "$days يوم";
-
-}
 }
 
 class _DescriptionCard extends StatelessWidget {
-
-  const _DescriptionCard({
-    required this.description,
-  });
-
+  const _DescriptionCard({required this.description});
 
   final String? description;
 
-
-
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
 
-    final scheme =
-        Theme.of(context).colorScheme;
-
-
-    final text =
-    description?.trim().isNotEmpty == true
+    final text = description?.trim().isNotEmpty == true
         ? description!.trim()
         : "لا يوجد وصف";
 
-
-    final isLong =
-        text.length > 80;
-
-
+    final isLong = text.length > 80;
 
     return Container(
-
       width: double.infinity,
 
       height: 95,
@@ -455,175 +358,97 @@ class _DescriptionCard extends StatelessWidget {
       padding: const EdgeInsets.all(10),
 
       decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest.withValues(alpha: .45),
 
-        color: scheme.surfaceContainerHighest
-            .withValues(alpha: .45),
-
-        borderRadius:
-        BorderRadius.circular(18),
-
+        borderRadius: BorderRadius.circular(18),
       ),
 
-
       child: Column(
-
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-
           Text(
-
             "وصف الباقة",
 
             style: TextStyle(
-
               fontSize: 13,
 
               fontWeight: FontWeight.w700,
 
               color: scheme.onSurfaceVariant,
-
             ),
-
           ),
-
 
           const SizedBox(height: 5),
 
-
-
           Row(
-
-            crossAxisAlignment:
-            CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
 
             children: [
-
               Expanded(
-
                 child: SizedBox(
-
                   height: 38,
 
                   child: Text(
-
                     text,
 
                     maxLines: 2,
 
-                    overflow:
-                    TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis,
 
-                    textDirection:
-                    TextDirection.rtl,
-
+                    textDirection: TextDirection.rtl,
 
                     style: TextStyle(
-
                       fontSize: 14,
 
                       height: 1.4,
 
                       color: scheme.onSurface,
-
                     ),
-
                   ),
-
                 ),
-
               ),
 
-
-
-              if(isLong)
-
+              if (isLong)
                 InkWell(
-
-                  onTap: (){
-
-                    _showFullDescription(
-                      context,
-                      text,
-                    );
-
+                  onTap: () {
+                    _showFullDescription(context, text);
                   },
 
-
                   child: Text(
-
                     "عرض",
 
                     style: TextStyle(
-
                       fontSize: 12,
 
-                      fontWeight:
-                      FontWeight.w700,
+                      fontWeight: FontWeight.w700,
 
-                      color:
-                      scheme.primary,
-
+                      color: scheme.primary,
                     ),
-
                   ),
-
                 ),
-
             ],
-
           ),
-
         ],
-
       ),
-
     );
-
   }
 
-
-
-  void _showFullDescription(
-      BuildContext context,
-      String description,
-      ){
-
+  void _showFullDescription(BuildContext context, String description) {
     showDialog(
-
       context: context,
 
       builder: (_) {
-
         return AlertDialog(
+          title: const Text("وصف الباقة"),
 
-          title:
-          const Text("وصف الباقة"),
-
-
-          content:
-          SingleChildScrollView(
-
-            child: Text(
-
-              description,
-
-              textDirection:
-              TextDirection.rtl,
-
-            ),
-
+          content: SingleChildScrollView(
+            child: Text(description, textDirection: TextDirection.rtl),
           ),
-
         );
-
       },
-
     );
-
   }
-
 }
 
 class _ActionButton extends StatelessWidget {

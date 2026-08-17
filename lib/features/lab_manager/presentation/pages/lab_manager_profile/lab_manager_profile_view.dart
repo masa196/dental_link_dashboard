@@ -8,7 +8,6 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/lab
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/lab_manager_profile/lab_manager_profile_state.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/stripe_link/stripe_link_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/stripe_link/stripe_link_state.dart';
-import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/lab_manager_profile/widgets/header/profile_header.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/lab_manager_profile/widgets/profile_card.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/lab_manager_profile/widgets/profile_info_card.dart';
 import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
@@ -82,6 +81,7 @@ class _LabManagerProfileViewState extends State<LabManagerProfileView> {
             child: Column(
               children: [
                 DashboardHeader(
+                  showNotification: false,
                   title: context.isArabic
                       ? 'الملف الشخصي'
                       : 'Profile',
@@ -130,6 +130,7 @@ class _LabManagerProfileViewState extends State<LabManagerProfileView> {
       return Column(
         children: [
           DashboardHeader(
+             showNotification: false,
             title: context.isArabic
                 ? 'الملف الشخصي'
                 : 'Profile',
@@ -194,10 +195,12 @@ class _LabManagerProfileViewState extends State<LabManagerProfileView> {
 }) {
   return Column(
     children: [
+      /*
       ProfileHeader(
         user: user,
         roles: state.response?.data?.roles ?? [],
       ),
+      */
 
       const SizedBox(height: 28),
 
@@ -235,13 +238,28 @@ class _StripeStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<StripeLinkBloc, StripeLinkState>(
       builder: (context, state) {
+        // ============================================================
+        // Stripe is still loading:
+        // Show the card itself with a loading indicator.
+        // ============================================================
         if (state.isLoading) {
-          return const SizedBox.shrink();
+          return const ProfileCard(
+            title: 'حساب Stripe',
+            icon: Icons.account_balance_outlined,
+            child: SizedBox(
+              height: 80,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
         }
 
         final failure = state.failure;
 
+        // ============================================================
         // 400 = Stripe account is already active.
+        // ============================================================
         if (failure?.statusCode == 400) {
           return const _StripeInfoContent(
             icon: Icons.check_circle_outline,
@@ -249,12 +267,17 @@ class _StripeStatusCard extends StatelessWidget {
           );
         }
 
-        // Any failure other than 400 = show nothing.
+        // ============================================================
+        // Any failure other than 400:
+        // Show nothing.
+        // ============================================================
         if (failure != null) {
           return const SizedBox.shrink();
         }
 
+        // ============================================================
         // Successful response.
+        // ============================================================
         final url = state.response?.data?.url;
 
         if (url == null || url.isEmpty) {
@@ -293,7 +316,6 @@ class _StripeInfoContent extends StatelessWidget {
         children: [
           Text(
             message,
-            
             style: TextStyle(
               fontSize: AppTypography.fs14,
               fontWeight: FontWeight.w600,
@@ -359,19 +381,19 @@ class _StripeInfoContent extends StatelessWidget {
     );
   }
 
- Future<void> _openStripeLink(
-  BuildContext context,
-  String url,
-) async {
-  final uri = Uri.tryParse(url);
+  Future<void> _openStripeLink(
+    BuildContext context,
+    String url,
+  ) async {
+    final uri = Uri.tryParse(url);
 
-  if (uri == null) {
-    return;
+    if (uri == null) {
+      return;
+    }
+
+    await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
   }
-
-  await launchUrl(
-    uri,
-    mode: LaunchMode.externalApplication,
-  );
-}
 }

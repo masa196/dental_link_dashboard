@@ -72,7 +72,7 @@ class EditLabManagerEntity {
       'address': location?.name,
       'latitude': location?.lat,
       'longitude': location?.lng,
-      'is_active': isActive,
+      'is_active': isActive ? '1' : '0',
     };
   }
 }

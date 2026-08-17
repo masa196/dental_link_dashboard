@@ -20,7 +20,7 @@ class DeliveryTasksEmptyState extends StatelessWidget {
           const SizedBox(height: 12),
 
           Text(
-            "No Delivery Tasks",
+            "لا يوجد مهام توصيل ",
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -30,12 +30,7 @@ class DeliveryTasksEmptyState extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          Text(
-            "There are no assigned delivery tasks yet.",
-            style: TextStyle(
-              color: scheme.onSurfaceVariant,
-            ),
-          ),
+        
         ],
       ),
     );

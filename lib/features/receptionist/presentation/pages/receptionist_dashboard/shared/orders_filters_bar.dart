@@ -17,21 +17,75 @@ class OrdersFiltersBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(
-          child: DashboardTabs(
-            tabs: tabs,
-            selectedIndex: selectedIndex,
-            onTap: onTabChanged,
-          ),
-        ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const priorityWidth = 150.0;
+        const spacing = 24.0;
 
-        const SizedBox(width: 24),
+        /*
+         * الحد الأدنى للمساحة المطلوبة حتى يبقى
+         * الـ Tabs والـ PriorityFilter بدون ضغط.
+         */
+        const minimumTabsWidth = 300.0;
 
-        const PriorityFilter(),
-      ],
+        final minimumRequiredWidth =
+            minimumTabsWidth +
+            spacing +
+            priorityWidth;
+
+        final shouldScroll =
+            constraints.maxWidth < minimumRequiredWidth;
+
+        if (shouldScroll) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            child: SizedBox(
+              width: minimumRequiredWidth,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: minimumTabsWidth,
+                    child: DashboardTabs(
+                      tabs: tabs,
+                      selectedIndex: selectedIndex,
+                      onTap: onTabChanged,
+                    ),
+                  ),
+
+                  const SizedBox(width: spacing),
+
+                  const SizedBox(
+                    width: priorityWidth,
+                    child: PriorityFilter(),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: DashboardTabs(
+                tabs: tabs,
+                selectedIndex: selectedIndex,
+                onTap: onTabChanged,
+              ),
+            ),
+
+            const SizedBox(width: spacing),
+
+            const SizedBox(
+              width: priorityWidth,
+              child: PriorityFilter(),
+            ),
+          ],
+        );
+      },
     );
   }
 }

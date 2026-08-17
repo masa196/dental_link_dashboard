@@ -104,6 +104,24 @@ class LabManagerSideNav extends StatelessWidget {
                         onTap: () =>
                             const LabManagerShowDoctorsRoute().go(context),
                       ),
+                      _NavItem(
+                        icon: Icons.history_outlined,
+                        label: isArabic ? 'سجل عمليات النظام' : 'System Logs',
+                        active: location.startsWith('/lab-manager/system-logs'),
+                        compact: compact,
+                        onTap: () =>
+                            const LabManagerSystemLogsRoute().go(context),
+                      ),
+                       _NavItem(
+                        icon: Icons.inventory_2_outlined,
+                        label: isArabic ? 'الباقات' : 'packages',
+                        active: location.startsWith('/lab-manager/packages'),
+                        compact: compact,
+                        onTap: () =>
+                            const LabManagerPackagesRoute().go(context),
+                      ),
+
+                      
 
                       const Spacer(),
                       _NavItem(
@@ -194,7 +212,6 @@ class LabManagerSideNav extends StatelessWidget {
 
         await sub.cancel();
         await bloc.close();
-        
       }
 
       if (state.isFailure) {

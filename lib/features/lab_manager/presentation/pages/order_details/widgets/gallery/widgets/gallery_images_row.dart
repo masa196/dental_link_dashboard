@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:dental_link_dashboard/core/api/api_endpoints.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -26,11 +27,7 @@ class GalleryImagesRow extends StatelessWidget {
 
   final bool editable;
 
-  Future<void> _pickImage(
-    BuildContext context,
-    bool before,
-  ) async {
-
+  Future<void> _pickImage(BuildContext context, bool before) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       withData: true,
@@ -43,45 +40,35 @@ class GalleryImagesRow extends StatelessWidget {
     if (file.bytes == null) return;
 
     if (before) {
-      onBeforeSelected?.call(
-        file.bytes!,
-        file.name,
-      );
+      onBeforeSelected?.call(file.bytes!, file.name);
     } else {
-      onAfterSelected?.call(
-        file.bytes!,
-        file.name,
-      );
+      onAfterSelected?.call(file.bytes!, file.name);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children:[
+      children: [
         Expanded(
-          child:_ImageBox(
-            title:"قبل العلاج",
-            bytes:beforeBytes,
-            imageUrl:beforeImageUrl,
-            editable:editable,
-            onTap:editable
-                ? ()=>_pickImage(context,true)
-                : null,
+          child: _ImageBox(
+            title: "قبل العلاج",
+            bytes: beforeBytes,
+            imageUrl: beforeImageUrl,
+            editable: editable,
+            onTap: editable ? () => _pickImage(context, true) : null,
           ),
         ),
 
-        const SizedBox(width:16),
+        const SizedBox(width: 16),
 
         Expanded(
-          child:_ImageBox(
-            title:"بعد العلاج",
-            bytes:afterBytes,
-            imageUrl:afterImageUrl,
-            editable:editable,
-            onTap:editable
-                ? ()=>_pickImage(context,false)
-                : null,
+          child: _ImageBox(
+            title: "بعد العلاج",
+            bytes: afterBytes,
+            imageUrl: afterImageUrl,
+            editable: editable,
+            onTap: editable ? () => _pickImage(context, false) : null,
           ),
         ),
       ],
@@ -90,7 +77,6 @@ class GalleryImagesRow extends StatelessWidget {
 }
 
 class _ImageBox extends StatelessWidget {
-
   const _ImageBox({
     required this.title,
     this.bytes,
@@ -107,78 +93,54 @@ class _ImageBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     Widget image;
 
-    if(bytes != null){
-
+    if (bytes != null) {
       image = Image.memory(
         bytes!,
-        height:140,
-        width:double.infinity,
-        fit:BoxFit.cover,
+        height: 140,
+        width: double.infinity,
+        fit: BoxFit.cover,
       );
-
-    }else if(imageUrl != null){
-
+    } else if (imageUrl != null) {
       image = Image.network(
-        imageUrl!,
-        height:140,
-        width:double.infinity,
-        fit:BoxFit.cover,
+        ApiEndpoints.resolveFileUrl(imageUrl!),
+        headers: ApiEndpoints.fileHeaders,
+        height: 140,
+        width: double.infinity,
+        fit: BoxFit.cover,
       );
-
-    }else{
-
-      image = const Icon(
-        Icons.add_photo_alternate_outlined,
-        size:40,
-      );
-
+    } else {
+      image = const Icon(Icons.add_photo_alternate_outlined, size: 40);
     }
 
-
     return Column(
-      crossAxisAlignment:CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
 
-      children:[
+      children: [
+        Text(title, style: Theme.of(context).textTheme.labelLarge),
 
-        Text(
-          title,
-          style:
-          Theme.of(context)
-              .textTheme
-              .labelLarge,
-        ),
-
-        const SizedBox(height:8),
+        const SizedBox(height: 8),
 
         InkWell(
-          onTap:editable ? onTap : null,
+          onTap: editable ? onTap : null,
 
-          borderRadius:
-          BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16),
 
-          child:Container(
-            height:140,
-            width:double.infinity,
+          child: Container(
+            height: 140,
+            width: double.infinity,
 
-            decoration:BoxDecoration(
-              borderRadius:
-              BorderRadius.circular(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
 
-              border:Border.all(
-                color:
-                Theme.of(context)
-                    .dividerColor,
-              ),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
 
-            child:ClipRRect(
-              borderRadius:
-              BorderRadius.circular(16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
 
-              child:image,
+              child: image,
             ),
           ),
         ),

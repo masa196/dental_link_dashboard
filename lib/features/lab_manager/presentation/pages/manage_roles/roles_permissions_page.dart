@@ -1,4 +1,4 @@
-import 'package:dental_link_dashboard/core/navigation/lab_manager_layout.dart';
+
 import 'package:dental_link_dashboard/core/services/locator.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/models/matrix_roles_and_permissions/all_permissions_model.dart';
 import 'package:dental_link_dashboard/features/lab_manager/data/models/matrix_roles_and_permissions/matrix_roles_and_permissions_model.dart';
@@ -13,24 +13,16 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/man
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_roles/get_matrix_roles_and_permissions/get_matrix_roles_and_permissions_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_roles/get_matrix_roles_and_permissions/get_matrix_roles_and_permissions_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_roles/get_matrix_roles_and_permissions/get_matrix_roles_and_permissions_state.dart';
-
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_roles/update_matrix_roles_and_permissions/update_matrix_roles_and_permissions_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_roles/update_matrix_roles_and_permissions/update_matrix_roles_and_permissions_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_roles/update_matrix_roles_and_permissions/update_matrix_roles_and_permissions_state.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_roles/widgets/create_role_dialog.dart';
-
 import 'package:dental_link_dashboard/features/lab_manager/presentation/widgets/department_snackbar_helper.dart';
-
-import 'package:dental_link_dashboard/shared/widgets/side_nav_menu_button.dart';
-
+import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:dental_link_dashboard/core/constants/app_fonts/app_typography.dart';
-import 'package:dental_link_dashboard/core/constants/app_values/app_spacing.dart';
 import 'package:dental_link_dashboard/core/extensions/context_extensions.dart';
 import 'package:dental_link_dashboard/core/responsive/responsive.dart';
-
 import 'widgets/matrix_header.dart';
 import 'widgets/permission_row.dart';
 
@@ -230,172 +222,260 @@ class _RolesPermissionsViewState extends State<_RolesPermissionsView> {
   // =========================
 
   @override
-  Widget build(BuildContext context) {
-    final scheme = context.scheme;
-    final isArabic = context.isArabic;
-    final isMobile = Responsive.isMobile(context);
+Widget build(BuildContext context) {
+  final scheme = context.scheme;
+  final isArabic = context.isArabic;
+  final isMobile = Responsive.isMobile(context);
 
-    return MultiBlocListener(
-      listeners: [
-        // UPDATE MATRIX
-        BlocListener<
-          UpdateMatrixRolesAndPermissonsBloc,
-          UpdateMatrixRolesAndPermissonsState
+  return MultiBlocListener(
+    listeners: [
+      // UPDATE MATRIX
+      BlocListener<
+        UpdateMatrixRolesAndPermissonsBloc,
+        UpdateMatrixRolesAndPermissonsState
+      >(
+        listener: (context, state) {
+          if (state.isSuccess) {
+            _cancelEditing();
+
+            context.read<GetMatrixRolesAndPermissionsBloc>().add(
+              const LoadMatrixRolesAndPermissions(),
+            );
+
+            AppSnackbarHelper.showSuccess(
+              context,
+              title: "Success",
+              message: state.message ?? "Updated successfully",
+            );
+          }
+
+          if (state.failure != null) {
+            AppSnackbarHelper.showFailure(
+              context,
+              title: "Error",
+              message: state.failure!.message,
+              failure: state.failure,
+            );
+          }
+        },
+      ),
+
+      // DELETE ROLE
+      BlocListener<DeleteRoleBloc, DeleteRoleState>(
+        listener: (context, state) {
+          if (state.isSuccess) {
+            context.read<GetMatrixRolesAndPermissionsBloc>().add(
+              const LoadMatrixRolesAndPermissions(),
+            );
+
+            AppSnackbarHelper.showSuccess(
+              context,
+              title: "Deleted",
+              message: state.message ?? "Role deleted successfully",
+            );
+
+            context.read<DeleteRoleBloc>().add(
+              const ResetDeleteRoleState(),
+            );
+          }
+
+          if (state.failure != null) {
+            AppSnackbarHelper.showFailure(
+              context,
+              title: "Error",
+              message: state.failure!.message,
+              failure: state.failure,
+            );
+
+            context.read<DeleteRoleBloc>().add(
+              const ResetDeleteRoleState(),
+            );
+          }
+        },
+      ),
+    ],
+
+    child: BlocBuilder<
+      GetMatrixRolesAndPermissionsBloc,
+      GetMatrixRolesAndPermissionsState
+    >(
+      builder: (context, matrixState) {
+        if (matrixState.isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (matrixState.isFailure) {
+          return Center(
+            child: Text(
+              matrixState.failure?.message ?? "Error",
+            ),
+          );
+        }
+
+        return BlocBuilder<
+          GetAllPermissionsBloc,
+          GetAllPermissionsState
         >(
-          listener: (context, state) {
-            if (state.isSuccess) {
-              _cancelEditing();
+          builder: (context, permissionState) {
+            final matrix =
+                matrixState.response?.data?.matrix ?? [];
 
-              context.read<GetMatrixRolesAndPermissionsBloc>().add(
-                const LoadMatrixRolesAndPermissions(),
+            final permissions =
+                permissionState.response?.data?.permissions ?? [];
+
+            _permissionNameToId
+              ..clear()
+              ..addEntries(
+                permissions.map(
+                  (e) => MapEntry(
+                    e.name ?? '',
+                    e.id ?? 0,
+                  ),
+                ),
               );
 
-              AppSnackbarHelper.showSuccess(
-                context,
-                title: "Success",
-                message: state.message ?? "Updated successfully",
-              );
-            }
+            return Column(
+              children: [
+                DashboardHeader(
+                  title: isArabic
+                      ? "الأدوار والصلاحيات"
+                      : "Roles & Permissions",
+                  showSearchBar: false,
+                  showNotification: false,
+                  showMenuButton: !Responsive.isDesktop(context),
+                  trailing: FilledButton.icon(
+                    onPressed: () async {
+                      final permissions =
+                          context
+                              .read<GetAllPermissionsBloc>()
+                              .state
+                              .response
+                              ?.data
+                              ?.permissions ??
+                          [];
 
-            if (state.failure != null) {
-              AppSnackbarHelper.showFailure(
-                context,
-                title: "Error",
-                message: state.failure!.message,
-                failure: state.failure,
-              );
-            }
-          },
-        ),
+                      final result = await showDialog<bool>(
+                        context: context,
+                        builder: (dialogContext) {
+                          return BlocProvider.value(
+                            value: context.read<CreateRoleBloc>(),
+                            child: CreateRoleDialog(
+                              permissions: permissions,
+                            ),
+                          );
+                        },
+                      );
 
-        // DELETE ROLE
-        BlocListener<DeleteRoleBloc, DeleteRoleState>(
-          listener: (context, state) {
-            if (state.isSuccess) {
-              context.read<GetMatrixRolesAndPermissionsBloc>().add(
-                const LoadMatrixRolesAndPermissions(),
-              );
+                      if (!context.mounted) return;
 
-              AppSnackbarHelper.showSuccess(
-                context,
-                title: "Deleted",
-                message: state.message ?? "Role deleted successfully",
-              );
+                      if (result == true) {
+                        context
+                            .read<
+                              GetMatrixRolesAndPermissionsBloc
+                            >()
+                            .add(
+                              const LoadMatrixRolesAndPermissions(),
+                            );
 
-              context.read<DeleteRoleBloc>().add(const ResetDeleteRoleState());
-            }
+                        context
+                            .read<GetAllPermissionsBloc>()
+                            .add(
+                              const LoadAllPermissions(),
+                            );
+                      }
+                    },
+                    icon: const Icon(Icons.add),
+                    label: Text(
+                      isArabic
+                          ? "إضافة دور"
+                          : "Add Role",
+                    ),
+                  ),
+                ),
 
-            if (state.failure != null) {
-              AppSnackbarHelper.showFailure(
-                context,
-                title: "Error",
-                message: state.failure!.message,
-                failure: state.failure,
-              );
+                const SizedBox(height: 12),
 
-              context.read<DeleteRoleBloc>().add(const ResetDeleteRoleState());
-            }
-          },
-        ),
-      ],
-      child:
-          BlocBuilder<
-            GetMatrixRolesAndPermissionsBloc,
-            GetMatrixRolesAndPermissionsState
-          >(
-            builder: (context, matrixState) {
-              if (matrixState.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 12 : 24,
+                    ),
+                    child: _MatrixTable(
+                      matrix: matrix,
+                      permissions: permissions,
+                      isArabic: isArabic,
+                      scheme: scheme,
+                      isEditing: _isEditing,
+                      editedMatrix: _editedMatrix,
+                      onPermissionChanged: _togglePermission,
+                    ),
+                  ),
+                ),
 
-              if (matrixState.isFailure) {
-                return Center(
-                  child: Text(matrixState.failure?.message ?? "Error"),
-                );
-              }
+                const SizedBox(height: 16),
 
-              return BlocBuilder<GetAllPermissionsBloc, GetAllPermissionsState>(
-                builder: (context, permissionState) {
-                  final matrix = matrixState.response?.data?.matrix ?? [];
-                  final permissions =
-                      permissionState.response?.data?.permissions ?? [];
-
-                  _permissionNameToId
-                    ..clear()
-                    ..addEntries(
-                      permissions.map((e) => MapEntry(e.name ?? '', e.id ?? 0)),
-                    );
-
-                  return Column(
-                    children: [
-                      _HeaderSection(isArabic: isArabic, scheme: scheme),
-
-                      const SizedBox(height: 12),
-
-                      Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isMobile ? 12 : 24,
-                          ),
-                          child: _MatrixTable(
-                            matrix: matrix,
-                            permissions: permissions,
-                            isArabic: isArabic,
-                            scheme: scheme,
-                            isEditing: _isEditing,
-                            editedMatrix: _editedMatrix,
-                            onPermissionChanged: _togglePermission,
-                          ),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    if (!_isEditing)
+                      FilledButton.icon(
+                        onPressed: () => _startEditing(matrix),
+                        icon: const Icon(Icons.edit),
+                        label: Text(
+                          isArabic ? "تعديل" : "Edit",
                         ),
                       ),
 
-                      const SizedBox(height: 16),
-
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: [
-                          if (!_isEditing)
-                            FilledButton.icon(
-                              onPressed: () => _startEditing(matrix),
-                              icon: const Icon(Icons.edit),
-                              label: Text(isArabic ? "تعديل" : "Edit"),
-                            ),
-
-                          if (!_isEditing)
-                            OutlinedButton.icon(
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.red,
-                              ),
-                              onPressed: () => _showDeleteRoleDialog(matrix),
-                              icon: const Icon(Icons.delete_outline),
-                              label: Text(isArabic ? "حذف دور" : "Delete Role"),
-                            ),
-
-                          if (_isEditing)
-                            OutlinedButton(
-                              onPressed: _cancelEditing,
-                              child: Text(isArabic ? "إلغاء" : "Cancel"),
-                            ),
-
-                          if (_isEditing)
-                            FilledButton.icon(
-                              onPressed: _submit,
-                              icon: const Icon(Icons.save),
-                              label: Text(isArabic ? "حفظ" : "Save"),
-                            ),
-                        ],
+                    if (!_isEditing)
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red,
+                        ),
+                        onPressed: () =>
+                            _showDeleteRoleDialog(matrix),
+                        icon: const Icon(
+                          Icons.delete_outline,
+                        ),
+                        label: Text(
+                          isArabic
+                              ? "حذف دور"
+                              : "Delete Role",
+                        ),
                       ),
 
-                      const SizedBox(height: 12),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-    );
-  }
+                    if (_isEditing)
+                      OutlinedButton(
+                        onPressed: _cancelEditing,
+                        child: Text(
+                          isArabic
+                              ? "إلغاء"
+                              : "Cancel",
+                        ),
+                      ),
+
+                    if (_isEditing)
+                      FilledButton.icon(
+                        onPressed: _submit,
+                        icon: const Icon(Icons.save),
+                        label: Text(
+                          isArabic ? "حفظ" : "Save",
+                        ),
+                      ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+              ],
+            );
+          },
+        );
+      },
+    ),
+  );
+}
 }
 
 class _MatrixTable extends StatelessWidget {
@@ -539,104 +619,4 @@ class _MatrixTable extends StatelessWidget {
   }
 }
 
-class _HeaderSection extends StatelessWidget {
-  final bool isArabic;
-  final ColorScheme scheme;
 
-  const _HeaderSection({required this.isArabic, required this.scheme});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
-      ),
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: scheme.outline.withValues(alpha: .10)),
-      ),
-      child: Row(
-        children: [
-          if (!Responsive.isDesktop(context))
-            SideNavMenuButton(onTap: LayoutScope.of(context).openDrawer),
-
-          const SizedBox(width: 8),
-
-          Icon(
-            Icons.admin_panel_settings_outlined,
-            color: scheme.primary,
-            size: 24,
-          ),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  isArabic ? "الأدوار والصلاحيات" : "Roles & Permissions",
-                  style: TextStyle(
-                    fontSize: AppTypography.fs24,
-                    fontWeight: FontWeight.bold,
-                    color: scheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  isArabic
-                      ? "إدارة أدوار النظام والصلاحيات"
-                      : "Manage roles and permissions",
-                  style: TextStyle(
-                    fontSize: AppTypography.fs13,
-                    color: scheme.onSurface.withValues(alpha: .60),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          ElevatedButton.icon(
-            onPressed: () async {
-              final permissions =
-                  context
-                      .read<GetAllPermissionsBloc>()
-                      .state
-                      .response
-                      ?.data
-                      ?.permissions ??
-                  [];
-
-              final result = await showDialog<bool>(
-                context: context,
-                builder: (dialogContext) {
-                  return BlocProvider.value(
-                    value: context.read<CreateRoleBloc>(),
-                    child: CreateRoleDialog(permissions: permissions),
-                  );
-                },
-              );
-
-              if (!context.mounted) return;
-
-              if (result == true) {
-                context.read<GetMatrixRolesAndPermissionsBloc>().add(
-                  const LoadMatrixRolesAndPermissions(),
-                );
-
-                context.read<GetAllPermissionsBloc>().add(
-                  const LoadAllPermissions(),
-                );
-              }
-            },
-            icon: const Icon(Icons.add),
-            label: const Text("Add Role"),
-          ),
-        ],
-      ),
-    );
-  }
-}
