@@ -17,11 +17,14 @@ class SystemLogsState extends Equatable {
     this.message,
     this.error,
     this.currentPage = 1,
-    this.perPage = 15,
+    this.perPage = 5,
+    this.total = 0,
+    this.lastPage = 1,
   });
 
   final SystemLogsStatus status;
 
+  /// سجلات النظام
   final List<SystemLogItem> data;
 
   /// رسالة السيرفر
@@ -30,9 +33,17 @@ class SystemLogsState extends Equatable {
   /// الخطأ القادم من AppErrorMapper
   final AppFailure? error;
 
+  /// الصفحة الحالية
   final int currentPage;
 
+  /// عدد العناصر في الصفحة
   final int perPage;
+
+  /// العدد الكلي للسجلات
+  final int total;
+
+  /// آخر صفحة
+  final int lastPage;
 
   bool get isInitial => status == SystemLogsStatus.initial;
 
@@ -42,6 +53,8 @@ class SystemLogsState extends Equatable {
 
   bool get isFailure => status == SystemLogsStatus.failure;
 
+  bool get hasPagination => lastPage > 1;
+
   SystemLogsState copyWith({
     SystemLogsStatus? status,
     List<SystemLogItem>? data,
@@ -49,6 +62,8 @@ class SystemLogsState extends Equatable {
     AppFailure? error,
     int? currentPage,
     int? perPage,
+    int? total,
+    int? lastPage,
     bool clearMessage = false,
     bool clearError = false,
   }) {
@@ -59,6 +74,8 @@ class SystemLogsState extends Equatable {
       error: clearError ? null : error ?? this.error,
       currentPage: currentPage ?? this.currentPage,
       perPage: perPage ?? this.perPage,
+      total: total ?? this.total,
+      lastPage: lastPage ?? this.lastPage,
     );
   }
 
@@ -70,5 +87,7 @@ class SystemLogsState extends Equatable {
         error,
         currentPage,
         perPage,
+        total,
+        lastPage,
       ];
 }

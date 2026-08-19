@@ -1,9 +1,11 @@
 import 'package:dental_link_dashboard/core/extensions/context_extensions.dart';
 import 'package:dental_link_dashboard/core/responsive/responsive.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/system_logs/system_logs_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/system_logs/system_logs_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/system_logs/system_logs_state.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/system_logs/widgets/system_logs_list.dart';
 import 'package:dental_link_dashboard/shared/dashboard_header/dashboard_header.dart';
+import 'package:dental_link_dashboard/shared/pagination/floating_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -50,24 +52,49 @@ class SystemLogsView extends StatelessWidget {
                     ),
                   ],
 
+                  // Pagination
+                  if (!isSmallHeight && state.lastPage > 1) ...[
+                    const SizedBox(height: 28),
+
+                    IgnorePointer(
+                      ignoring: state.isLoading,
+                      child: FloatingPagination(
+                        currentPage: state.currentPage,
+                        totalPages: state.lastPage,
+                        onPageChanged: (page) {
+                          context.read<SystemLogsBloc>().add(
+                                ChangeSystemLogsPageEvent(
+                                  page: page,
+                                ),
+                              );
+                        },
+                      ),
+                    ),
+                  ],
+
                   const SizedBox(height: 30),
                 ],
               ),
             );
 
+            // ارتفاع صغير جدًا:
+            // نخفي Pagination بالكامل.
             if (isSmallHeight) {
               return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     DashboardHeader(
-                       title: isArabic ? 'سجل عمليات النظام' : 'System Logs',
-                       showMenuButton: !Responsive.isDesktop(context),
-                       showNotification: false,
-                       showSearchBar: false,
-
+                      title: isArabic
+                          ? 'سجل عمليات النظام'
+                          : 'System Logs',
+                      showMenuButton: !Responsive.isDesktop(context),
+                      showNotification: false,
+                      showSearchBar: false,
                     ),
-                     SizedBox(height: 20),
+
+                    const SizedBox(height: 20),
+
                     content,
                   ],
                 ),
@@ -76,14 +103,17 @@ class SystemLogsView extends StatelessWidget {
 
             return Column(
               children: [
-                 DashboardHeader(
-                      title: isArabic ? 'سجل عمليات النظام' : 'System Logs',
-                       showMenuButton: !Responsive.isDesktop(context),
-                       showNotification: false,
-                       showSearchBar: false,
+                DashboardHeader(
+                  title: isArabic
+                      ? 'سجل عمليات النظام'
+                      : 'System Logs',
+                  showMenuButton: !Responsive.isDesktop(context),
+                  showNotification: false,
+                  showSearchBar: false,
+                ),
 
-                    ),
-                    SizedBox(height: 20),
+                const SizedBox(height: 20),
+
                 Expanded(
                   child: SingleChildScrollView(
                     child: content,

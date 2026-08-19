@@ -95,6 +95,7 @@ class ReceptionistSideNav extends StatelessWidget {
                             const ReceptionistShowDoctorsRoute().go(context),
                       ),
 
+                      /*
                       _NavItem(
                         icon: Icons.mark_email_unread_outlined,
                         label: isArabic ? 'الاستعلامات' : 'Inquiries',
@@ -102,15 +103,16 @@ class ReceptionistSideNav extends StatelessWidget {
                         compact: compact,
                         onTap: () =>
                             const ReceptionistInquiriesRoute().go(context),
-                      ),
+                      ),*/
 
                       const Spacer(),
-
+ /*
                       _NavItem(
                         icon: Icons.help_outline,
                         label: l10n.navHelp,
                         compact: compact,
                       ),
+                      */
 
                       _NavItem(
                         icon: Icons.logout,

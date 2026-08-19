@@ -54,8 +54,9 @@ class WorkflowStep extends Equatable {
 
   String get statusLabel {
     switch (status) {
-      case 'assigned':
       case 'pending_assignment':
+        return 'Pending Assignment';
+      case 'assigned':
         return 'Assigned';
 
       case 'in_progress':

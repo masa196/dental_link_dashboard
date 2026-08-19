@@ -551,6 +551,7 @@ mixin $LabManagerDoctorDetailsRoute on GoRouteData {
   static LabManagerDoctorDetailsRoute _fromState(GoRouterState state) =>
       LabManagerDoctorDetailsRoute(
         doctorId: int.parse(state.pathParameters['doctorId']!),
+        $extra: state.extra as DoctorModel?,
       );
 
   LabManagerDoctorDetailsRoute get _self =>
@@ -562,17 +563,19 @@ mixin $LabManagerDoctorDetailsRoute on GoRouteData {
   );
 
   @override
-  void go(BuildContext context) => context.go(location);
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
 
   @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: _self.$extra);
 
   @override
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
 
 mixin $DoctorOrderDetailsRoute on GoRouteData {
@@ -839,6 +842,7 @@ mixin $ReceptionistDoctorDetailsRoute on GoRouteData {
   static ReceptionistDoctorDetailsRoute _fromState(GoRouterState state) =>
       ReceptionistDoctorDetailsRoute(
         doctorId: int.parse(state.pathParameters['doctorId']!),
+        $extra: state.extra as DoctorModel?,
       );
 
   ReceptionistDoctorDetailsRoute get _self =>
@@ -850,17 +854,19 @@ mixin $ReceptionistDoctorDetailsRoute on GoRouteData {
   );
 
   @override
-  void go(BuildContext context) => context.go(location);
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: _self.$extra);
 
   @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
+      context.pushReplacement(location, extra: _self.$extra);
 
   @override
-  void replace(BuildContext context) => context.replace(location);
+  void replace(BuildContext context) =>
+      context.replace(location, extra: _self.$extra);
 }
 
 mixin $ReceptionistDoctorOrderDetailsRoute on GoRouteData {

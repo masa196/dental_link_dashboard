@@ -6,16 +6,22 @@ import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_pa
 import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_packages/update_package/update_package_bloc.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/dialogs/add_package_dialog.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/dialogs/delete_package_dialog.dart';
+import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/dialogs/my_package_dialog.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/dialogs/update_package_dialog.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/packages_page.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/widgets/packages_grid.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/get_package_assigned/get_package_assigned_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/get_package_assigned/get_package_assigned_event.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/widgets/materials_header.dart';
 import 'package:dental_link_dashboard/shared/pagination/floating_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PackagesView extends StatelessWidget {
-  const PackagesView({super.key, required this.mode});
+  const PackagesView({
+    super.key,
+    required this.mode,
+  });
 
   final PackagesPageMode mode;
 
@@ -29,12 +35,36 @@ class PackagesView extends StatelessWidget {
       builder: (_) {
         return MultiBlocProvider(
           providers: [
-            BlocProvider.value(value: context.read<AddPackageBloc>()),
-            BlocProvider.value(value: context.read<ShowPackagesBloc>()),
+            BlocProvider.value(
+              value: context.read<AddPackageBloc>(),
+            ),
+            BlocProvider.value(
+              value: context.read<ShowPackagesBloc>(),
+            ),
           ],
           child: const AddPackageDialog(),
         );
       },
+    );
+  }
+
+  void _showMyPackageDialog(BuildContext context) {
+    if (isAdmin) return;
+
+    final bloc = context.read<GetPackageAssignedBloc>();
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return BlocProvider.value(
+          value: bloc,
+          child: const MyPackageDialog(),
+        );
+      },
+    );
+
+    bloc.add(
+      const GetPackageAssignedRequested(),
     );
   }
 
@@ -43,11 +73,15 @@ class PackagesView extends StatelessWidget {
     return BlocBuilder<ShowPackagesBloc, ShowPackagesState>(
       builder: (context, state) {
         if (state.isLoading && state.packages.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
 
         if (state.failure != null) {
-          return Center(child: Text(state.failure!.message));
+          return Center(
+            child: Text(state.failure!.message),
+          );
         }
 
         return LayoutBuilder(
@@ -69,13 +103,17 @@ class PackagesView extends StatelessWidget {
                                 return MultiBlocProvider(
                                   providers: [
                                     BlocProvider.value(
-                                      value: context.read<UpdatePackageBloc>(),
+                                      value: context
+                                          .read<UpdatePackageBloc>(),
                                     ),
                                     BlocProvider.value(
-                                      value: context.read<ShowPackagesBloc>(),
+                                      value: context
+                                          .read<ShowPackagesBloc>(),
                                     ),
                                   ],
-                                  child: UpdatePackageDialog(package: package),
+                                  child: UpdatePackageDialog(
+                                    package: package,
+                                  ),
                                 );
                               },
                             );
@@ -89,13 +127,17 @@ class PackagesView extends StatelessWidget {
                                 return MultiBlocProvider(
                                   providers: [
                                     BlocProvider.value(
-                                      value: context.read<DeletePackageBloc>(),
+                                      value: context
+                                          .read<DeletePackageBloc>(),
                                     ),
                                     BlocProvider.value(
-                                      value: context.read<ShowPackagesBloc>(),
+                                      value: context
+                                          .read<ShowPackagesBloc>(),
                                     ),
                                   ],
-                                  child: DeletePackageDialog(package: package),
+                                  child: DeletePackageDialog(
+                                    package: package,
+                                  ),
                                 );
                               },
                             );
@@ -105,7 +147,9 @@ class PackagesView extends StatelessWidget {
 
                   if (state.isLoading) ...[
                     const SizedBox(height: 20),
-                    const Center(child: CircularProgressIndicator()),
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   ],
 
                   if (state.lastPage > 1) ...[
@@ -114,16 +158,17 @@ class PackagesView extends StatelessWidget {
                     FloatingPagination(
                       currentPage: state.currentPage,
                       totalPages: state.lastPage,
-
                       onPageChanged: state.isLoading
                           ? (_) {}
                           : (page) {
-                              context.read<ShowPackagesBloc>().add(
-                                ShowPackagesRequested(
-                                  page: page,
-                                  search: state.currentSearch,
-                                ),
-                              );
+                              context
+                                  .read<ShowPackagesBloc>()
+                                  .add(
+                                    ShowPackagesRequested(
+                                      page: page,
+                                      search: state.currentSearch,
+                                    ),
+                                  );
                             },
                     ),
                   ],
@@ -140,13 +185,27 @@ class PackagesView extends StatelessWidget {
                   children: [
                     MaterialsHeader(
                       title: "إدارة الباقات",
-                      addButtonLabel: "إضافة باقة",
-                      showAddButton: isAdmin,
-                      onAdd: isAdmin ? () => _showAddDialog(context) : null,
+
+                      // Admin -> إضافة باقة
+                      // Lab Manager -> عرض باقتي
+                      addButtonLabel:
+                          isAdmin ? "إضافة باقة" : "عرض باقتي",
+
+                      showAddButton: true,
+
+                      onAdd: isAdmin
+                          ? () => _showAddDialog(context)
+                          : () => _showMyPackageDialog(context),
+
                       onSearch: (value) {
-                        context.read<ShowPackagesBloc>().add(
-                          ShowPackagesRequested(page: 1, search: value),
-                        );
+                        context
+                            .read<ShowPackagesBloc>()
+                            .add(
+                              ShowPackagesRequested(
+                                page: 1,
+                                search: value,
+                              ),
+                            );
                       },
                     ),
                     content,
@@ -159,16 +218,35 @@ class PackagesView extends StatelessWidget {
               children: [
                 MaterialsHeader(
                   title: "إدارة الباقات",
-                  addButtonLabel: "إضافة باقة",
-                  showAddButton: isAdmin,
-                  onAdd: isAdmin ? () => _showAddDialog(context) : null,
+
+                  // Admin -> إضافة باقة
+                  // Lab Manager -> عرض باقتي
+                  addButtonLabel:
+                      isAdmin ? "إضافة باقة" : "عرض باقتي",
+
+                  showAddButton: true,
+
+                  onAdd: isAdmin
+                      ? () => _showAddDialog(context)
+                      : () => _showMyPackageDialog(context),
+
                   onSearch: (value) {
-                    context.read<ShowPackagesBloc>().add(
-                      ShowPackagesRequested(page: 1, search: value),
-                    );
+                    context
+                        .read<ShowPackagesBloc>()
+                        .add(
+                          ShowPackagesRequested(
+                            page: 1,
+                            search: value,
+                          ),
+                        );
                   },
                 ),
-                Expanded(child: SingleChildScrollView(child: content)),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: content,
+                  ),
+                ),
               ],
             );
           },

@@ -111,6 +111,9 @@ class ApiEndpoints {
   //Change Password
   static const String changePassword = '/auth/change-password';
 
+ static const String packageAssigned = '/auth/lab/package';
+  static const String dashboardStatistics = '/dashboard'; 
+
   ////////////////////////////Receptionist EndPoints///////////////////////////
 
   //Doctors

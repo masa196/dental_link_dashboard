@@ -6,6 +6,7 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/man
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/show_employee/employee_page_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_order_stages/get_order_stages/get_order_stages_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_order_stages/update_order_stages/update_order_stages_bloc.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/dashboard_statistics/dashboard_statistics_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/lab_manager_profile/lab_manager_profile_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/edit_employee/edit_employee_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_materials/materials_page.dart';
@@ -13,6 +14,7 @@ import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/ma
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/order_details/order_details_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/orders/lab_manager_order_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/system_logs/system_logs_page.dart';
+import 'package:dental_link_dashboard/features/receptionist/data/models/all_doctors/all_doctors_model.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/doctor_details/doctor_details_page.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/doctors/doctors_page.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_delivery_tasks/receptionist_delivery_tasks_page.dart';
@@ -32,7 +34,6 @@ import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_l
 import 'package:dental_link_dashboard/features/admin/presentation/pages/profile/profile_screen.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_dep/departments_with_employee/departments_with_employee_bloc.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/manage_employee/roles/roles_bloc.dart';
-import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/lab_manager_dashboard.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_dep/departments_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/employee_page.dart';
 import 'package:dental_link_dashboard/features/lab_manager/presentation/pages/manage_employee/create_employee/create_employee_page.dart';
@@ -288,9 +289,13 @@ class LabManagerShowDoctorsRoute extends GoRouteData
 
 class LabManagerDoctorDetailsRoute extends GoRouteData
     with $LabManagerDoctorDetailsRoute {
-  const LabManagerDoctorDetailsRoute({required this.doctorId});
+  const LabManagerDoctorDetailsRoute({
+    required this.doctorId,
+    this.$extra,
+  });
 
   final int doctorId;
+  final DoctorModel? $extra;
 
   @override
   CustomTransitionPage<void> buildPage(
@@ -300,6 +305,7 @@ class LabManagerDoctorDetailsRoute extends GoRouteData
     return DoctorDetailsPage(
       mode: DoctorsPageMode.labManager,
       doctorId: doctorId,
+      doctorSummary: $extra,
     ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }
@@ -335,7 +341,7 @@ class LabManagerDashboardRoute extends GoRouteData
     BuildContext context,
     GoRouterState state,
   ) {
-    return const LabManagerDashboard().buildPage(
+    return const DashboardStatisticsPage().buildPage(
       pageAnimation: PageAnimation.fade,
     );
   }
@@ -720,9 +726,13 @@ class ReceptionistShowDoctorsRoute extends GoRouteData
 
 class ReceptionistDoctorDetailsRoute extends GoRouteData
     with $ReceptionistDoctorDetailsRoute {
-  const ReceptionistDoctorDetailsRoute({required this.doctorId});
+  const ReceptionistDoctorDetailsRoute({
+    required this.doctorId,
+    this.$extra,
+  });
 
   final int doctorId;
+  final DoctorModel? $extra;
 
   @override
   CustomTransitionPage<void> buildPage(
@@ -732,6 +742,7 @@ class ReceptionistDoctorDetailsRoute extends GoRouteData
     return DoctorDetailsPage(
       mode: DoctorsPageMode.receptionist,
       doctorId: doctorId,
+      doctorSummary: $extra,
     ).buildPage(pageAnimation: PageAnimation.fade);
   }
 }

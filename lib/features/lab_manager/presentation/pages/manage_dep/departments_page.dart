@@ -85,6 +85,7 @@ class DepartmentsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     DashboardHeader(
+                      showNotification: false,
                       showSearchBar: false,
                       title: isArabic
                           ? 'دليل الموظفين والأقسام'

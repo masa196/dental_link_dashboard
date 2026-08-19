@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class SystemLogsEntity extends Equatable {
   const SystemLogsEntity({
-    this.perPage = 15,
+    this.perPage = 5,
     this.page = 1,
    
   });

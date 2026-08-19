@@ -16,10 +16,12 @@ class DashboardStatisticsResponse extends Equatable {
   final bool? success;
   final int? status;
   final String? message;
-  final DashboardStatisticsModel? data;
+  final DashboardStatisticsData? data;
   final dynamic errors;
 
-  factory DashboardStatisticsResponse.fromJson(Map<String, dynamic> json) =>
+  factory DashboardStatisticsResponse.fromJson(
+    Map<String, dynamic> json,
+  ) =>
       _$DashboardStatisticsResponseFromJson(json);
 
   @override
@@ -33,8 +35,8 @@ class DashboardStatisticsResponse extends Equatable {
 }
 
 @JsonSerializable(createToJson: false)
-class DashboardStatisticsModel extends Equatable {
-  const DashboardStatisticsModel({
+class DashboardStatisticsData extends Equatable {
+  const DashboardStatisticsData({
     required this.averageDeliveryTime,
     required this.monthlyRevenue,
     required this.technicianProductivity,
@@ -45,29 +47,30 @@ class DashboardStatisticsModel extends Equatable {
   });
 
   @JsonKey(name: 'average_delivery_time')
-  final AverageDeliveryTimeModel? averageDeliveryTime;
+  final AverageDeliveryTimeStatistics? averageDeliveryTime;
 
   @JsonKey(name: 'monthly_revenue')
-  final MonthlyRevenueModel? monthlyRevenue;
+  final MonthlyRevenueStatistics? monthlyRevenue;
 
   @JsonKey(name: 'technician_productivity')
-  final TechnicianProductivityModel? technicianProductivity;
+  final TechnicianProductivityStatistics? technicianProductivity;
 
   @JsonKey(name: 'department_workload')
-  final DepartmentWorkloadModel? departmentWorkload;
+  final DepartmentWorkloadStatistics? departmentWorkload;
 
   @JsonKey(name: 'top_clinics')
-  final TopClinicsModel? topClinics;
+  final TopClinicsStatistics? topClinics;
 
   @JsonKey(name: 'yearly_performance_chart')
-  final YearlyPerformanceChartModel? yearlyPerformanceChart;
+  final YearlyPerformanceStatistics? yearlyPerformanceChart;
 
   @JsonKey(name: 'date_range')
-  final StatisticsDateRangeModel? dateRange;
+  final StatisticsDateRange? dateRange;
 
-
-  factory DashboardStatisticsModel.fromJson(Map<String, dynamic> json) =>
-      _$DashboardStatisticsModelFromJson(json);
+  factory DashboardStatisticsData.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$DashboardStatisticsDataFromJson(json);
 
   @override
   List<Object?> get props => [
@@ -82,71 +85,129 @@ class DashboardStatisticsModel extends Equatable {
 }
 
 @JsonSerializable(createToJson: false)
-class AverageDeliveryTimeModel extends Equatable {
-  const AverageDeliveryTimeModel({
+class AverageDeliveryTimeStatistics extends Equatable {
+  const AverageDeliveryTimeStatistics({
     required this.averageDays,
-    required this.averageHours,
-    required this.totalCompleted,
   });
 
   @JsonKey(name: 'average_days')
-  final int? averageDays;
+  final double? averageDays;
 
-  @JsonKey(name: 'average_hours')
-  final int? averageHours;
-
-  @JsonKey(name: 'total_completed')
-  final int? totalCompleted;
-
-  factory AverageDeliveryTimeModel.fromJson(Map<String, dynamic> json) =>
-      _$AverageDeliveryTimeModelFromJson(json);
+  factory AverageDeliveryTimeStatistics.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$AverageDeliveryTimeStatisticsFromJson(json);
 
   @override
   List<Object?> get props => [
         averageDays,
-        averageHours,
-        totalCompleted,
       ];
 }
 
 @JsonSerializable(createToJson: false)
-class MonthlyRevenueModel extends Equatable {
-  const MonthlyRevenueModel({
+class StatisticsDateRange extends Equatable {
+  StatisticsDateRange({
+    required this.from,
+    required this.to,
+  });
+
+  final DateTime? from;
+  final DateTime? to;
+
+  factory StatisticsDateRange.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$StatisticsDateRangeFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        from,
+        to,
+      ];
+}
+
+@JsonSerializable(createToJson: false)
+class DepartmentWorkloadStatistics extends Equatable {
+  DepartmentWorkloadStatistics({
+    required this.departments,
+  });
+
+  final List<DepartmentWorkloadItem>? departments;
+
+  factory DepartmentWorkloadStatistics.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$DepartmentWorkloadStatisticsFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        departments,
+      ];
+}
+
+@JsonSerializable(createToJson: false)
+class DepartmentWorkloadItem extends Equatable {
+  const DepartmentWorkloadItem({
+    required this.departmentId,
+    required this.name,
+    required this.inProgressTasks,
+  });
+
+  @JsonKey(name: 'department_id')
+  final int? departmentId;
+
+  final String? name;
+
+  @JsonKey(name: 'in_progress_tasks')
+  final int? inProgressTasks;
+
+  factory DepartmentWorkloadItem.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$DepartmentWorkloadItemFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        departmentId,
+        name,
+        inProgressTasks,
+      ];
+}
+
+@JsonSerializable(createToJson: false)
+class MonthlyRevenueStatistics extends Equatable {
+  const MonthlyRevenueStatistics({
     required this.totalRevenue,
     required this.ordersCount,
-    required this.averageOrderValue,
   });
 
   @JsonKey(name: 'total_revenue')
-  final num? totalRevenue;
+  final int? totalRevenue;
 
   @JsonKey(name: 'orders_count')
   final int? ordersCount;
 
-  @JsonKey(name: 'average_order_value')
-  final num? averageOrderValue;
-
-  factory MonthlyRevenueModel.fromJson(Map<String, dynamic> json) =>
-      _$MonthlyRevenueModelFromJson(json);
+  factory MonthlyRevenueStatistics.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$MonthlyRevenueStatisticsFromJson(json);
 
   @override
   List<Object?> get props => [
         totalRevenue,
         ordersCount,
-        averageOrderValue,
       ];
 }
 
 @JsonSerializable(createToJson: false)
-class TechnicianProductivityModel extends Equatable {
-  const TechnicianProductivityModel({
+class TechnicianProductivityStatistics extends Equatable {
+ const TechnicianProductivityStatistics({
     required this.technicians,
     required this.totalTechnicians,
     required this.totalCompletedTasks,
-    required this.totalWorkedHours,
   });
 
-  final List<TechnicianStatisticsModel>? technicians;
+  final List<TechnicianProductivityItem>? technicians;
 
   @JsonKey(name: 'total_technicians')
   final int? totalTechnicians;
@@ -154,31 +215,25 @@ class TechnicianProductivityModel extends Equatable {
   @JsonKey(name: 'total_completed_tasks')
   final int? totalCompletedTasks;
 
-  @JsonKey(name: 'total_worked_hours')
-  final num? totalWorkedHours;
-
-  factory TechnicianProductivityModel.fromJson(
+  factory TechnicianProductivityStatistics.fromJson(
     Map<String, dynamic> json,
   ) =>
-      _$TechnicianProductivityModelFromJson(json);
+      _$TechnicianProductivityStatisticsFromJson(json);
 
   @override
   List<Object?> get props => [
         technicians,
         totalTechnicians,
         totalCompletedTasks,
-        totalWorkedHours,
       ];
 }
 
 @JsonSerializable(createToJson: false)
-class TechnicianStatisticsModel extends Equatable {
-  const TechnicianStatisticsModel({
+class TechnicianProductivityItem extends Equatable {
+const  TechnicianProductivityItem({
     required this.technicianId,
     required this.name,
     required this.completedTasksCount,
-    required this.totalWorkedHours,
-    required this.avgTimePerTaskHours,
   });
 
   @JsonKey(name: 'technician_id')
@@ -189,115 +244,31 @@ class TechnicianStatisticsModel extends Equatable {
   @JsonKey(name: 'completed_tasks_count')
   final int? completedTasksCount;
 
-  @JsonKey(name: 'total_worked_hours')
-  final num? totalWorkedHours;
-
-  @JsonKey(name: 'avg_time_per_task_hours')
-  final num? avgTimePerTaskHours;
-
-  factory TechnicianStatisticsModel.fromJson(
+  factory TechnicianProductivityItem.fromJson(
     Map<String, dynamic> json,
   ) =>
-      _$TechnicianStatisticsModelFromJson(json);
+      _$TechnicianProductivityItemFromJson(json);
 
   @override
   List<Object?> get props => [
         technicianId,
         name,
         completedTasksCount,
-        totalWorkedHours,
-        avgTimePerTaskHours,
       ];
 }
 
 @JsonSerializable(createToJson: false)
-class DepartmentWorkloadModel extends Equatable {
-  const DepartmentWorkloadModel({
-    required this.departments,
-    required this.totalTasks,
-    required this.totalCompleted,
-  });
-
-  final List<DepartmentStatisticsModel>? departments;
-
-  @JsonKey(name: 'total_tasks')
-  final int? totalTasks;
-
-  @JsonKey(name: 'total_completed')
-  final int? totalCompleted;
-
-  factory DepartmentWorkloadModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
-      _$DepartmentWorkloadModelFromJson(json);
-
-  @override
-  List<Object?> get props => [
-        departments,
-        totalTasks,
-        totalCompleted,
-      ];
-}
-
-@JsonSerializable(createToJson: false)
-class DepartmentStatisticsModel extends Equatable {
-  const DepartmentStatisticsModel({
-    required this.departmentId,
-    required this.name,
-    required this.pendingTasks,
-    required this.inProgressTasks,
-    required this.completedTasks,
-    required this.totalTasks,
-    required this.completionRate,
-  });
-
-  @JsonKey(name: 'department_id')
-  final int? departmentId;
-
-  final String? name;
-
-  @JsonKey(name: 'pending_tasks')
-  final int? pendingTasks;
-
-  @JsonKey(name: 'in_progress_tasks')
-  final int? inProgressTasks;
-
-  @JsonKey(name: 'completed_tasks')
-  final int? completedTasks;
-
-  @JsonKey(name: 'total_tasks')
-  final int? totalTasks;
-
-  @JsonKey(name: 'completion_rate')
-  final num? completionRate;
-
-  factory DepartmentStatisticsModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
-      _$DepartmentStatisticsModelFromJson(json);
-
-  @override
-  List<Object?> get props => [
-        departmentId,
-        name,
-        pendingTasks,
-        inProgressTasks,
-        completedTasks,
-        totalTasks,
-        completionRate,
-      ];
-}
-
-@JsonSerializable(createToJson: false)
-class TopClinicsModel extends Equatable {
-  const TopClinicsModel({
+class TopClinicsStatistics extends Equatable {
+const  TopClinicsStatistics({
     required this.doctors,
   });
 
-  final List<TopClinicDoctorModel>? doctors;
+  final List<TopClinicItem>? doctors;
 
-  factory TopClinicsModel.fromJson(Map<String, dynamic> json) =>
-      _$TopClinicsModelFromJson(json);
+  factory TopClinicsStatistics.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$TopClinicsStatisticsFromJson(json);
 
   @override
   List<Object?> get props => [
@@ -306,12 +277,11 @@ class TopClinicsModel extends Equatable {
 }
 
 @JsonSerializable(createToJson: false)
-class TopClinicDoctorModel extends Equatable {
-  const TopClinicDoctorModel({
+class TopClinicItem extends Equatable {
+  const TopClinicItem({
     required this.doctorId,
     required this.name,
     required this.ordersCount,
-    required this.totalRevenue,
   });
 
   @JsonKey(name: 'doctor_id')
@@ -322,26 +292,22 @@ class TopClinicDoctorModel extends Equatable {
   @JsonKey(name: 'orders_count')
   final int? ordersCount;
 
-  @JsonKey(name: 'total_revenue')
-  final num? totalRevenue;
-
-  factory TopClinicDoctorModel.fromJson(
+  factory TopClinicItem.fromJson(
     Map<String, dynamic> json,
   ) =>
-      _$TopClinicDoctorModelFromJson(json);
+      _$TopClinicItemFromJson(json);
 
   @override
   List<Object?> get props => [
         doctorId,
         name,
         ordersCount,
-        totalRevenue,
       ];
 }
 
 @JsonSerializable(createToJson: false)
-class YearlyPerformanceChartModel extends Equatable {
-  const YearlyPerformanceChartModel({
+class YearlyPerformanceStatistics extends Equatable {
+const  YearlyPerformanceStatistics({
     required this.year,
     required this.months,
     required this.yearlyTotalRevenue,
@@ -351,10 +317,10 @@ class YearlyPerformanceChartModel extends Equatable {
 
   final int? year;
 
-  final List<MonthlyPerformanceModel>? months;
+  final List<MonthlyPerformanceItem>? months;
 
   @JsonKey(name: 'yearly_total_revenue')
-  final num? yearlyTotalRevenue;
+  final int? yearlyTotalRevenue;
 
   @JsonKey(name: 'yearly_total_orders')
   final int? yearlyTotalOrders;
@@ -362,10 +328,10 @@ class YearlyPerformanceChartModel extends Equatable {
   @JsonKey(name: 'yearly_completed_orders')
   final int? yearlyCompletedOrders;
 
-  factory YearlyPerformanceChartModel.fromJson(
+  factory YearlyPerformanceStatistics.fromJson(
     Map<String, dynamic> json,
   ) =>
-      _$YearlyPerformanceChartModelFromJson(json);
+      _$YearlyPerformanceStatisticsFromJson(json);
 
   @override
   List<Object?> get props => [
@@ -378,14 +344,11 @@ class YearlyPerformanceChartModel extends Equatable {
 }
 
 @JsonSerializable(createToJson: false)
-class MonthlyPerformanceModel extends Equatable {
-  const MonthlyPerformanceModel({
+class MonthlyPerformanceItem extends Equatable {
+const  MonthlyPerformanceItem({
     required this.month,
     required this.monthName,
     required this.ordersCount,
-    required this.completedCount,
-    required this.revenue,
-    required this.completionRate,
   });
 
   final int? month;
@@ -396,48 +359,15 @@ class MonthlyPerformanceModel extends Equatable {
   @JsonKey(name: 'orders_count')
   final int? ordersCount;
 
-  @JsonKey(name: 'completed_count')
-  final int? completedCount;
-
-  final num? revenue;
-
-  @JsonKey(name: 'completion_rate')
-  final num? completionRate;
-
-  factory MonthlyPerformanceModel.fromJson(
+  factory MonthlyPerformanceItem.fromJson(
     Map<String, dynamic> json,
   ) =>
-      _$MonthlyPerformanceModelFromJson(json);
+      _$MonthlyPerformanceItemFromJson(json);
 
   @override
   List<Object?> get props => [
         month,
         monthName,
         ordersCount,
-        completedCount,
-        revenue,
-        completionRate,
-      ];
-}
-
-@JsonSerializable(createToJson: false)
-class StatisticsDateRangeModel extends Equatable {
-  const StatisticsDateRangeModel({
-    required this.from,
-    required this.to,
-  });
-
-  final String? from;
-  final String? to;
-
-  factory StatisticsDateRangeModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
-      _$StatisticsDateRangeModelFromJson(json);
-
-  @override
-  List<Object?> get props => [
-        from,
-        to,
       ];
 }

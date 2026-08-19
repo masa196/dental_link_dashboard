@@ -4,7 +4,6 @@ import 'package:dental_link_dashboard/features/receptionist/presentation/pages/d
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/doctors/widgets/doctor_card.dart';
 import 'package:flutter/material.dart';
 
-
 class DoctorsGrid extends StatelessWidget {
   const DoctorsGrid({super.key, required this.doctors, required this.mode});
 
@@ -53,15 +52,15 @@ class DoctorsGrid extends StatelessWidget {
                   return;
                 }
 
-               
-
                 if (mode == DoctorsPageMode.labManager) {
                   LabManagerDoctorDetailsRoute(
                     doctorId: doctor.doctorId!,
+                    $extra: doctor,
                   ).go(context);
                 } else {
                   ReceptionistDoctorDetailsRoute(
                     doctorId: doctor.doctorId!,
+                    $extra: doctor,
                   ).go(context);
                 }
               },

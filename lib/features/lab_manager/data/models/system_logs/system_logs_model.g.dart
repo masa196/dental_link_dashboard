@@ -11,11 +11,23 @@ SystemLogsResponse _$SystemLogsResponseFromJson(Map<String, dynamic> json) =>
       success: json['success'] as bool?,
       status: (json['status'] as num?)?.toInt(),
       message: json['message'] as String?,
-      data: (json['data'] as List<dynamic>?)
-          ?.map((e) => SystemLogItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      data: json['data'] == null
+          ? null
+          : SystemLogsPagination.fromJson(json['data'] as Map<String, dynamic>),
       errors: json['errors'],
     );
+
+SystemLogsPagination _$SystemLogsPaginationFromJson(
+  Map<String, dynamic> json,
+) => SystemLogsPagination(
+  data: (json['data'] as List<dynamic>?)
+      ?.map((e) => SystemLogItem.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  total: (json['total'] as num?)?.toInt(),
+  perPage: (json['per_page'] as num?)?.toInt(),
+  currentPage: (json['current_page'] as num?)?.toInt(),
+  lastPage: (json['last_page'] as num?)?.toInt(),
+);
 
 SystemLogItem _$SystemLogItemFromJson(Map<String, dynamic> json) =>
     SystemLogItem(

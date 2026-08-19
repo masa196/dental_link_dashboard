@@ -65,8 +65,9 @@ class OrderTimelineStep {
 
   String get statusLabel {
     switch (status) {
+       case 'pending_assignment':
+        return 'Pending Assignment';
       case 'assigned':
-      case 'pending_assignment':
         return 'Assigned';
 
       case 'in_progress':

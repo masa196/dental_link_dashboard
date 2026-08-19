@@ -5,6 +5,7 @@ import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_pa
 import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_packages/show_packages/show_packages_event.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/bloc/manage_packages/update_package/update_package_bloc.dart';
 import 'package:dental_link_dashboard/features/admin/presentation/pages/manage_packages/packages_view.dart';
+import 'package:dental_link_dashboard/features/lab_manager/presentation/bloc/get_package_assigned/get_package_assigned_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,6 +26,8 @@ class PackagesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        // الباقات المتوفرة في النظام
+        // نحتاجها في Admin و Lab Manager
         BlocProvider(
           lazy: false,
           create: (_) =>
@@ -32,7 +35,7 @@ class PackagesPage extends StatelessWidget {
                 ..add(const ShowPackagesRequested()),
         ),
 
-        // هذه الـ Blocs نحتاجها فقط في وضع Admin
+        // عمليات الإدارة فقط
         if (mode == PackagesPageMode.admin)
           BlocProvider(
             create: (_) => locator<AddPackageBloc>(),
@@ -46,6 +49,12 @@ class PackagesPage extends StatelessWidget {
         if (mode == PackagesPageMode.admin)
           BlocProvider(
             create: (_) => locator<DeletePackageBloc>(),
+          ),
+
+        // الباقة الحالية للمخبر فقط
+        if (mode == PackagesPageMode.labManager)
+          BlocProvider(
+            create: (_) => locator<GetPackageAssignedBloc>(),
           ),
       ],
       child: PackagesView(mode: mode),

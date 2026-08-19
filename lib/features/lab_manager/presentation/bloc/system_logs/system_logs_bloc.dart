@@ -1,7 +1,7 @@
+import 'package:dental_link_dashboard/features/lab_manager/domain/entities/system_logs/system_logs_entity.dart';
 import 'package:dental_link_dashboard/features/lab_manager/domain/usecases/system_logs/get_system_logs_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:dental_link_dashboard/features/lab_manager/domain/entities/system_logs/system_logs_entity.dart';
 
 import 'system_logs_event.dart';
 import 'system_logs_state.dart';
@@ -41,13 +41,26 @@ class SystemLogsBloc extends Bloc<SystemLogsEvent, SystemLogsState> {
         );
       },
       (response) {
+        final pagination = response.data;
+
         emit(
           state.copyWith(
             status: SystemLogsStatus.success,
-            data: response.data ?? const [],
+
+            data: pagination?.data ?? const [],
+
             message: response.message,
-            currentPage: event.parameters.page,
-            perPage: event.parameters.perPage,
+
+            currentPage: pagination?.currentPage ??
+                event.parameters.page,
+
+            perPage: pagination?.perPage ??
+                event.parameters.perPage,
+
+            total: pagination?.total ?? 0,
+
+            lastPage: pagination?.lastPage ?? 1,
+
             clearError: true,
           ),
         );
@@ -59,6 +72,10 @@ class SystemLogsBloc extends Bloc<SystemLogsEvent, SystemLogsState> {
     ChangeSystemLogsPageEvent event,
     Emitter<SystemLogsState> emit,
   ) {
+    if (event.page == state.currentPage) {
+      return;
+    }
+
     add(
       GetSystemLogsEvent(
         parameters: SystemLogsEntity(

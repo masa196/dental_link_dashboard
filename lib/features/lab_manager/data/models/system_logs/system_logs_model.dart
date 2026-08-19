@@ -5,88 +5,150 @@ part 'system_logs_model.g.dart';
 
 @JsonSerializable(createToJson: false)
 class SystemLogsResponse extends Equatable {
-  const   SystemLogsResponse({
-        required this.success,
-        required this.status,
-        required this.message,
-        required this.data,
-        required this.errors,
-    });
+  const SystemLogsResponse({
+    required this.success,
+    required this.status,
+    required this.message,
+    required this.data,
+    required this.errors,
+  });
 
-    final bool? success;
-    final int? status;
-    final String? message;
-    final List<SystemLogItem>? data;
-    final dynamic errors;
+  final bool? success;
+  final int? status;
+  final String? message;
+  final SystemLogsPagination? data;
+  final dynamic errors;
 
-    factory SystemLogsResponse.fromJson(Map<String, dynamic> json) => _$SystemLogsResponseFromJson(json);
+  factory SystemLogsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SystemLogsResponseFromJson(json);
 
-    @override
-    List<Object?> get props => [
-    success, status, message, data, errors, ];
+  @override
+  List<Object?> get props => [
+        success,
+        status,
+        message,
+        data,
+        errors,
+      ];
+}
+
+@JsonSerializable(createToJson: false)
+class SystemLogsPagination extends Equatable {
+  const SystemLogsPagination({
+    required this.data,
+    required this.total,
+    required this.perPage,
+    required this.currentPage,
+    required this.lastPage,
+  });
+
+  final List<SystemLogItem>? data;
+
+  final int? total;
+
+  @JsonKey(name: 'per_page')
+  final int? perPage;
+
+  @JsonKey(name: 'current_page')
+  final int? currentPage;
+
+  @JsonKey(name: 'last_page')
+  final int? lastPage;
+
+  factory SystemLogsPagination.fromJson(Map<String, dynamic> json) =>
+      _$SystemLogsPaginationFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        data,
+        total,
+        perPage,
+        currentPage,
+        lastPage,
+      ];
 }
 
 @JsonSerializable(createToJson: false)
 class SystemLogItem extends Equatable {
-   const SystemLogItem({
-        required this.id,
-        required this.level,
-        required this.event,
-        required this.message,
-        required this.user,
-        required this.labId,
-        required this.metadata,
-        required this.createdAt,
-    });
+  const SystemLogItem({
+    required this.id,
+    required this.level,
+    required this.event,
+    required this.message,
+    required this.user,
+    required this.labId,
+    required this.metadata,
+    required this.createdAt,
+  });
 
-    final int? id;
-    final String? level;
-    final String? event;
-    final String? message;
-    final UserInsSystemLogs? user;
+  final int? id;
 
-    @JsonKey(name: 'lab_id') 
-    final int? labId;
-    final Metadata? metadata;
+  final String? level;
 
-    @JsonKey(name: 'created_at') 
-    final DateTime? createdAt;
+  final String? event;
 
-    factory SystemLogItem.fromJson(Map<String, dynamic> json) => _$SystemLogItemFromJson(json);
+  final String? message;
 
-    @override
-    List<Object?> get props => [
-    id, level, event, message, user, labId, metadata, createdAt, ];
+  final UserInsSystemLogs? user;
+
+  @JsonKey(name: 'lab_id')
+  final int? labId;
+
+  final Metadata? metadata;
+
+  @JsonKey(name: 'created_at')
+  final DateTime? createdAt;
+
+  factory SystemLogItem.fromJson(Map<String, dynamic> json) =>
+      _$SystemLogItemFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        id,
+        level,
+        event,
+        message,
+        user,
+        labId,
+        metadata,
+        createdAt,
+      ];
 }
 
 @JsonSerializable(createToJson: false)
 class Metadata extends Equatable {
-    const Metadata({
-        required this.email,
-    });
+  const Metadata({
+    required this.email,
+  });
 
-    final String? email;
+  final String? email;
 
-    factory Metadata.fromJson(Map<String, dynamic> json) => _$MetadataFromJson(json);
+  factory Metadata.fromJson(Map<String, dynamic> json) =>
+      _$MetadataFromJson(json);
 
-    @override
-    List<Object?> get props => [
-    email, ];
+  @override
+  List<Object?> get props => [
+        email,
+      ];
 }
 
 @JsonSerializable(createToJson: false)
 class UserInsSystemLogs extends Equatable {
-    const UserInsSystemLogs({
-        required this.id,
-        required this.name,
-    });
+  const UserInsSystemLogs({
+    required this.id,
+    required this.name,
+  });
 
-    final int? id;
-    final String? name;
+  final int? id;
 
-    factory UserInsSystemLogs.fromJson(Map<String, dynamic> json) => _$UserInsSystemLogsFromJson(json);
+  final String? name;
 
-    @override
-    List<Object?> get props => [
-    id, name, ];
+  factory UserInsSystemLogs.fromJson(Map<String, dynamic> json) =>
+      _$UserInsSystemLogsFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+      ];
 }

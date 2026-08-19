@@ -43,7 +43,7 @@ class DeliveryTaskCard extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _Badge(text: task.direction ?? "TO_LAB"),
+                  _Badge(text: task.direction ?? "--"),
                   const Spacer(),
 
                   _StatusBadge(status: task.status),
@@ -88,7 +88,7 @@ class DeliveryTaskCard extends StatelessWidget {
                       Expanded(
                         flex: 3,
                         child: _PersonRow(
-                          title: "Delivery Employee",
+                          title: "معلومات موظف التوصيل",
                           name: task.deliveryUser?.name ?? "-",
                           phone: task.deliveryUser?.phone ?? "-",
                           icon: Icons.local_shipping_outlined,
@@ -104,7 +104,7 @@ class DeliveryTaskCard extends StatelessWidget {
                       Expanded(
                         flex: 3,
                         child: _PersonRow(
-                          title: "Doctor",
+                          title: "معلومات الطبيب",
                           name: task.doctorName ?? "-",
                           phone: task.doctorPhone ?? "-",
                           icon: Icons.person,
