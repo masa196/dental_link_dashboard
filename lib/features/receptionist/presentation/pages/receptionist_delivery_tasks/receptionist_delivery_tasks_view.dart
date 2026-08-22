@@ -23,6 +23,7 @@ class ReceptionistDeliveryTasksView extends StatelessWidget {
           title: "مهام التوصيل",
           showMenuButton: !Responsive.isDesktop(context),
           onMenuPressed: ReceptionistLayoutScope.of(context).openDrawer,
+          showSearchBar: false,
           onSearch: (_) {},
           onNotificationTap: () {
               NotificationsDialog.show(context);

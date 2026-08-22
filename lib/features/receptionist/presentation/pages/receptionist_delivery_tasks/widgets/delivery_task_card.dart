@@ -46,8 +46,10 @@ class DeliveryTaskCard extends StatelessWidget {
                   _Badge(text: task.direction ?? "--"),
                   const Spacer(),
 
-                  _StatusBadge(status: task.status),
-                  const SizedBox(width: 20),
+                  if (task.status != null && task.status != 'empty') ...[
+                    _StatusBadge(status: task.status),
+                    const SizedBox(width: 20),
+                  ],
                   Icon(
                     Icons.receipt_long_outlined,
                     size: 18,
@@ -56,7 +58,7 @@ class DeliveryTaskCard extends StatelessWidget {
                   const SizedBox(width: 6),
 
                   Text(
-                    "#${task.orderId}",
+                    "#${task.serialNumber}",
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 13,
@@ -120,7 +122,9 @@ class DeliveryTaskCard extends StatelessWidget {
                       Expanded(
                         flex: 3,
                         child: _LocationBox(
-                          location: task.doctorLocation ?? "-",
+                          location: task.doctorLocation,
+                          lat: double.tryParse(task.doctorLocationLat ?? ''),
+                          lng: double.tryParse(task.doctorLocationLng ?? ''),
                           onTap: onLocationTap,
                         ),
                       ),
@@ -159,7 +163,9 @@ class DeliveryTaskCard extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   _LocationBox(
-                    location: task.doctorLocation ?? "-",
+                    location: task.doctorLocation,
+                    lat: double.tryParse(task.doctorLocationLat ?? ''),
+                    lng: double.tryParse(task.doctorLocationLng ?? ''),
                     onTap: onLocationTap,
                   ),
                 ],
@@ -339,42 +345,61 @@ class _PersonRow extends StatelessWidget {
 }
 
 class _LocationBox extends StatelessWidget {
-  const _LocationBox({required this.location, this.onTap});
+  const _LocationBox({
+    required this.location,
+    required this.lat,
+    required this.lng,
+    this.onTap,
+  });
 
-  final String location;
+  final String? location;
+  final double? lat;
+  final double? lng;
   final VoidCallback? onTap;
+
+  bool get hasLocation =>
+      location != null &&
+      location!.trim().isNotEmpty &&
+      lat != null &&
+      lng != null;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
     return InkWell(
-      onTap: onTap,
+      onTap: hasLocation ? onTap : null,
       borderRadius: BorderRadius.circular(16),
-
       child: Container(
         constraints: const BoxConstraints(minHeight: 86),
-
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-
         decoration: BoxDecoration(
-          color: scheme.primary.withValues(alpha: 0.08),
+          color: hasLocation
+              ? scheme.primary.withValues(alpha: 0.08)
+              : scheme.surfaceContainerHighest.withValues(alpha: 0.35),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: scheme.primary),
+          border: Border.all(
+            color: hasLocation
+                ? scheme.primary.withValues(alpha: 0.35)
+                : scheme.outlineVariant.withValues(alpha: 0.3),
+          ),
         ),
-
         child: Row(
           children: [
             Container(
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: scheme.primary.withValues(alpha: .10),
+                color: hasLocation
+                    ? scheme.primary.withValues(alpha: .10)
+                    : scheme.onSurfaceVariant.withValues(alpha: .08),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.location_on_outlined,
-                color: scheme.primary,
+                hasLocation
+                    ? Icons.location_on_outlined
+                    : Icons.location_off_outlined,
+                color: hasLocation ? scheme.primary : scheme.onSurfaceVariant,
                 size: 20,
               ),
             ),
@@ -387,21 +412,26 @@ class _LocationBox extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    location,
-                    maxLines: 1,
+                    hasLocation ? location!.trim() : "Open Location",
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
+                      color: hasLocation
+                          ? scheme.onSurface
+                          : scheme.onSurfaceVariant,
                     ),
                   ),
 
                   const SizedBox(height: 5),
 
                   Text(
-                    "Open Location",
+                    hasLocation ? "عرض الموقع على الخريطة" : "الموقع غير متوفر",
                     style: TextStyle(
-                      color: scheme.primary,
+                      color: hasLocation
+                          ? scheme.primary
+                          : scheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
@@ -410,11 +440,12 @@ class _LocationBox extends StatelessWidget {
               ),
             ),
 
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 14,
-              color: scheme.primary,
-            ),
+            if (hasLocation)
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 14,
+                color: scheme.primary,
+              ),
           ],
         ),
       ),
@@ -439,16 +470,39 @@ class _StatusBadge extends StatelessWidget {
 
   Color _getColor(String? status) {
     switch (status) {
-      case "assigned":
-        return Colors.blue;
-      case "completed":
-        return Colors.green;
-      case "pending":
+      case "on_the_way_to_the_doctor":
         return Colors.orange;
-      case "cancelled":
-        return Colors.red;
+
+      case "on_the_way_to_the_lab":
+        return Colors.blue;
+
+      case "received":
+        return Colors.green;
+
+      case "delivered":
+        return Colors.teal;
+
       default:
         return Colors.grey;
+    }
+  }
+
+  String _getLabel(String? status) {
+    switch (status) {
+      case "on_the_way_to_the_doctor":
+        return "في الطريق إلى الطبيب";
+
+      case "on_the_way_to_the_lab":
+        return "في الطريق إلى المخبر";
+
+      case "received":
+        return "تم الاستلام";
+
+      case "delivered":
+        return "تم التسليم";
+
+      default:
+        return "-";
     }
   }
 
@@ -457,11 +511,16 @@ class _StatusBadge extends StatelessWidget {
     final color = _getColor(status);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 5,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.25)),
+        border: Border.all(
+          color: color.withValues(alpha: 0.25),
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -469,11 +528,16 @@ class _StatusBadge extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
           ),
+
           const SizedBox(width: 6),
+
           Text(
-            status ?? "-",
+            _getLabel(status),
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,

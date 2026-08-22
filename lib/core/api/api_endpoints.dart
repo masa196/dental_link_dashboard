@@ -2,7 +2,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   static const String baseUrl =
-      'http://127.0.0.1:8000/api';
+      'https://4f35-185-132-179-49.ngrok-free.app/api';
 
   static const Map<String, String> fileHeaders = {
     'ngrok-skip-browser-warning': 'true',

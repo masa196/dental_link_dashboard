@@ -42,8 +42,11 @@ class ReceptionistDashboardView extends StatelessWidget {
         BlocListener<PrintQrBloc, PrintQrState>(
           listener: (context, state) {
             if (state.status == PrintQrStatus.failure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.failure?.message ?? 'حدث خطأ')),
+              AppSnackbarHelper.showFailure(
+                context,
+                title: "خطأ",
+                message: state.failure?.message ?? "فشل طباعة رمز QR",
+                failure: state.failure,
               );
             }
 

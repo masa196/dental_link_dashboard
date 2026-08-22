@@ -4,21 +4,15 @@ import 'package:injectable/injectable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 @lazySingleton
+
 class LocaleCubit extends Cubit<Locale> {
   static const _boxName = 'settings';
   static const _localeKey = 'locale';
 
-  LocaleCubit() : super(_initialLocale()) {
-    // keep Hive box access ready; any subsequent changes should persist
-  }
+  LocaleCubit() : super(_initialLocale());
 
   static Locale _initialLocale() {
-    try {
-      final box = Hive.box<String>(_boxName);
-      final saved = box.get(_localeKey);
-      if (saved == 'ar') return const Locale('ar');
-    } catch (_) {}
-    return const Locale('en');
+    return const Locale('ar');
   }
 
   void setEnglish() {

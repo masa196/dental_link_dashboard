@@ -74,6 +74,9 @@ OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => OrderModel(
   requiresResubmission: json['requires_resubmission'] as bool?,
   resubmissionReason: json['resubmission_reason'],
   resubmissionRequestedAt: json['resubmission_requested_at'],
+  qrPrintedAt: json['qr_printed_at'] == null
+      ? null
+      : DateTime.parse(json['qr_printed_at'] as String),
   createdAt: json['created_at'] == null
       ? null
       : DateTime.parse(json['created_at'] as String),

@@ -79,11 +79,11 @@ Widget build(BuildContext context) {
       }
 
 
-      if(width < 350){
+      if(width < 700){
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: SizedBox(
-            width: 350,
+            width: 700,
             child: header,
           ),
         );

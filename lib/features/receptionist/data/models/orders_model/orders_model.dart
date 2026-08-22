@@ -106,6 +106,7 @@ class OrderModel extends Equatable {
         required this.requiresResubmission,
         required this.resubmissionReason,
         required this.resubmissionRequestedAt,
+        required this.qrPrintedAt,
         required this.createdAt,
         required this.doctor,
         required this.lab,
@@ -170,6 +171,9 @@ class OrderModel extends Equatable {
     @JsonKey(name: 'resubmission_requested_at') 
     final dynamic resubmissionRequestedAt;
 
+     @JsonKey(name: 'qr_printed_at') 
+    final DateTime? qrPrintedAt;
+
     @JsonKey(name: 'created_at') 
     final DateTime? createdAt;
     final Doctor? doctor;
@@ -178,7 +182,10 @@ class OrderModel extends Equatable {
     factory OrderModel.fromJson(Map<String, dynamic> json) => _$OrderModelFromJson(json);
 
 
-        List<WorkflowStep> get workflowSteps {
+
+
+/*
+    List<WorkflowStep> get workflowSteps {
   final deps = departments ?? [];
 
   if (deps.isEmpty) {
@@ -237,6 +244,23 @@ class OrderModel extends Equatable {
       hasStatus: false,
     );
   });
+}
+*/
+
+List<WorkflowStep> get workflowSteps {
+  final deps = departments ?? [];
+
+  return deps.map((department) {
+    final status = department.status;
+
+    return WorkflowStep(
+      title: department.name ?? '',
+      progress: _mapTaskStatusToProgress(status),
+      isCurrent: department.isCurrent == true,
+      status: status,
+      hasStatus: status != null && status.isNotEmpty,
+    );
+  }).toList();
 }
 
 double _mapTaskStatusToProgress(String? status) {

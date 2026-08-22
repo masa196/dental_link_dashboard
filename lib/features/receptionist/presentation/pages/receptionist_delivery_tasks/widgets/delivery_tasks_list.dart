@@ -1,6 +1,7 @@
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/manage_delivery/show_delivery_tasks/show_delivery_tasks_bloc.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/manage_delivery/show_delivery_tasks/show_delivery_tasks_event.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/bloc/manage_delivery/show_delivery_tasks/show_delivery_tasks_state.dart';
+import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_delivery_tasks/widgets/delivery_location_map_page.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_delivery_tasks/widgets/delivery_task_card.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_delivery_tasks/widgets/delivery_task_empty_state.dart';
 import 'package:dental_link_dashboard/features/receptionist/presentation/pages/receptionist_delivery_tasks/widgets/delivery_task_error_state.dart';
@@ -54,9 +55,23 @@ class DeliveryTasksList extends StatelessWidget {
 
               return DeliveryTaskCard(
                 task: task,
-
                 onLocationTap: () {
-                  /// سنربط الخريطة لاحقًا
+                  final lat = double.tryParse(task.doctorLocationLat ?? '');
+                  final lng = double.tryParse(task.doctorLocationLng ?? '');
+
+                  if (lat == null || lng == null) {
+                    return;
+                  }
+
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => DeliveryLocationMapPage(
+                        latitude: lat,
+                        longitude: lng,
+                        locationName: task.doctorLocation,
+                      ),
+                    ),
+                  );
                 },
               );
             },

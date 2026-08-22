@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'dart:convert';
 
 enum AppFailureType {
   validation,
@@ -57,34 +58,45 @@ class AppException implements Exception {
     return AppException(message: message);
   }
 
-  factory AppException.fromDioException(DioException exception) {
-    final response = exception.response;
-    final payload = AppErrorParser.asMap(response?.data);
+factory AppException.fromDioException(DioException exception) {
+  final response = exception.response;
 
-    if (payload != null) {
-      return AppException.fromResponse(
-        payload,
-        fallbackStatusCode: response?.statusCode,
-        rawResponse: response?.data,
-      );
-    }
+  final payload = AppErrorParser.asMap(response?.data);
 
-    final message = switch (exception.type) {
-      DioExceptionType.connectionTimeout => 'Connection timeout',
-      DioExceptionType.sendTimeout => 'Send timeout',
-      DioExceptionType.receiveTimeout => 'Receive timeout',
-      DioExceptionType.badCertificate => 'Bad certificate',
-      DioExceptionType.connectionError => 'No internet connection',
-      DioExceptionType.cancel => 'Request cancelled',
-      _ => response?.statusMessage ?? 'Request failed',
-    };
-
-    return AppException(
-      message: message,
-      statusCode: response?.statusCode,
+  if (payload != null) {
+    return AppException.fromResponse(
+      payload,
+      fallbackStatusCode: response?.statusCode,
       rawResponse: response?.data,
     );
   }
+
+  final bytesPayload = AppErrorParser.asJsonMap(response?.data);
+
+  if (bytesPayload != null) {
+    return AppException.fromResponse(
+      bytesPayload,
+      fallbackStatusCode: response?.statusCode,
+      rawResponse: response?.data,
+    );
+  }
+
+  final message = switch (exception.type) {
+    DioExceptionType.connectionTimeout => 'Connection timeout',
+    DioExceptionType.sendTimeout => 'Send timeout',
+    DioExceptionType.receiveTimeout => 'Receive timeout',
+    DioExceptionType.badCertificate => 'Bad certificate',
+    DioExceptionType.connectionError => 'No internet connection',
+    DioExceptionType.cancel => 'Request cancelled',
+    _ => response?.statusMessage ?? 'Request failed',
+  };
+
+  return AppException(
+    message: message,
+    statusCode: response?.statusCode,
+    rawResponse: response?.data,
+  );
+}
 
   factory AppException.fromResponse(
     Map<String, dynamic> response, {
@@ -118,37 +130,80 @@ class AppException implements Exception {
 class AppErrorParser {
   static Map<String, dynamic>? asMap(Object? raw) {
     if (raw is Map<String, dynamic>) return raw;
+
     if (raw is Map) {
-      return raw.map((key, value) => MapEntry(key.toString(), value));
+      return raw.map(
+        (key, value) => MapEntry(
+          key.toString(),
+          value,
+        ),
+      );
     }
+
+    return null;
+  }
+
+  static Map<String, dynamic>? asJsonMap(Object? raw) {
+    if (raw == null) {
+      return null;
+    }
+
+    if (raw is List<int>) {
+      try {
+        final decoded = utf8.decode(raw);
+        final json = jsonDecode(decoded);
+
+        return asMap(json);
+      } catch (_) {
+        return null;
+      }
+    }
+
     return null;
   }
 
   static Map<String, List<String>>? parseErrors(Object? raw) {
     final map = asMap(raw);
-    if (map == null || map.isEmpty) return null;
+
+    if (map == null || map.isEmpty) {
+      return null;
+    }
 
     return map.map((key, value) {
       if (value is List) {
-        return MapEntry(key, value.map((item) => item.toString()).toList());
+        return MapEntry(
+          key,
+          value.map((item) => item.toString()).toList(),
+        );
       }
+
       if (value == null) {
         return MapEntry(key, <String>[]);
       }
-      return MapEntry(key, <String>[value.toString()]);
+
+      return MapEntry(
+        key,
+        <String>[value.toString()],
+      );
     });
   }
 
   static int? parseRetryAfter(Object? raw) {
     final map = asMap(raw);
-    if (map == null) return null;
+
+    if (map == null) {
+      return null;
+    }
 
     final value = map['retry_after_seconds'];
-    if (value is num) return value.toInt();
+
+    if (value is num) {
+      return value.toInt();
+    }
+
     return int.tryParse(value?.toString() ?? '');
   }
 }
-
 class AppErrorMapper {
   static AppFailure map(Object error) {
     if (error is AppException) {

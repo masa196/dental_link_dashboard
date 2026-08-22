@@ -50,6 +50,7 @@ class TaskInfo extends Equatable {
     const TaskInfo({
         required this.id,
         required this.orderId,
+        required this.serialNumber,
         required this.status,
         required this.direction,
         required this.assignedAt,
@@ -67,6 +68,9 @@ class TaskInfo extends Equatable {
     final int? orderId;
     final String? status;
     final String? direction;
+
+    @JsonKey(name: 'serial_number') 
+    final String? serialNumber;
 
     @JsonKey(name: 'assigned_at') 
     final DateTime? assignedAt;
@@ -93,7 +97,7 @@ class TaskInfo extends Equatable {
 
     @override
     List<Object?> get props => [
-    id, orderId, status, direction, assignedAt, deliveryUser, doctorName, doctorPhone, doctorLocation, doctorLocationLat, doctorLocationLng, ];
+    id, orderId, status, direction, assignedAt, deliveryUser, doctorName, doctorPhone, doctorLocation, doctorLocationLat, doctorLocationLng, serialNumber ];
 }
 
 @JsonSerializable(createToJson: false)

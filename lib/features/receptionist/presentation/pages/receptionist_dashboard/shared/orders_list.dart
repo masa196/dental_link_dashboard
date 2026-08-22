@@ -196,17 +196,24 @@ class OrdersList extends StatelessWidget {
               // ============================================
 
               if (selectedTab == ReceptionistOrderTab.pending) {
-                actionWidget = DashboardActionButton(
-                  title: 'اطبع QR لبدء العمل',
+                final qrAlreadyPrinted = order.qrPrintedAt != null;
 
-                  onPressed: () {
-                    context.read<PrintQrBloc>().add(
-                      PrintQrRequested(
-                        orderId: order.id!,
-                        serialNumber: order.serialNumber ?? order.id.toString(),
-                      ),
-                    );
-                  },
+                actionWidget = DashboardActionButton(
+                  title: qrAlreadyPrinted
+                      ? 'تم طباعة QR'
+                      : 'اطبع QR لبدء العمل',
+
+                  onPressed: qrAlreadyPrinted
+                      ? null
+                      : () {
+                          context.read<PrintQrBloc>().add(
+                            PrintQrRequested(
+                              orderId: order.id!,
+                              serialNumber:
+                                  order.serialNumber ?? order.id.toString(),
+                            ),
+                          );
+                        },
                 );
               }
               // ============================================

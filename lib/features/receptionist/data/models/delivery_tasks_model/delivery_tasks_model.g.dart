@@ -33,6 +33,7 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
 TaskInfo _$TaskInfoFromJson(Map<String, dynamic> json) => TaskInfo(
   id: (json['id'] as num?)?.toInt(),
   orderId: (json['order_id'] as num?)?.toInt(),
+  serialNumber: json['serial_number'] as String?,
   status: json['status'] as String?,
   direction: json['direction'] as String?,
   assignedAt: json['assigned_at'] == null
